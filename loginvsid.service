@@ -1,0 +1,10 @@
+[Unit]
+Description=Login VSI daemon
+After = docker.service
+[Service]
+Type=notify
+ExecStart=/usr/bin/loginvsid start
+ExecStop=/usr/bin/loginvsid stop
+
+[Install]
+WantedBy=multi-user.target

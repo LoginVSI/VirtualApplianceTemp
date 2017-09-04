@@ -1,0 +1,22 @@
+#!/bin/bash
+### BEGIN INIT INFO
+# Provides:          loginvsid
+# Required-Start:    
+# Required-Stop:     
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: loginvsid
+# Description:       loginvsid
+### END INIT INFO
+
+start() {
+  docker-compose -f /loginvsi/host-internaldb.yml up -d
+}
+
+stop() {
+  docker stop $(docker ps -a -q)
+}
+
+case $1 in
+  start|stop) "$1" ;;
+esac
