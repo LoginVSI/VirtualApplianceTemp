@@ -54,6 +54,7 @@ cp -f $SCRIPT_PATH/loginvsid.service /etc/systemd/system/
 cp -f $SCRIPT_PATH/firstrun /loginvsi/
 cp -f $SCRIPT_PATH/.env /loginvsi/
 cp -f $SCRIPT_PATH/sshd_config /etc/ssh/
+hostname "loginvsi-ng"
 
 echo "#!/bin/bash" > /home/administrator/.bash_profile
 echo "if [ ! -f '/loginvsi/first_run.chk' ]; then"  >> /home/administrator/.bash_profile
