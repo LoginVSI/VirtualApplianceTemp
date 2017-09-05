@@ -85,5 +85,6 @@ if [ -f "/loginvsi/first_run.chk" ]; then
 fi
 
 
+
 docker rm -f $(docker ps -a -q)
 docker network prune -f
