@@ -47,11 +47,13 @@ if [ -d /loginvsi ]; then
     rm -rf /loginvsi
 fi
 mkdir /loginvsi
-cp -r "/dockerrepo/latest/Host/Internal DB/host-internaldb.yml" /loginvsi
+cp -r "/dockerrepo/latest/Host/Internal DB/host-internaldb.yml" /loginvsi/
 rm -rf /dockerrepo
-cp $SCRIPT_PATH/loginvsid /usr/bin
-cp $SCRIPT_PATH/loginvsid.service /etc/systemd/system
-cp $SCRIPT_PATH/firstrun /loginvsi
+cp -f $SCRIPT_PATH/loginvsid /usr/bin/
+cp -f $SCRIPT_PATH/loginvsid.service /etc/systemd/system/
+cp -f $SCRIPT_PATH/firstrun /loginvsi/
+cp -f $SCRIPT_PATH\.env /loginvsi/
+cp -f $SCRIPT_PATH\sshd_config /etc/ssh/
 
 echo "#!/bin/bash" > /home/administrator/.bash_profile
 echo "if [ ! -f '/loginvsi/first_run.chk' ]; then"  >> /home/administrator/.bash_profile
@@ -59,7 +61,7 @@ echo "  echo 'admin' | sudo -S -p '' echo 'Starting LoginVSI configuration tool.
 echo "  sudo /loginvsi/firstrun" >> /home/administrator/.bash_profile
 echo "fi" >> /home/administrator/.bash_profile
 chmod +x /home/administrator/.bash_profile
-
+chmod +x /loginvsi/firstrun
 
 echo "administrator:admin" | chpasswd
 cp $SCRIPT_PATH/issue /etc/
@@ -93,5 +95,5 @@ fi
 
 
 
-docker rm -f $(docker ps -a -q)
-docker network prune -f
+#docker rm -f $(docker ps -a -q)
+#docker network prune -f

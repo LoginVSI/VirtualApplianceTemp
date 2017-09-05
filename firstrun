@@ -69,7 +69,21 @@ iface $netadapter inet static
                 " > /etc/network/interfaces
                 ;;
             *)
-                echo "nothing to do";;
+               echo "
+# This file describes the network interfaces available on your system
+# and how to activate them. For more information, see interfaces(5).
+
+source /etc/network/interfaces.d/*
+
+# The loopback network interface
+auto lo
+iface lo inet loopback
+
+# The primary network interface
+auto $netadapter
+iface $netadapter inet dhcp        
+    " > /etc/network/interfaces
+      ;;
         esac
 
         while :       
@@ -98,8 +112,8 @@ iface $netadapter inet static
     echo " Setting hostname: $new_hostname"
     # update hostname
     echo "$new_hostname" > /etc/hostname
-    sed -i "s@unattended.unattended@$fqdn@g" /etc/hosts
-    sed -i "s@unattended@$new_hostname@g" /etc/hosts
+    sed -i "s@loginvsi-ng.loginvsi-ng@$fqdn@g" /etc/hosts
+    sed -i "s@loginvsi-ng@$new_hostname@g" /etc/hosts
     
     hostname "$new_hostname"
 
@@ -107,9 +121,9 @@ iface $netadapter inet static
     chmod +x /usr/bin/loginvsid
     chown root:root /usr/bin/loginvsid
 
-    #sed -i s,IMAGE_TAG=stable,IMAGE_TAG=latest, /loginvsi/Systems/All/.env
-    sed -i s,GATEWAY_PORT=3000,GATEWAY_PORT=443, /loginvsi/Systems/All/.env
-    sed -i s,HOST_URL=https://localhost.loginvsi.com:3000,HOST_URL=https://${fqdn},  /loginvsi/Systems/All/.env
+    
+    sed -i s,GATEWAY_PORT=3000,GATEWAY_PORT=443, /loginvsi/.env
+    sed -i s,HOST_URL=https://localhost.loginvsi.com:3000,HOST_URL=https://${fqdn},  /loginvsi/.env
     systemctl enable loginvsid 
     touch -f /loginvsi/first_run.chk
 	passwd -dl root
