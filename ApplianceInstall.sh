@@ -32,7 +32,7 @@ chmod +x /usr/local/bin/docker-compose
 if [ -d "/dockerrepo" ]; then
     rm -rf /dockerrepo
 fi
-git clone ssh://tfs.loginvsi.com/tfs/NextGen/Shared/_git/C_Hosting /dockerrepo
+git clone -b stable ssh://tfs.loginvsi.com/tfs/NextGen/Shared/_git/C_Hosting /dockerrepo
 cd /dockerrepo/
 docker login -u vsiplayaccount -p 8@0OIS58MajY
 export GATEWAY_PORT=443
@@ -79,8 +79,12 @@ printf "%s (%s %s %s)\n" "$DISTRIB_DESCRIPTION" "$(uname -o)" "$(uname -r)" "$(u
 
 ' > /etc/update-motd.d/00-header
 
-rm /etc/update-motd.d/10-help-text
-rm /etc/update-motd.d/90-updates-available
+if [ -f '/etc/update-motd.d/10-help-text' ]; then
+	rm /etc/update-motd.d/10-help-text
+fi
+if [ -f '/etc/update-motd.d/90-updates-available' ]; then
+	rm /etc/update-motd.d/90-updates-available
+fi
 
 
 if [ -f "/loginvsi/first_run.chk" ]; then
