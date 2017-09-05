@@ -123,7 +123,7 @@ iface $netadapter inet dhcp
     mkdir /certificates
 
     openssl genrsa -out /certificates/sslcert.key 2048
-    openssl req -new -sha256 -key /certificates/sslcert.key -out csr.csr -subj "/C=NL/ST=NH/L=Amsterdam/O=LoginVSI/OU=Development/CN=$fqdn/emailAddress=info@loginvsi.com" -bash 
+    openssl req -new -sha256 -key /certificates/sslcert.key -out csr.csr -subj "/C=NL/ST=NH/L=Amsterdam/O=LoginVSI/OU=Development/CN=$fqdn/emailAddress=info@loginvsi.com" -batch
     openssl req -x509 -sha256 -days 999 -key /certificates/sslcert.key -in csr.csr -out /certificates/sslcert.crt
     #openssl req -in csr.csr -text -noout | grep -i "Signature.*SHA256" && echo "All is well" || echo "This certificate will stop working in 2017! You must update OpenSSL to generate a widely-compatible certificate"
 
@@ -143,7 +143,9 @@ iface $netadapter inet dhcp
 Login VSI appliance is configured! 
 Please use your browser to go to https://${ip} or https://${fqdn}" >> /etc/issue
 
+  
 trap SIGINT
-#    reboot    
+
+reboot    
    
 fi
