@@ -138,15 +138,11 @@ iface $netadapter inet dhcp
     touch -f /loginvsi/first_run.chk
 	passwd -dl root
     head -n -2 /etc/issue > /etc/issue.tmp; mv /etc/issue.tmp /etc/issue
-    echo '
-    ip=$(ip -o addr show $netadapter primary scope global | while read -r num dev fam addr rest; do 
-        if [[ ${dev} != docker* ]]; then
-            echo ${addr%/*}; 
-        fi       
-    done
-    )
-    printf "Login VSI appliance is configured!"
-    printf "Please use your browser to go to https://%s or https://%s \n" "($ip)" "${fqdn}"'  >> /etc/issue
+    echo '   
+    Welcome to Login VSI Soon(tm)
+    Login VSI appliance is configured!
+    Please use your browser to go to https://\4{ens160} or https://\n.\o 
+    '  > /etc/issue
 
   
 trap SIGINT
