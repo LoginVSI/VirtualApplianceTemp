@@ -32,7 +32,7 @@ chmod +x /usr/local/bin/docker-compose
 if [ -d "/dockerrepo" ]; then
     rm -rf /dockerrepo
 fi
-git clone ssh://tfs_buildagent@tfs.loginvsi.com:22/tfs/NextGen/Shared/_git/C_Hosting /dockerrepo
+git clone https://tfs_buildagent:Password!@tfs.loginvsi.com/tfs/NextGen/Shared/_git/C_Hosting /dockerrepo
 cd /dockerrepo/
 docker login -u vsiplayaccount -p 8@0OIS58MajY
 docker-compose -f "./latest/Host/Internal DB/host-internaldb.yml" up -d
