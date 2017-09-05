@@ -35,6 +35,9 @@ fi
 git clone ssh://tfs.loginvsi.com/tfs/NextGen/Shared/_git/C_Hosting /dockerrepo
 cd /dockerrepo/
 docker login -u vsiplayaccount -p 8@0OIS58MajY
+export GATEWAY_PORT=443
+export COMPOSE_PROJECT_NAME=temp
+
 docker-compose -f "./latest/Host/Internal DB/host-internaldb.yml" up -d
 
 docker-compose -f "./latest/Host/Internal DB/host-internaldb.yml" down -v
