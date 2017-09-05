@@ -29,12 +29,12 @@ trap 'echo "You cannott cancel this script"' SIGINT
         echo "Welcome to LoginVSI NG!(tm)"
         echo "Please help answer the following questions to get the system setup..."
         
-        read -ep " Please enter your preferred hostname: " -i "$(hostname) " new_hostname
-        read -ep " Please enter your preferred domain: " -i "local " new_domain
+        read -ep " Please enter your preferred hostname: $(hostname)" new_hostname
+        read -ep " Please enter your preferred domain: local" new_domain
         read -ep " Please choose a network configuration mode: dhcp or static (D/s) " network
         case $network in
             s|S)
-                read -ep " Please provide the new ip address/subnet ($ip): " new_ip
+                read -ep " Please provide the new ip address ($ip): " new_ip
                 read -ep " Please provide the netmask ($netmask): " new_netmask
                 read -ep " Please provide the default gateway ($gateway): " new_gateway
                 read -ep " Please provide the nameservers ($nameservers) " new_nameservers
@@ -146,6 +146,6 @@ Please use your browser to go to https://${ip} or https://${fqdn}" >> /etc/issue
   
 trap SIGINT
 
-reboot    
+#reboot    
    
 fi
