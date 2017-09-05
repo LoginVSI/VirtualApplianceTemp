@@ -52,8 +52,8 @@ rm -rf /dockerrepo
 cp -f $SCRIPT_PATH/loginvsid /usr/bin/
 cp -f $SCRIPT_PATH/loginvsid.service /etc/systemd/system/
 cp -f $SCRIPT_PATH/firstrun /loginvsi/
-cp -f $SCRIPT_PATH\.env /loginvsi/
-cp -f $SCRIPT_PATH\sshd_config /etc/ssh/
+cp -f $SCRIPT_PATH/.env /loginvsi/
+cp -f $SCRIPT_PATH/sshd_config /etc/ssh/
 
 echo "#!/bin/bash" > /home/administrator/.bash_profile
 echo "if [ ! -f '/loginvsi/first_run.chk' ]; then"  >> /home/administrator/.bash_profile
