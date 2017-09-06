@@ -20,20 +20,21 @@ nameservers=$(echo $(echo "${nameserversarray[@]}"))
 broadcast=$(ip a s dev $netadapter | awk '/inet / {print $4}')
 dnssuffix=$(grep search /etc/resolv.conf | while read -r search suffix; do echo $suffix;done )
 if [ ! -f "/loginvsi/first_run.chk" ]; then
-trap 'echo "You cannott cancel this script"' SIGINT
+trap 'echo "You cannot cancel this script"' SIGINT
     # check for interactive shell
     if ! grep -q "noninteractive" /proc/cmdline ; then
         stty sane
 
         # ask questions
-        echo "Welcome to LoginVSI NG!(tm)"
+        echo "Welcome to LoginVSI Soon!(tm)"
         echo "Please help answer the following questions to get the system setup..."
         
-        read -ep " Please enter your preferred hostname: $(hostname)" new_hostname
-        read -ep " Please enter your preferred domain: local" new_domain
-        read -ep " Please choose a network configuration mode: dhcp or static (D/s) " network
+        read -ep " Please enter your preferred hostname ($(hostname)):" new_hostname
+        read -ep " Please enter your preferred domain (local):" new_domain
+        read -ep " Please choose a network configuration mode dhcp or static (D/s) " network
         case $network in
             s|S)
+                echo "Configuring network using static address..."
                 read -ep " Please provide the new ip address ($ip): " new_ip
                 read -ep " Please provide the netmask ($netmask): " new_netmask
                 read -ep " Please provide the default gateway ($gateway): " new_gateway
@@ -69,6 +70,7 @@ iface $netadapter inet static
                 " > /etc/network/interfaces
                 ;;
             *)
+                echo "Configuring network using dhcp..."
                echo "
 # This file describes the network interfaces available on your system
 # and how to activate them. For more information, see interfaces(5).
@@ -122,9 +124,9 @@ iface $netadapter inet dhcp
     /etc/init.d/ssh restart
     mkdir /certificates
 
-    openssl genrsa -out /certificates/sslcert.key 2048
-    openssl req -new -sha256 -key /certificates/sslcert.key -out csr.csr -subj "/C=NL/ST=NH/L=Amsterdam/O=LoginVSI/OU=Development/CN=$fqdn/emailAddress=info@loginvsi.com" -batch
-    openssl req -x509 -sha256 -days 999 -key /certificates/sslcert.key -in csr.csr -out /certificates/sslcert.crt
+    openssl genrsa -out /certificates/sslcert.key 2048 -noout
+    openssl req -new -sha256 -key /certificates/sslcert.key -out csr.csr -subj "/C=NL/ST=NH/L=Amsterdam/O=LoginVSI/OU=Development/CN=$fqdn/emailAddress=info@loginvsi.com" -batch -noout
+    openssl req -x509 -sha256 -days 999 -key /certificates/sslcert.key -in csr.csr -out /certificates/sslcert.crt -noout
     #openssl req -in csr.csr -text -noout | grep -i "Signature.*SHA256" && echo "All is well" || echo "This certificate will stop working in 2017! You must update OpenSSL to generate a widely-compatible certificate"
 
 

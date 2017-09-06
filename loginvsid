@@ -10,11 +10,13 @@
 ### END INIT INFO
 
 start() {
-  docker-compose -f /loginvsi/host-internaldb.yml up -d
+  cd /loginvsi
+  docker-compose -f ./host-internaldb.yml up -d
 }
 
 stop() {
-  docker stop $(docker ps -a -q)
+  cd /loginvsi
+  docker-compose -f ./host-internaldb.yml down
 }
 
 case $1 in
