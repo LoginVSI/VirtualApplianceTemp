@@ -32,7 +32,7 @@ chmod +x /usr/local/bin/docker-compose
 if [ -d "/dockerrepo" ]; then
     rm -rf /dockerrepo
 fi
-git clone -b stable ssh://tfs.loginvsi.com/tfs/NextGen/Shared/_git/P_Hosting /dockerrepo
+git clone -b master ssh://tfs.loginvsi.com/tfs/NextGen/Shared/_git/P_Hosting /dockerrepo
 cd /dockerrepo/
 docker login -u vsiplayaccount -p 8@0OIS58MajY
 export GATEWAY_PORT=443
