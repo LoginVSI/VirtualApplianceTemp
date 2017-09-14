@@ -29,10 +29,8 @@ trap 'echo "You cannot cancel this script"' SIGINT
         echo "Welcome to LoginVSI Soon!(tm)"
         echo "Please help answer the following questions to get the system setup..."
         
-        read -ep " Please enter your preferred hostname ($(hostname)):" new_hostname
-        echo $new_hostname
-        read -ep " Please enter your preferred domain (local):" new_domain
-        echo $new_domain
+        read -ep " Please enter your preferred hostname ($(hostname)):" new_hostname        
+        read -ep " Please enter your preferred domain (local):" new_domain        
         read -ep " Please choose a network configuration mode dhcp or static (D/s) " network
         case $network in
             s|S)
@@ -133,7 +131,7 @@ iface $netadapter inet dhcp
 
 
     docker swarm init &>/dev/null
-    echo "foobar" | docker secret create VSI_SSL_CERTIFICATE_KEY_PASSWORD -
+    echo "foobar" | docker secret create VSI_SSL_CERTIFICATE_KEY_PASSWORD - &>/dev/null
 
 
     chmod +x /usr/bin/loginvsid
@@ -148,7 +146,7 @@ iface $netadapter inet dhcp
     #sed -i s,HOST_URL=https://localhost.loginvsi.com:3000,HOST_URL=https://${fqdn},  /loginvsi/.env
     #sed -i s,SSL_CERTIFICATE_KEY_PATH=..\\..\\..\\Certificates\\certificate.key,SSL_CERTIFICATE_KEY_PATH=/certifcates/certificate.key, /loginvsi/.env
     #sed -i s,SSL_CERTIFICATE_PATH=..\..\..\Certificates\certificate.crt,SSL_CERTIFICATE_PATH=/certifcates/certificate.crt, /loginvsi/.env
-    systemctl enable loginvsid 
+    systemctl enable loginvsid &>/dev/null
     touch -f /loginvsi/first_run.chk
 	passwd -dl root &>/dev/null
     head -n -2 /etc/issue > /etc/issue.tmp; mv /etc/issue.tmp /etc/issue
