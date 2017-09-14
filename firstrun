@@ -150,11 +150,11 @@ iface $netadapter inet dhcp
     touch -f /loginvsi/first_run.chk
 	passwd -dl root &>/dev/null
     head -n -2 /etc/issue > /etc/issue.tmp; mv /etc/issue.tmp /etc/issue
-    echo '   
+    echo "   
     Welcome to Login VSI Soon(tm)
     Login VSI appliance is configured!
     Please use your browser to go to https://\4{$netadapter} or https://\n.\o 
-    '  > /etc/issue
+    "  > /etc/issue
 
   
 trap SIGINT
