@@ -11,12 +11,12 @@
 
 start() {
   cd /loginvsi
-  docker-compose -f ./host-internaldb.yml up -d
+  docker stack deploy --compose-file ./docker-compose.yml VSI
 }
 
 stop() {
-  cd /loginvsi
-  docker-compose -f ./host-internaldb.yml down
+  #cd /loginvsi
+  #docker stack deploy --compose-file ./docker-compose.yml VSI
 }
 
 case $1 in

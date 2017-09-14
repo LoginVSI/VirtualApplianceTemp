@@ -32,27 +32,28 @@ chmod +x /usr/local/bin/docker-compose
 if [ -d "/dockerrepo" ]; then
     rm -rf /dockerrepo
 fi
-git clone -b stable ssh://tfs.loginvsi.com/tfs/NextGen/Shared/_git/C_Hosting /dockerrepo
+git clone -b stable ssh://tfs.loginvsi.com/tfs/NextGen/Shared/_git/P_Hosting /dockerrepo
 cd /dockerrepo/
 docker login -u vsiplayaccount -p 8@0OIS58MajY
 export GATEWAY_PORT=443
 export COMPOSE_PROJECT_NAME=temp
 
-docker-compose -f "./latest/Host/Internal DB/host-internaldb.yml" up -d
+docker-compose -f "./latest/Development/InternalDB/docker-compose.yml" up -d
 
-docker-compose -f "./latest/Host/Internal DB/host-internaldb.yml" down -v
+docker-compose -f "./latest/Development/InternalDB/docker-compose.yml" down -v
 docker logout
 
 if [ -d /loginvsi ]; then
     rm -rf /loginvsi
 fi
 mkdir /loginvsi
-cp -r "/dockerrepo/latest/Host/Internal DB/host-internaldb.yml" /loginvsi/
+cp -r "/dockerrepo/latest/Production/InternalDB/docker-compose.yml" /loginvsi/
+cp -r "/dockerrepo/latest/Production/InternalDB/.env" /loginvsi/
 rm -rf /dockerrepo
 cp -f $SCRIPT_PATH/loginvsid /usr/bin/
 cp -f $SCRIPT_PATH/loginvsid.service /etc/systemd/system/
 cp -f $SCRIPT_PATH/firstrun /loginvsi/
-cp -f $SCRIPT_PATH/.env /loginvsi/
+#cp -f $SCRIPT_PATH/.env /loginvsi/
 cp -f $SCRIPT_PATH/sshd_config /etc/ssh/
 echo "loginvsi-ng" > /etc/hostname
 hostname "loginvsi-ng"

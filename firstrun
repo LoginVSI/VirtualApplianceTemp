@@ -120,15 +120,19 @@ iface $netadapter inet dhcp
     hostname "$new_hostname"
 
     rm /etc/ssh/ssh_host_*
-    dpkg-reconfigure openssh-server
+    dpkg-reconfigure openssh-server > /dev/null
     /etc/init.d/ssh restart
     mkdir /certificates
 
-    openssl genrsa -out /certificates/sslcert.key 2048 -noout
-    openssl req -new -sha256 -key /certificates/sslcert.key -out csr.csr -subj "/C=NL/ST=NH/L=Amsterdam/O=LoginVSI/OU=Development/CN=$fqdn/emailAddress=info@loginvsi.com" -batch -noout
-    openssl req -x509 -sha256 -days 999 -key /certificates/sslcert.key -in csr.csr -out /certificates/sslcert.crt -noout
-    #openssl req -in csr.csr -text -noout | grep -i "Signature.*SHA256" && echo "All is well" || echo "This certificate will stop working in 2017! You must update OpenSSL to generate a widely-compatible certificate"
+    openssl genrsa -out /certificates/certificate.key 2048 -noout -passout pass:foobar
+    openssl req -new -sha256 -key /certificates/certificate.key -out /certificates/csr.csr -subj "/C=NL/ST=NH/L=Amsterdam/O=LoginVSI/OU=Development/CN=$fqdn/emailAddress=info@loginvsi.com" -batch -noout
+    openssl req -x509 -sha256 -days 999 -key /certificates/certificate.key -in /certificates/csr.csr -out /certificates/certificate.crt -noout
+    #openssl req -in /certifcates/csr.csr -text -noout | grep -i "Signature.*SHA256" && echo "All is well" || echo "This certificate will stop working in 2017! You must update OpenSSL to generate a widely-compatible certificate"
 
+
+    docker swarm init
+    echo "foobar" | docker secret create VSI_SSL_CERTIFICATE_KEY_PASSWORD -
+    
 
     chmod +x /usr/bin/loginvsid
     chown root:root /usr/bin/loginvsid
@@ -136,6 +140,8 @@ iface $netadapter inet dhcp
     
     sed -i s,GATEWAY_PORT=3000,GATEWAY_PORT=443, /loginvsi/.env
     sed -i s,HOST_URL=https://localhost.loginvsi.com:3000,HOST_URL=https://${fqdn},  /loginvsi/.env
+    sed -i s,SSL_CERTIFICATE_KEY_PATH=..\..\..\Certificates\certificate.key,SSL_CERTIFICATE_KEY_PATH=/certifcates/certificate.key, /loginvsi/.env
+    sed -i s,SSL_CERTIFICATE_PATH=..\..\..\Certificates\certificate.crt,SSL_CERTIFICATE_PATH=/certifcates/certificate.crt, /loginvsi/.env
     systemctl enable loginvsid 
     touch -f /loginvsi/first_run.chk
 	passwd -dl root
