@@ -155,7 +155,7 @@ iface $netadapter inet dhcp
     echo '   
     Welcome to Login VSI Soon(tm)
     Login VSI appliance is configured!
-    Please use your browser to go to https://\4{ens160} or https://\n.\o 
+    Please use your browser to go to https://\4{$netadapter} or https://\n.\o 
     '  > /etc/issue
 
   
