@@ -124,13 +124,13 @@ iface $netadapter inet dhcp
     /etc/init.d/ssh restart
     mkdir /certificates
     export fqdn=$fqdn
-    openssl genrsa -out /certificates/certificate.key 2048 -noout -passout pass:foobar
+    openssl genrsa -out /certificates/certificate.key 2048 -noout -passout pass:foobar &>/dev/null
     openssl req -new -sha256 -key /certificates/certificate.key -out /certificates/csr.csr -subj "/C=NL/ST=NH/L=Amsterdam/O=LoginVSI/OU=Development/CN=${fqdn}/emailAddress=info@loginvsi.com" -batch
-    openssl req -x509 -sha256 -days 999 -key /certificates/certificate.key -in /certificates/csr.csr -out /certificates/certificate.crt -noout
+    openssl req -x509 -sha256 -days 999999 -key /certificates/certificate.key -in /certificates/csr.csr -out /certificates/certificate.crt -passin pass:foobar
     #openssl req -in /certifcates/csr.csr -text -noout | grep -i "Signature.*SHA256" && echo "All is well" || echo "This certificate will stop working in 2017! You must update OpenSSL to generate a widely-compatible certificate"
 
 
-    docker swarm init
+    docker swarm init &>/dev/null
     echo "foobar" | docker secret create VSI_SSL_CERTIFICATE_KEY_PASSWORD -
 
 
