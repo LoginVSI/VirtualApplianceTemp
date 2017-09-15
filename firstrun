@@ -119,6 +119,7 @@ iface $netadapter inet dhcp
     sed -i "s@loginvsi-ng@$new_hostname@g" /etc/hosts
     
     hostname "$new_hostname"
+    
 
     rm /etc/ssh/ssh_host_*
     dpkg-reconfigure openssh-server &>/dev/null
