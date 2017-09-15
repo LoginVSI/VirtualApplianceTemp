@@ -138,7 +138,7 @@ iface $netadapter inet dhcp
     chown root:root /usr/bin/loginvsid
 
     echo "SSL_CERTIFICATE_KEY_PATH=/certificates/certificate.key" >/loginvsi/.env
-    echo "SSL_CERTIFICATE_PAH=/certificates/certificate.crt" >>/loginvsi/.env
+    echo "SSL_CERTIFICATE_PATH=/certificates/certificate.crt" >>/loginvsi/.env
     echo "GATEWAY_PORT=443" >>/loginvsi/.env
     echo "HOST_URL=https:${fqdn}" >>/loginvsi/.env
 
