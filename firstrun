@@ -111,6 +111,7 @@ iface $netadapter inet dhcp
      
     export fqdn="$new_hostname.$new_domain"    
     echo " Setting fqdn: $fqdn"
+    sysctl -w kernel.domainname=$new_domain    
     echo " Setting hostname: $new_hostname"
     # update hostname
     echo "$new_hostname" > /etc/hostname
