@@ -111,15 +111,16 @@ iface $netadapter inet dhcp
      
     export fqdn="$new_hostname.$new_domain"    
     echo " Setting fqdn: $fqdn"
-    sysctl -w kernel.domainname=$new_domain    
+    
     echo " Setting hostname: $new_hostname"
     # update hostname
     echo "$new_hostname" > /etc/hostname
+    echo "kernel.domainname=$new_domain" >>/etc/sysctl.conf
     sed -i "s@loginvsi-ng.loginvsi-ng@$fqdn@g" /etc/hosts
     sed -i "s@loginvsi-ng@$new_hostname@g" /etc/hosts
     
     hostname "$new_hostname"
-    
+
 
     rm /etc/ssh/ssh_host_*
     dpkg-reconfigure openssh-server &>/dev/null
