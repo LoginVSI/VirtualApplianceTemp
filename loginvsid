@@ -12,8 +12,23 @@
 start() {
   cd /loginvsi
   export $(cat .env); docker stack deploy --compose-file ./docker-compose.yml VSI
-  RUNNING=docker stack services VSI --format "{{.Replicas}}" | grep "1/1" | wc -l
+  sleep 5
   TOTAL=docker stack services VSI --format "{{.Replicas}}" | wc -l
+  MAXCOUNT = 600
+  COUNT = 0
+  while [ $COUNT -le $MAXCOUNT ]
+  do
+    sleep 1
+    $COUNT = $COUNT + 1
+    RUNNING=docker stack services VSI --format "{{.Replicas}}" | grep "1/1" | wc -l
+    if [ $TOTAL -eq $RUNNING ] then
+      echo "All services up and running..."
+      break
+    else
+      echo "Not all services up and running, attempt $COUNT of $MAXCOUNT"
+    fi  
+  done
+
 }
 
 stop() {
