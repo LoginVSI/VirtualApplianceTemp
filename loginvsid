@@ -12,6 +12,8 @@
 start() {
   cd /loginvsi
   export $(cat .env); docker stack deploy --compose-file ./docker-compose.yml VSI
+  RUNNING=docker stack services VSI --format "{{.Replicas}}" | grep "1/1" | wc -l
+  TOTAL=docker stack services VSI --format "{{.Replicas}}" | wc -l
 }
 
 stop() {
