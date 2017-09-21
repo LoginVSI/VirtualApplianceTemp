@@ -158,10 +158,10 @@ iface $netadapter inet dhcp
     Login VSI appliance is configured!
     Please use your browser to go to https://\4{$netadapter} or https://\n.\o 
     "  > /etc/issue
-
+    update-grub
   
 trap SIGINT
 
-#reboot    
+reboot    
    
 fi
