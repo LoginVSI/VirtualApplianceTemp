@@ -112,7 +112,6 @@ iface $netadapter inet dhcp
     # set fqdn
      [[ -z $new_hostname ]] && new_hostname=$(hostname)
      [[ -z $new_domain ]] && new_domain="local"
-     ]
     export fqdn="$new_hostname.$new_domain"    
     echo " Setting fqdn: $fqdn"
     
