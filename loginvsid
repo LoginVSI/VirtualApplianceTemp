@@ -11,30 +11,47 @@
 
 start() {
   cd /loginvsi
-  export $(cat .env); docker stack deploy --compose-file ./docker-compose.yml VSI
-  sleep 5
-  TOTAL=docker stack services VSI --format "{{.Replicas}}" | wc -l
-  MAXCOUNT = 600
-  COUNT = 0
-  while [ $COUNT -le $MAXCOUNT ]
-  do
-    sleep 1
-    $COUNT = $COUNT + 1
-    RUNNING=docker stack services VSI --format "{{.Replicas}}" | grep "1/1" | wc -l
-    if [ $TOTAL -eq $RUNNING ] then
-      echo "All services up and running..."
+  export $(cat .env); docker stack deploy --compose-file ./docker-compose.yml VSI &>/dev/null
+  sleep 5 &>/dev/null
+  TOTAL=$(docker stack services VSI --format "{{.Replicas}}" | wc -l)
+  MAXCOUNT=300
+  COUNT=0
+  while [ $COUNT -le $MAXCOUNT ];
+  do    
+    COUNT=((COUNT+1))
+    RUNNING=$(docker stack services VSI --format "{{.Replicas}}" | grep "1/1" | wc -l)
+    if [ $TOTAL -eq $RUNNING ]; then
+      printf "\rStarting LoginVSI services: \e[32m[DONE]\e[39m \r\n" 
+      DONE="true" 
       break
     else
-      echo "Not all services up and running, attempt $COUNT of $MAXCOUNT"
-    fi  
+      printf "\rStarting LoginVSI services: \e[36m[%s]\e[39m:" "$TOTAL/$RUNNING"
+    fi
+    sleep 1 &>/dev/null  
   done
-
+  if [ $DONE != "true" ]; then
+    echo "Starting services timedout after $MAXCOUNT seconds"
+  fi
 }
 
-stop() {
-  echo "Nothing to stop, yet"   
+stop() { 
+  printf "\rStopping LoginVSI services:"
+  docker stop $(docker ps -qf name=VSI_) &>/dev/null    
+  printf "\rStopping LoginVSI services: \e[32m[DONE]\e[39m \r\n"
+}
+
+restart() {
+  stop
+  start
+}
+
+update() {
+  cd /loginvsi
+  wget #URL to download latest yml from
+  docker rmi (docker image ls loginvsi/* -q)
+  export $(cat .env); docker stack deploy --compose-file ./docker-compose.yml VSI &>/dev/null
 }
 
 case $1 in
-  start|stop) "$1" ;;
+  start|stop|restart) "$1" ;;
 esac
