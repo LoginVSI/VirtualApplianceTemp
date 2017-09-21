@@ -43,7 +43,7 @@ trap 'echo "You cannot cancel this script"' SIGINT
                 read -ep " Please provide the dns search suffix ($new_domain) " new_dnssuffix
                 read -ep " Please provide the broadcast address ($broadcast) " new_broadcast
 
-                [[ -z "$new_dnssuffix"] && new_dnssuffix=$new_domain
+                [[ -z "$new_dnssuffix" ] && new_dnssuffix=$new_domain
                 [[ ! -z "$new_ip" ]] && ip=$new_ip                                
                 [[ ! -z "$new_netmask" ]] && netmask=$new_netmask
                 [[ ! -z "$new_gateway" ]] && gateway=$new_gateway
