@@ -34,6 +34,7 @@ trap 'echo "You cannot cancel this script"' SIGINT
         read -ep " Please choose a network configuration mode dhcp or static (D/s) " network
         case $network in
             s|S)
+                
                 echo "Configuring network using static address..."
                 read -ep " Please provide the new ip address ($ip): " new_ip
                 read -ep " Please provide the netmask ($netmask): " new_netmask
@@ -42,12 +43,15 @@ trap 'echo "You cannot cancel this script"' SIGINT
                 read -ep " Please provide the dns search suffix ($new_domain) " new_dnssuffix
                 read -ep " Please provide the broadcast address ($broadcast) " new_broadcast
 
+                [[ -z "$new_dnssuffix"] && new_dnssuffix=$new_domain
                 [[ ! -z "$new_ip" ]] && ip=$new_ip                                
                 [[ ! -z "$new_netmask" ]] && netmask=$new_netmask
                 [[ ! -z "$new_gateway" ]] && gateway=$new_gateway
                 [[ ! -z "$new_nameservers" ]] && nameservers=$new_nameservers
+                
                 [[ ! -z "$new_dnssuffix" ]] && dnssuffix=$new_dnssuffix
                 [[ ! -z "$new_broadcast" ]] && broadcast=$new_broadcast
+                
                 
                 echo "
 # This file describes the network interfaces available on your system
@@ -108,7 +112,7 @@ iface $netadapter inet dhcp
     # set fqdn
      [[ -z $new_hostname ]] && new_hostname=$(hostname)
      [[ -z $new_domain ]] && new_domain="local"
-     
+     ]
     export fqdn="$new_hostname.$new_domain"    
     echo " Setting fqdn: $fqdn"
     
