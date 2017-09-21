@@ -48,10 +48,10 @@ restart() {
 update() {
   cd /loginvsi
   wget #URL to download latest yml from
-  docker rmi (docker image ls loginvsi/* -q)
+  docker rmi $(docker image ls loginvsi/* -q)
   export $(cat .env); docker stack deploy --compose-file ./docker-compose.yml VSI &>/dev/null
 }
 
 case $1 in
-  start|stop|restart) "$1" ;;
+  start|stop|restart|update) "$1" ;;
 esac
