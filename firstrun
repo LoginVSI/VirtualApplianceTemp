@@ -39,7 +39,7 @@ trap 'echo "You cannot cancel this script"' SIGINT
                 read -ep " Please provide the netmask ($netmask): " new_netmask
                 read -ep " Please provide the default gateway ($gateway): " new_gateway
                 read -ep " Please provide the nameservers ($nameservers) " new_nameservers
-                read -ep " Please provide the dns search suffix ($dnssuffix) " new_dnssuffix
+                read -ep " Please provide the dns search suffix ($new_domain) " new_dnssuffix
                 read -ep " Please provide the broadcast address ($broadcast) " new_broadcast
 
                 [[ ! -z "$new_ip" ]] && ip=$new_ip                                
