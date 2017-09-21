@@ -21,23 +21,23 @@ start() {
     COUNT=$((COUNT+1))
     RUNNING=$(docker stack services VSI --format "{{.Replicas}}" | grep "1/1" | wc -l)
     if [ $TOTAL -eq $RUNNING ]; then
-      printf "\rStarting LoginVSI services: \e[32m[DONE]\e[39m \r\n" 
+      printf "Starting LoginVSI services: \e[32m[DONE]\e[39m \r\n" 
       DONE="true" 
       break
     else
-      printf "\rStarting LoginVSI services: \e[36m[%s]\e[39m:" "$TOTAL/$RUNNING"
+      printf "Starting LoginVSI services: \e[36m[%s]\e[39m:\r\n" "$TOTAL/$RUNNING"
     fi
     sleep 1 &>/dev/null  
   done
-  if [ $DONE != "true" ]; then
+  if [ -z $DONE ]; then
     echo "Starting services timedout after $MAXCOUNT seconds"
   fi
 }
 
 stop() { 
-  printf "\rStopping LoginVSI services:"
+  printf "Stopping LoginVSI services \r\n"
   docker stop $(docker ps -qf name=VSI_) &>/dev/null    
-  printf "\rStopping LoginVSI services: \e[32m[DONE]\e[39m \r\n"
+  printf "Stopping LoginVSI services: \e[32m[DONE]\e[39m \r\n"
 }
 
 restart() {
