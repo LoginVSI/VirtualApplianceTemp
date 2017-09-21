@@ -158,7 +158,7 @@ iface $netadapter inet dhcp
     Login VSI appliance is configured!
     Please use your browser to go to https://\4{$netadapter} or https://\n.\o 
     "  > /etc/issue
-    update-grub
+    update-grub &>/dev/null
   
 trap SIGINT
 
