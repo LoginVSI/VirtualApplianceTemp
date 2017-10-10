@@ -35,6 +35,8 @@ fi
 git clone -b master ssh://tfs.loginvsi.com/tfs/NextGen/Shared/_git/P_Hosting /dockerrepo
 cd /dockerrepo/
 docker login -u vsiplayaccount -p 8@0OIS58MajY
+docker pull portainer/portainer
+docker pull tragus/webmin
 export GATEWAY_PORT=443
 export COMPOSE_PROJECT_NAME=temp
 
