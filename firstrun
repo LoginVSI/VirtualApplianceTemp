@@ -70,7 +70,7 @@ iface $netadapter inet static
     netmask $netmask
     gateway $gateway
     dns-search $dnssuffix
-    nameservers $nameservers
+    dns-nameservers $nameservers
                 " > /etc/network/interfaces
                 ;;
             *)
