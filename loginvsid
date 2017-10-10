@@ -11,7 +11,7 @@
 
 start() {
   cd /loginvsi
-  docker run -d -p 9000:9000 -v /var/run/docker.sock:/var/run/docker.sock -v /opt/portainer:/data --name portainer portainer/portainer
+  docker run -d -p 9000:9000 -v /certificates:/certs -v /var/run/docker.sock:/var/run/docker.sock -v /opt/portainer:/data --name portainer portainer/portainer --ssl --sslkey /certs/portainer.key --sslcert /certs/portainer.crt --admin-password {{ADMIN_PASS}} --logo /loginvsi/logo.png -H unix:///var/run/docker.sock
   docker run -d -p 80:80 -v /var/run/webmin:/var/run/container-control --name webmin tragus/webmin
   export $(cat .env); docker stack deploy --compose-file ./docker-compose.yml VSI &>/dev/null
   sleep 5 &>/dev/null

@@ -49,6 +49,7 @@ if [ -d /loginvsi ]; then
     rm -rf /loginvsi
 fi
 mkdir /loginvsi
+wget -O /loginvsi/logo.png https://www.loginvsi.com/images/logos/login-vsi-company-logo.png 
 cp -r "/dockerrepo/latest/Production/InternalDB/docker-compose.yml" /loginvsi/
 cp -r "/dockerrepo/latest/Production/InternalDB/.env" /loginvsi/
 rm -rf /dockerrepo
@@ -63,18 +64,20 @@ echo "loginvsi-ng" > /etc/hostname
 hostname "loginvsi-ng"
 update-grub
 
-echo "#!/bin/bash" > /home/administrator/.bash_profile
-echo "if [ ! -f '/loginvsi/first_run.chk' ]; then"  >> /home/administrator/.bash_profile
-echo "  echo 'admin' | sudo -S -p '' echo 'Starting LoginVSI configuration tool...'" >> /home/administrator/.bash_profile
-echo "  sudo /loginvsi/firstrun" >> /home/administrator/.bash_profile
-echo "fi" >> /home/administrator/.bash_profile
-chmod +x /home/administrator/.bash_profile
+echo "#!/bin/bash" > /home/admin/.bash_profile
+echo "if [ ! -f '/loginvsi/first_run.chk' ]; then"  >> /home/admin/.bash_profile
+echo "  echo 'admin' | sudo -S -p '' echo 'Starting LoginVSI configuration tool...'" >> /home/admin/.bash_profile
+echo "  sudo /loginvsi/firstrun" >> /home/admin/.bash_profile
+echo "fi" >> /home/admin/.bash_profile
+chmod +x /home/admin/.bash_profile
 chmod +x /loginvsi/firstrun
 
-echo "administrator:admin" | chpasswd
+
+
+echo "admin:admin" | chpasswd
 cp $SCRIPT_PATH/issue /etc/
 cp $SCRIPT_PATH/hosts /etc/
-echo "This system is not yet configured, please logon with username: administrator and password: admin" >> /etc/issue
+echo "This system is not yet configured, please logon with username: admin and password: admin" >> /etc/issue
 
 echo '#!/bin/sh
 [ -r /etc/lsb-release ] && . /etc/lsb-release
