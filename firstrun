@@ -143,7 +143,7 @@ iface $netadapter inet dhcp
     openssl ecparam -genkey secp3841r1 -out /certificates/portainer.key &>/dev/null
     openssl req -new -x509 -key /certificates/portainer.key -out /certificates/portainer.crt -days 999999 &>/dev/null
 
-    sed -i s,{{ADMIN_PASS}},${adminpass}, /usr/sbin/loginvsid
+    sed -i s,{{ADMIN_PASS}},${adminpass}, /usr/bin/loginvsid
 
     chmod +x /usr/bin/loginvsid
     chown root:root /usr/bin/loginvsid
