@@ -14,7 +14,8 @@ apt-get install -y \
     apt-transport-https \
     ca-certificates \
     curl \
-    software-properties-common
+    software-properties-common \
+    httpd
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
 add-apt-repository \
    "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
@@ -32,11 +33,13 @@ dpkg --configure -a
 if [ -d "/dockerrepo" ]; then
     rm -rf /dockerrepo
 fi
-git clone -b master https://tfs_buildagent:Password\!@tfs.loginvsi.com/tfs/NextGen/Shared/_git/P_Hosting /dockerrepo
+git clone -b master ssh://tfs.loginvsi.com/tfs/NextGen/Shared/_git/P_Hosting /dockerrepo
 cd /dockerrepo/
 docker login -u vsiplayaccount -p 8@0OIS58MajY
 docker pull portainer/portainer
 docker pull tragus/webmin
+docker pull httpd:2.4-alpine
+
 export GATEWAY_PORT=443
 export COMPOSE_PROJECT_NAME=temp
 
