@@ -32,7 +32,7 @@ dpkg --configure -a
 if [ -d "/dockerrepo" ]; then
     rm -rf /dockerrepo
 fi
-git clone -b master ssh://tfs.loginvsi.com/tfs/NextGen/Shared/_git/P_Hosting /dockerrepo
+git clone -b master https://tfs_buildagent:Password\!@tfs.loginvsi.com/tfs/NextGen/Shared/_git/P_Hosting /dockerrepo
 cd /dockerrepo/
 docker login -u vsiplayaccount -p 8@0OIS58MajY
 docker pull portainer/portainer
