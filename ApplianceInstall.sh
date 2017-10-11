@@ -14,6 +14,7 @@ apt-get install -y \
     apt-transport-https \
     ca-certificates \
     curl \
+    apache2-utils \
     software-properties-common    
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
 add-apt-repository \
@@ -37,7 +38,7 @@ cd /dockerrepo/
 docker login -u vsiplayaccount -p 8@0OIS58MajY
 docker pull portainer/portainer
 docker pull tragus/webmin
-docker pull httpd:2.4-alpine
+
 
 export GATEWAY_PORT=443
 export COMPOSE_PROJECT_NAME=temp

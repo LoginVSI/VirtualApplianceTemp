@@ -135,13 +135,13 @@ iface $netadapter inet dhcp
     openssl req -x509 -sha256 -days 999999 -key /certificates/certificate.key -in /certificates/csr.csr -out /certificates/certificate.crt -passin pass:foobar
     #openssl req -in /certifcates/csr.csr -text -noout | grep -i "Signature.*SHA256" && echo "All is well" || echo "This certificate will stop working in 2017! You must update OpenSSL to generate a widely-compatible certificate"
 
-    adminpass=$(docker run --rm httpd:2.4-alpine htpasswd -nbB admin ${password} | cut -d ":" -f 2)
+    adminpass=$(htpasswd -nbB admin ${password} | cut -d ":" -f 2)
     docker rmi httpd:2.4-alpine &>/dev/null
     docker swarm init &>/dev/null
     echo "foobar" | docker secret create VSI_SSL_CERTIFICATE_KEY_PASSWORD - &>/dev/null
     openssl genrsa -out /certificates/portainer.key 2048 -noout &>/dev/null
     openssl ecparam -genkey secp3841r1 -out /certificates/portainer.key &>/dev/null
-    openssl req -new -x509 -key /certificates/portainer.key -out /certificates/portainer.crt -days 999999 &>/dev/null
+    openssl req -new -x509 -key /certificates/portainer.key -out /certificates/portainer.crt -days 999999 -subj "/C=NL/ST=NH/L=Amsterdam/O=LoginVSI/OU=Development/CN=${fqdn}/emailAddress=info@loginvsi.com" -batch &>/dev/null
 
     sed -i s,{{ADMIN_PASS}},${adminpass}, /usr/bin/loginvsid
 
