@@ -51,7 +51,8 @@ if [ -d /loginvsi ]; then
     rm -rf /loginvsi
 fi
 mkdir /loginvsi
-wget -O /loginvsi/logo.png https://www.loginvsi.com/images/logos/login-vsi-company-logo.png 
+mkdir /loginvsi/img
+wget -O /loginvsi/img/logo_alt.png https://www.loginvsi.com/images/logos/login-vsi-company-logo.png
 cp -r "/dockerrepo/latest/Production/InternalDB/docker-compose.yml" /loginvsi/
 cp -r "/dockerrepo/latest/Production/InternalDB/.env" /loginvsi/
 rm -rf /dockerrepo
