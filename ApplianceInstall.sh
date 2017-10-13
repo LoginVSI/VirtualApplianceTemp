@@ -5,7 +5,7 @@ cd /
 # get latest versions of packages
 apt-get update && apt-get upgrade -y
 # install security updates
-unattended-upgrades
+#unattended-upgrades
 
 # install docker-ce
 apt-get remove docker docker-engine
