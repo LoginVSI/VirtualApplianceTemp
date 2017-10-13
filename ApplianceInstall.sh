@@ -14,7 +14,8 @@ apt-get install -y \
     apt-transport-https \
     ca-certificates \
     curl \
-    software-properties-common    
+    software-properties-common \
+    pdmenu    
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
 add-apt-repository \
    "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
@@ -36,7 +37,6 @@ git clone -b master ssh://tfs.loginvsi.com/tfs/NextGen/Shared/_git/P_Hosting /do
 cd /dockerrepo/
 docker login -u vsiplayaccount -p 8@0OIS58MajY
 docker pull portainer/portainer
-docker pull tragus/webmin
 docker pull httpd:2.4-alpine 
 
 export GATEWAY_PORT=443
@@ -53,9 +53,12 @@ fi
 mkdir /loginvsi
 mkdir /loginvsi/img
 wget -O /loginvsi/img/logo_alt.png https://www.loginvsi.com/images/logos/login-vsi-company-logo.png
+cp /loginvsi/img/logo_alt.png /loginvsi/img/logo.png
 cp -r "/dockerrepo/latest/Production/InternalDB/docker-compose.yml" /loginvsi/
 cp -r "/dockerrepo/latest/Production/InternalDB/.env" /loginvsi/
 rm -rf /dockerrepo
+cp -r -f $SCRIPT_PATH/menu /loginvsi/menu
+cp -f $SCRIPT_PATH/pdmenurc /etc/
 cp -f $SCRIPT_PATH/loginvsid /usr/bin/
 cp -f $SCRIPT_PATH/loginvsid.service /etc/systemd/system/
 cp -f $SCRIPT_PATH/firstrun /loginvsi/
@@ -106,7 +109,6 @@ fi
 if [ -f "/loginvsi/first_run.chk" ]; then
     rm /loginvsi/first_run.chk
 fi
-
 
 
 #docker rm -f $(docker ps -a -q)

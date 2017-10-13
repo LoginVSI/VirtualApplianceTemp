@@ -1,12 +1,13 @@
 #!/bin/bash
 
 # add first_run script
-netadapter=$(ip -o addr show up primary scope global | while read -r num dev fam addr rest; do 
-        if [[ ${dev} != docker* && ${dev} != br-* ]]; then
+netadapters=$(ip -o link show | while read -r num dev fam mtulabel mtusize qlabel queu statelabel state modelabel mode grouplabel group qlenlabel qlen maclabel mac brdlabel brcast; do 
+        if [[ ${mac} != brd && ${mac} != 00:00:00:00:00:00 && ${dev} != br-*  && ${dev} != veth* ]]; then
             echo ${dev%/*}; 
         fi     
     done
     )
+netadapter=$($netadapters | tail -1 | awk '{split($1,n,":");print n[1]}')
 ip=$(ip -o addr show $netadapter primary scope global | while read -r num dev fam addr rest; do 
         if [[ ${dev} != docker* ]]; then
             echo ${addr%/*}; 
@@ -30,7 +31,7 @@ trap 'echo "You cannot cancel this script"' SIGINT
         echo "Please help answer the following questions to get the system setup..."
         
         read -ep " Please enter your preferred hostname ($(hostname)):" new_hostname        
-        read -ep " Please enter your preferred domain (local):" new_domain        
+        read -ep " Please enter your preferred domain ($(domainname)):" new_domain        
         read -ep " Please choose a network configuration mode dhcp or static (D/s) " network
         case $network in
             s|S)
@@ -164,9 +165,17 @@ iface $netadapter inet dhcp
     echo "   
     Welcome to Login VSI Soon(tm)
     Login VSI appliance is configured!
-    Please use your browser to go to https://\4{$netadapter} or https://\n.\o 
+    Main interface https://\4{$netadapter} or https://\n.\o
+    Admin interface: https://\4{$netapter}:9000 or https://\n.\o:9000
     "  > /etc/issue
     update-grub &>/dev/null
+
+    echo "#!/bin/bash
+    sudo pdmenu -c -q" > /usr/bin/startmenu
+    chmod +x /usr/bin/startmenu
+    echo "admin ALL = (root) NOPASSWD: /usr/bin/pdmenu" >>/etc/sudoers
+    sed -i 's#admin:x:1000:1000:administrator,,,:/home/admin:/bin/bash#admin:x:1000:1000:administrator,,,:/home/admin:/usr/bin/startmenu#' /etc/passwd
+    echo "/usr/bin//startmenu" >> /etc/shells
   
 trap SIGINT
 
