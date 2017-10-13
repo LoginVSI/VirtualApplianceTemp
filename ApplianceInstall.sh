@@ -3,12 +3,12 @@ SCRIPT_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd /
 
 # get latest versions of packages
-apt-get update && apt-get upgrade -y &>/dev/null
+apt-get update && apt-get upgrade -f -y &>/dev/null
 # install security updates
 unattended-upgrades
 
 # install docker-ce
-apt-get remove docker docker-engine
+apt-get remove docker docker-engine 
 
 apt-get install -y \
     apt-transport-https \
@@ -21,14 +21,14 @@ add-apt-repository \
    "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
    $(lsb_release -cs) \
    stable"
-apt-get update
+apt-get update -f
 apt-get install -y docker-ce
 
 # install docker-compose
 curl -L https://github.com/docker/compose/releases/download/1.13.0/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
 chmod +x /usr/local/bin/docker-compose
 
-dpkg --configure -a
+#dpkg --configure -a
 # clone repo and pull images
 if [ -d "/dockerrepo" ]; then
     rm -rf /dockerrepo
@@ -68,7 +68,7 @@ cp -f $SCRIPT_PATH/grub /etc/default/
 
 echo "loginvsi-ng" > /etc/hostname
 hostname "loginvsi-ng"
-update-grub
+update-grub &>/dev/null
 
 echo "#!/bin/bash" > /home/admin/.bash_profile
 echo "if [ ! -f '/loginvsi/first_run.chk' ]; then"  >> /home/admin/.bash_profile
