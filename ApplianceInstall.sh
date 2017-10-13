@@ -3,9 +3,9 @@ SCRIPT_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd /
 
 # get latest versions of packages
-apt-get update && apt-get upgrade -y
+apt-get update && apt-get upgrade -y &>/dev/null
 # install security updates
-#unattended-upgrades
+unattended-upgrades
 
 # install docker-ce
 apt-get remove docker docker-engine
