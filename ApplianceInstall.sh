@@ -3,26 +3,26 @@ SCRIPT_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd /
 
 # get latest versions of packages
-apt-get update && apt-get upgrade -y &>/dev/null
+apt-get -qq update && apt-get -qq -y upgrade &>/dev/null
 # install security updates
 unattended-upgrades &>/dev/null
 
 # install docker-ce
-apt-get remove docker docker-engine 
+apt-get -qq -y remove docker docker-engine &>/dev/nul
 
-apt-get install -y \
+apt-get -qq -y install \
     apt-transport-https \
     ca-certificates \
     curl \
     software-properties-common \
-    pdmenu    
+    pdmenu
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
 add-apt-repository \
    "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
    $(lsb_release -cs) \
    stable"
-apt-get update  &>/dev/null
-apt-get install -y docker-ce
+apt-get -qq update  &>/dev/null
+apt-get -qq -y install docker-ce
 
 # install docker-compose
 curl -L https://github.com/docker/compose/releases/download/1.13.0/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
