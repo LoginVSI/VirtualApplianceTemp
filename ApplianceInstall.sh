@@ -68,7 +68,7 @@ cp -f $SCRIPT_PATH/grub /etc/default/
 
 echo "loginvsi-ng" > /etc/hostname
 hostname "loginvsi-ng"
-update-grub &>/dev/null
+#update-grub &>/dev/null
 
 echo "#!/bin/bash" > /home/admin/.bash_profile
 echo "if [ ! -f '/loginvsi/first_run.chk' ]; then"  >> /home/admin/.bash_profile
