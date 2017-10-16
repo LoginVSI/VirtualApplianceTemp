@@ -25,7 +25,7 @@ apt-get -qq update &>/dev/null
 apt-get -qq -y install docker-ce &>/dev/null
 
 # install docker-compose
-curl -L https://github.com/docker/compose/releases/download/1.13.0/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
+curl -s -S -L https://github.com/docker/compose/releases/download/1.13.0/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
 chmod +x /usr/local/bin/docker-compose
 
 #dpkg --configure -a
@@ -33,18 +33,17 @@ chmod +x /usr/local/bin/docker-compose
 if [ -d "/dockerrepo" ]; then
     rm -rf /dockerrepo
 fi
-git clone -b master ssh://tfs.loginvsi.com/tfs/NextGen/Shared/_git/P_Hosting /dockerrepo
+git clone -q -b master ssh://tfs.loginvsi.com/tfs/NextGen/Shared/_git/P_Hosting /dockerrepo
 cd /dockerrepo/
-docker login -u vsiplayaccount -p 8@0OIS58MajY
-docker pull portainer/portainer
-docker pull httpd:2.4-alpine 
+echo 8@0OIS58MajY | docker login -u vsiplayaccount --password-stdin
+docker pull portainer/portainer | cat 
+docker pull httpd:2.4-alpine | cat
 
 export GATEWAY_PORT=443
 export COMPOSE_PROJECT_NAME=temp
 
-docker-compose -f "./latest/Development/InternalDB/docker-compose.yml" up -d
+docker-compose -f "./latest/Development/InternalDB/docker-compose.yml" pull | cat 
 
-docker-compose -f "./latest/Development/InternalDB/docker-compose.yml" down -v
 docker logout
 
 if [ -d /loginvsi ]; then
