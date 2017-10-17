@@ -40,9 +40,9 @@ docker pull portainer/portainer | cat
 docker pull httpd:2.4-alpine | cat
 
 cd /dockerrepo/latest/Development/InternalDB
-docker-compose pull | cat 
+docker-compose pull &>/dev/null
 
-docker logout
+docker logout &>/dev/null
 
 if [ -d /loginvsi ]; then
     rm -rf /loginvsi
