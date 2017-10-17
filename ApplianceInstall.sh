@@ -49,7 +49,7 @@ if [ -d /loginvsi ]; then
 fi
 mkdir /loginvsi
 mkdir /loginvsi/img
-wget -O /loginvsi/img/logo_alt.png https://www.loginvsi.com/images/logos/login-vsi-company-logo.png
+wget -q -O /loginvsi/img/logo_alt.png https://www.loginvsi.com/images/logos/login-vsi-company-logo.png
 cp /loginvsi/img/logo_alt.png /loginvsi/img/logo.png
 cp -r "/dockerrepo/latest/Production/InternalDB/docker-compose.yml" /loginvsi/
 cp -r "/dockerrepo/latest/Production/InternalDB/.env" /loginvsi/
