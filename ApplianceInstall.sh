@@ -39,10 +39,8 @@ echo 8@0OIS58MajY | docker login -u vsiplayaccount --password-stdin
 docker pull portainer/portainer | cat 
 docker pull httpd:2.4-alpine | cat
 
-export GATEWAY_PORT=443
-export COMPOSE_PROJECT_NAME=temp
-
-docker-compose -f "./latest/Development/InternalDB/docker-compose.yml" pull | cat 
+cd /dockerrepo/latest/Development/InternalDB
+docker-compose pull | cat 
 
 docker logout
 
