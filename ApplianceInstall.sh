@@ -74,7 +74,7 @@ echo "  sudo /loginvsi/firstrun" >> /home/admin/.bash_profile
 echo "fi" >> /home/admin/.bash_profile
 chmod +x /home/admin/.bash_profile
 chmod +x /loginvsi/firstrun
-
+chmod +x /loginvsi/menu/*
 
 
 echo "admin:admin" | chpasswd

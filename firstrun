@@ -7,7 +7,7 @@ netadapters=$(ip -o link show | while read -r num dev fam mtulabel mtusize qlabe
         fi     
     done
     )
-netadapter=$($netadapters | tail -1 | awk '{split($1,n,":");print n[1]}')
+netadapter=$(echo $netadapters | tail -1 | awk '{split($1,n,":");print n[1]}')
 ip=$(ip -o addr show $netadapter primary scope global | while read -r num dev fam addr rest; do 
         if [[ ${dev} != docker* ]]; then
             echo ${addr%/*}; 
