@@ -166,7 +166,7 @@ iface $netadapter inet dhcp
     Welcome to Login VSI Soon(tm)
     Login VSI appliance is configured!
     Main interface https://\4{$netadapter} or https://\n.\o
-    Admin interface: https://\4{$netapter}:9000 or https://\n.\o:9000
+    Admin interface: https://\4{$netadapter}:9000 or https://\n.\o:9000
     "  > /etc/issue
     update-grub &>/dev/null
 
