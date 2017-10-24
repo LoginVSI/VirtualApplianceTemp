@@ -3,8 +3,8 @@ SCRIPT_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd /
 
 # get latest versions of packages
-apt-get -qq update | cat  
-apt-get -qq -y upgrade | cat 
+apt-get -qq update | &>/dev/null
+apt-get -qq -y upgrade &>/dev/null
 # install security updates
 unattended-upgrades &>/dev/null
 
