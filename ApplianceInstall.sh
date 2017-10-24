@@ -3,26 +3,27 @@ SCRIPT_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd /
 
 # get latest versions of packages
-apt-get -qq update &>/dev/null && apt-get -qq -y upgrade &>/dev/null
+apt-get -qq update | cat  
+apt-get -qq -y upgrade | cat 
 # install security updates
-unattended-upgrades &>/dev/null
+unattended-upgrades | cat 
 
 # install docker-ce
-apt-get -qq -y remove docker docker-engine &>/dev/null
+apt-get -qq -y remove docker docker-engine | cat
 
 apt-get -qq -y install \
     apt-transport-https \
     ca-certificates \
     curl \
     software-properties-common \
-    pdmenu &>/dev/null
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add - &>/dev/null
+    pdmenu | cat
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add - | cat
 add-apt-repository \
    "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
    $(lsb_release -cs) \
-   stable" &>/dev/null
-apt-get -qq update &>/dev/null
-apt-get -qq -y install docker-ce &>/dev/null
+   stable" | cat
+apt-get -qq update | cat 
+apt-get -qq -y install docker-ce | cat
 
 # install docker-compose
 curl -s -S -L https://github.com/docker/compose/releases/download/1.13.0/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
@@ -40,9 +41,9 @@ docker pull portainer/portainer | cat
 docker pull httpd:2.4-alpine | cat
 
 cd /dockerrepo/latest/Development/InternalDB
-docker-compose pull &>/dev/null
+docker-compose pull | cat 
 
-docker logout &>/dev/null
+docker logout | cat 
 
 if [ -d /loginvsi ]; then
     rm -rf /loginvsi
