@@ -6,7 +6,7 @@ cd /
 apt-get -qq update | cat  
 apt-get -qq -y upgrade | cat 
 # install security updates
-unattended-upgrades | cat 
+unattended-upgrades &>/dev/null
 
 # install docker-ce
 apt-get -qq -y remove docker docker-engine | cat
@@ -43,7 +43,7 @@ docker pull httpd:2.4-alpine | cat
 cd /dockerrepo/latest/Development/InternalDB
 docker-compose pull | cat 
 
-docker logout | cat 
+docker logout &>/dev/null
 
 if [ -d /loginvsi ]; then
     rm -rf /loginvsi
