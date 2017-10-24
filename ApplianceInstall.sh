@@ -1,12 +1,12 @@
 #!/bin/bash
 SCRIPT_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd /
-
+DEBIAN_FRONTEND=noninteractive
 # get latest versions of packages
 apt-get -qq update | cat
 apt-get -qq -y upgrade | cat
 # install security updates
-unattended-upgrades &>/dev/null
+unattended-upgrades | cat 
 
 # install docker-ce
 
