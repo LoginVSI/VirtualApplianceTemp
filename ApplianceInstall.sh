@@ -27,7 +27,7 @@ apt-get -qq update &>/dev/null
 apt-get -qq -y install docker-ce &>/dev/null
 
 # install docker-compose
-curl -s -S -L https://github.com/docker/compose/releases/download/1.13.0/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
+curl -s -S -L https://github.com/docker/compose/releases/download/1.16.1/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
 chmod +x /usr/local/bin/docker-compose
 
 #dpkg --configure -a
