@@ -16,15 +16,15 @@ apt-get -qq -y install \
     ca-certificates \
     curl \
     software-properties-common \
-    pdmenu | cat
+    pdmenu &>/dev/null
 
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add - | cat
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add - &>/dev/null
 add-apt-repository \
    "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
    $(lsb_release -cs) \
-   stable" | cat
-apt-get -qq update | cat 
-apt-get -qq -y install docker-ce | cat
+   stable" &>/dev/null
+apt-get -qq update &>/dev/null
+apt-get -qq -y install docker-ce &>/dev/null
 
 # install docker-compose
 curl -s -S -L https://github.com/docker/compose/releases/download/1.13.0/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
