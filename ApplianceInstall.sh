@@ -42,7 +42,7 @@ docker pull portainer/portainer | cat
 docker pull httpd:2.4-alpine | cat
 
 cd /dockerrepo/latest/Development/InternalDB
-docker-compose pull --quiet
+docker-compose pull --quiet &>/dev/null
 
 docker logout &>/dev/null
 
