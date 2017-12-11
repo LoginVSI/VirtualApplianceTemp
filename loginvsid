@@ -12,10 +12,10 @@
 start() {
   cd /loginvsi
   docker run -d -p 9000:9000 -v /loginvsi/img:/images -v /certificates:/certs -v /var/run/docker.sock:/var/run/docker.sock -v /opt/portainer:/data --name portainer portainer/portainer --ssl --sslkey /certs/portainer.key --sslcert /certs/portainer.crt --admin-password '{{ADMIN_PASS}}' -H unix:///var/run/docker.sock
-  export $(cat .env); docker stack deploy --compose-file ./docker-compose.yml VSI &>/dev/null
+  export $(cat .env); docker stack deploy --resolve-image never --compose-file ./docker-compose.yml VSI &>/dev/null
   sleep 5 &>/dev/null
   TOTAL=$(docker stack services VSI --format "{{.Replicas}}" | wc -l)
-  MAXCOUNT=300
+  MAXCOUNT=600
   COUNT=0
   while [ $COUNT -le $MAXCOUNT ];
   do    
@@ -26,7 +26,7 @@ start() {
       DONE="true" 
       break
     else
-      printf "Starting LoginVSI services: \e[36m[%s]\e[39m:\r\n" "$TOTAL/$RUNNING"
+      printf "Starting LoginVSI services: \e[36m[%s]\e[39m:\r\n" "$RUNNING/$TOTAL"
     fi
     sleep 1 &>/dev/null  
   done

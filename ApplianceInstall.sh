@@ -97,6 +97,10 @@ printf "%s (%s %s %s)\n" "$DISTRIB_DESCRIPTION" "$(uname -o)" "$(uname -r)" "$(u
 
 ' > /etc/update-motd.d/00-header
 
+echo "[Link]
+NamePolicy=kernel database onboard slot path
+MACAddressPolicy=none" > /etc/systemd/network/99-default.link
+
 if [ -f '/etc/update-motd.d/10-help-text' ]; then
 	rm /etc/update-motd.d/10-help-text
 fi
