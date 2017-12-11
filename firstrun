@@ -124,8 +124,23 @@ iface $netadapter inet dhcp
     sed -i "s@loginvsi-ng@$new_hostname@g" /etc/hosts
     
     hostname "$new_hostname"
-
-
+	
+	echo "   
+    Welcome to Login VSI Soon(tm)
+    Login VSI appliance is not yet configured!
+    Logon with admin and the password you set previously
+	"  > /etc/issue
+    update-grub &>/dev/null
+	
+	adminpass=$(docker run --rm httpd:2.4-alpine htpasswd -nbB admin ${password} | cut -d ":" -f 2)
+	sed -i s,{{ADMIN_PASS}},${adminpass}, /usr/bin/loginvsid
+	
+	touch -f /loginvsi/first_run.chk
+	reboot  
+	trap SIGINT	
+fi 
+if [ ! -f "/loginvsi/second_run.chk" ]; then
+	trap 'echo "You cannot cancel this script"' SIGINT
     rm /etc/ssh/ssh_host_*
     dpkg-reconfigure openssh-server &>/dev/null
     /etc/init.d/ssh restart &>/dev/null
@@ -136,7 +151,7 @@ iface $netadapter inet dhcp
     openssl req -x509 -sha256 -days 999999 -key /certificates/certificate.key -in /certificates/csr.csr -out /certificates/certificate.crt -passin pass:foobar
     #openssl req -in /certifcates/csr.csr -text -noout | grep -i "Signature.*SHA256" && echo "All is well" || echo "This certificate will stop working in 2017! You must update OpenSSL to generate a widely-compatible certificate"
 
-    adminpass=$(docker run --rm httpd:2.4-alpine htpasswd -nbB admin ${password} | cut -d ":" -f 2)
+   
     docker rmi httpd:2.4-alpine &>/dev/null
     docker swarm init &>/dev/null
     echo "foobar" | docker secret create VSI_SSL_CERTIFICATE_KEY_PASSWORD - &>/dev/null
@@ -144,7 +159,7 @@ iface $netadapter inet dhcp
     openssl ecparam -genkey secp3841r1 -out /certificates/portainer.key &>/dev/null
     openssl req -new -x509 -key /certificates/portainer.key -out /certificates/portainer.crt -days 999999 -subj "/C=NL/ST=NH/L=Amsterdam/O=LoginVSI/OU=Development/CN=${fqdn}/emailAddress=info@loginvsi.com" -batch &>/dev/null
 
-    sed -i s,{{ADMIN_PASS}},${adminpass}, /usr/bin/loginvsid
+    
 
     chmod +x /usr/bin/loginvsid
     chown root:root /usr/bin/loginvsid
@@ -159,7 +174,7 @@ iface $netadapter inet dhcp
     #sed -i s,SSL_CERTIFICATE_KEY_PATH=..\\..\\..\\Certificates\\certificate.key,SSL_CERTIFICATE_KEY_PATH=/certifcates/certificate.key, /loginvsi/.env
     #sed -i s,SSL_CERTIFICATE_PATH=..\..\..\Certificates\certificate.crt,SSL_CERTIFICATE_PATH=/certifcates/certificate.crt, /loginvsi/.env
     systemctl enable loginvsid &>/dev/null
-    touch -f /loginvsi/first_run.chk
+    touch -f /loginvsi/second_run.chk
 	passwd -dl root &>/dev/null
     head -n -2 /etc/issue > /etc/issue.tmp; mv /etc/issue.tmp /etc/issue
     echo "   
