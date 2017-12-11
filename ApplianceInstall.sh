@@ -16,7 +16,8 @@ apt-get -qq -y install \
     ca-certificates \
     curl \
     software-properties-common \
-    pdmenu &>/dev/null
+    pdmenu \
+	htop &>/dev/null
 
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add - &>/dev/null
 add-apt-repository \
