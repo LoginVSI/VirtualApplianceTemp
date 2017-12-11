@@ -136,6 +136,15 @@ iface $netadapter inet dhcp
 	sed -i s,{{ADMIN_PASS}},${adminpass}, /usr/bin/loginvsid
 	
 	touch -f /loginvsi/first_run.chk
+	
+	echo "#!/bin/bash" > /home/admin/.bash_profile
+	echo "if [ ! -f '/loginvsi/second_run.chk' ]; then"  >> /home/admin/.bash_profile
+	echo "  echo ${password} | sudo -S -p '' echo 'Starting LoginVSI configuration tool...'" >> /home/admin/.bash_profile
+	echo "  sudo /loginvsi/firstrun" >> /home/admin/.bash_profile
+	echo "fi" >> /home/admin/.bash_profile
+	chmod +x /home/admin/.bash_profile
+
+	
 	reboot  
 	trap SIGINT	
 fi 
@@ -191,7 +200,9 @@ if [ ! -f "/loginvsi/second_run.chk" ]; then
     echo "admin ALL = (root) NOPASSWD: /usr/bin/pdmenu" >>/etc/sudoers
     sed -i 's#admin:x:1000:1000:administrator,,,:/home/admin:/bin/bash#admin:x:1000:1000:administrator,,,:/home/admin:/usr/bin/startmenu#' /etc/passwd
     echo "/usr/bin//startmenu" >> /etc/shells
-  
+	
+	#cleanup
+	
 trap SIGINT
 
 reboot    
