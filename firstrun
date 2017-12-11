@@ -115,6 +115,7 @@ iface $netadapter inet dhcp
      [[ -z $new_domain ]] && new_domain="local"
     export fqdn="$new_hostname.$new_domain"    
     echo " Setting fqdn: $fqdn"
+	echo $fqdn > /loginvsi/fqdn
     
     echo " Setting hostname: $new_hostname"
     # update hostname
@@ -153,7 +154,8 @@ if [ ! -f "/loginvsi/second_run.chk" ]; then
     rm /etc/ssh/ssh_host_*
     dpkg-reconfigure openssh-server &>/dev/null
     /etc/init.d/ssh restart &>/dev/null
-    mkdir /certificates
+    export fqdn=$(cat /loginvsi/fqdn)
+	mkdir /certificates
     
     openssl genrsa -out /certificates/certificate.key 2048 -noout -passout pass:foobar &>/dev/null
     openssl req -new -sha256 -key /certificates/certificate.key -out /certificates/csr.csr -subj "/C=NL/ST=NH/L=Amsterdam/O=LoginVSI/OU=Development/CN=${fqdn}/emailAddress=info@loginvsi.com" -batch
