@@ -19,7 +19,7 @@ apt-get -qq -y install \
     pdmenu \
 	htop &>/dev/null
 
-curl -sSL https://get.docker.com | sh
+curl -sSL https://get.docker.com | sh &>/dev/null
 
 #dpkg --configure -a
 # clone repo and pull images
