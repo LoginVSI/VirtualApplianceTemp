@@ -19,7 +19,17 @@ apt-get -qq -y install \
     pdmenu \
 	htop &>/dev/null
 
-curl -sSL https://get.docker.com | sh &>/dev/null
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add - &>/dev/null
+add-apt-repository \
+   "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+   $(lsb_release -cs) \
+   stable" &>/dev/null
+apt-get -qq update &>/dev/null
+apt-get -qq -y install docker-ce &>/dev/null
+
+# install docker-compose
+curl -s -S -L https://github.com/docker/compose/releases/download/1.17.1/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
+chmod +x /usr/local/bin/docker-compose
 
 #dpkg --configure -a
 # clone repo and pull images
@@ -83,7 +93,7 @@ if [ -z "$DISTRIB_DESCRIPTION" ] && [ -x /usr/bin/lsb_release ]; then
         DISTRIB_DESCRIPTION=$(lsb_release -s -d)
 fi
 
-printf "Welcome to LoginPI3(tm) BETA!\n"
+printf "Welcome to LoginPI3(tm) BETA\n"
 printf "%s (%s %s %s)\n" "$DISTRIB_DESCRIPTION" "$(uname -o)" "$(uname -r)" "$(uname -m)"
 
 ' > /etc/update-motd.d/00-header
