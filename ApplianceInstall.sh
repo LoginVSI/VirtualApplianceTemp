@@ -66,6 +66,7 @@ cp -f $SCRIPT_PATH/firstrun /loginvsi/
 cp -f $SCRIPT_PATH/sshd_config /etc/ssh/
 cp -f $SCRIPT_PATH/grub /etc/default/
 
+
 echo "loginvsi-ng" > /etc/hostname
 hostname "loginvsi-ng"
 #update-grub &>/dev/null
@@ -78,7 +79,6 @@ echo "fi" >> /home/admin/.bash_profile
 chmod +x /home/admin/.bash_profile
 chmod +x /loginvsi/firstrun
 chmod +x /loginvsi/menu/*
-
 
 echo "admin:admin" | chpasswd
 cp $SCRIPT_PATH/issue /etc/

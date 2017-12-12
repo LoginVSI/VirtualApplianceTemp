@@ -113,7 +113,7 @@ iface $netadapter inet dhcp
      [[ -z $new_domain ]] && new_domain="local"
     export fqdn="$new_hostname.$new_domain"    
     echo " Setting fqdn: $fqdn"
-	echo $fqdn > /loginvsi/fqdn
+	
     
     echo " Setting hostname: $new_hostname"
     # update hostname
@@ -154,7 +154,7 @@ if [ ! -f "/loginvsi/second_run.chk" ]; then
     dpkg-reconfigure openssh-server &>/dev/null
     /etc/init.d/ssh restart &>/dev/null
     echo "Generating self-signed certificates..."
-	export fqdn=$(cat /loginvsi/fqdn)
+	export fqdn=$(hostname).$(domainname)
 	mkdir /certificates
 	
 	cat << EOF > /certificates/v3.ext
@@ -167,15 +167,17 @@ DNS.1 = ${fqdn}
 EOF
     
 	#Docker (encrypted key)
-    openssl genrsa -out /certificates/certificate.key 2048 -noout -passout pass:foobar &>/dev/null
-    openssl req -new -sha256 -key /certificates/certificate.key -out /certificates/csr.csr -subj "/C=NL/ST=NH/L=Amsterdam/O=LoginVSI/OU=Development/CN=${fqdn}/emailAddress=info@loginvsi.com" -batch
-    openssl req -x509 -sha256 -days 999999 -key /certificates/certificate.key -in /certificates/csr.csr -out /certificates/certificate.crt -passin pass:foobar -extfile /certificates/v3.ext
+    /loginvsi/menu/sslgen -c=NL -s=Noord-Holland -l=Amsterdam -o="Login VSI B.V." -u=Development -n=${fqdn} -e=info@loginvsi.com -d=999999 -w=foobar -p=/certificates/
+
+	#openssl genrsa -out /certificates/certificate.key 2048 -noout -passout pass:foobar &>/dev/null
+    #openssl req -new -sha256 -key /certificates/certificate.key -out /certificates/csr.csr -subj "/C=NL/ST=NH/L=Amsterdam/O=LoginVSI/OU=Development/CN=${fqdn}/emailAddress=info@loginvsi.com" -batch
+    #openssl req -x509 -sha256 -days 999999 -key /certificates/certificate.key -in /certificates/csr.csr -out /certificates/certificate.crt -passin pass:foobar -extfile /certificates/v3.ext
     #openssl req -in /certifcates/csr.csr -text -noout | grep -i "Signature.*SHA256" && echo "All is well" || echo "This certificate will stop working in 2017! You must update OpenSSL to generate a widely-compatible certificate"
 	
 	# Portainer (non-encrypted key)
-	openssl genrsa -out /certificates/portainer.key 2048 -noout &>/dev/null
-    openssl ecparam -genkey secp3841r1 -out /certificates/portainer.key &>/dev/null
-    openssl req -new -x509 -key /certificates/portainer.key -out /certificates/portainer.crt -days 999999 -subj "/C=NL/ST=NH/L=Amsterdam/O=LoginVSI/OU=Development/CN=${fqdn}/emailAddress=info@loginvsi.com" -batch &>/dev/null
+	#openssl genrsa -out /certificates/portainer.key 2048 -noout &>/dev/null
+    #openssl ecparam -genkey secp3841r1 -out /certificates/portainer.key &>/dev/null
+    #openssl req -new -x509 -key /certificates/portainer.key -out /certificates/portainer.crt -days 999999 -subj "/C=NL/ST=NH/L=Amsterdam/O=LoginVSI/OU=Development/CN=${fqdn}/emailAddress=info@loginvsi.com" -batch &>/dev/null
 
     echo "Initting docker swarm..."  
     docker rmi httpd:2.4-alpine &>/dev/null
@@ -187,10 +189,10 @@ EOF
     chmod +x /usr/bin/loginvsid
     chown root:root /usr/bin/loginvsid
 	
-    echo "SSL_CERTIFICATE_KEY_PATH=/certificates/certificate.key" >/loginvsi/.env
-    echo "SSL_CERTIFICATE_PATH=/certificates/certificate.crt" >>/loginvsi/.env
+    echo "SSL_CERTIFICATE_KEY_PATH=/certificates/${fqdn}.key" >/loginvsi/.env
+    echo "SSL_CERTIFICATE_PATH=/certificates/${fqdn}.crt" >>/loginvsi/.env
     echo "GATEWAY_PORT=443" >>/loginvsi/.env
-    echo "HOST_URL=https:${fqdn}" >>/loginvsi/.env
+    #echo "HOST_URL=https://${fqdn}" >>/loginvsi/.env
 
     #sed -i s,GATEWAY_PORT=3000,GATEWAY_PORT=443, /loginvsi/.env
     #sed -i s,HOST_URL=https://localhost.loginvsi.com:3000,HOST_URL=https://${fqdn},  /loginvsi/.env
