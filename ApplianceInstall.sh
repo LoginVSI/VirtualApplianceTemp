@@ -19,17 +19,7 @@ apt-get -qq -y install \
     pdmenu \
 	htop &>/dev/null
 
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add - &>/dev/null
-add-apt-repository \
-   "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
-   $(lsb_release -cs) \
-   stable" &>/dev/null
-apt-get -qq update &>/dev/null
-apt-get -qq -y install docker-ce &>/dev/null
-
-# install docker-compose
-curl -s -S -L https://github.com/docker/compose/releases/download/1.16.1/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
-chmod +x /usr/local/bin/docker-compose
+curl https://get.docker.com | sh &>/dev/null
 
 #dpkg --configure -a
 # clone repo and pull images
