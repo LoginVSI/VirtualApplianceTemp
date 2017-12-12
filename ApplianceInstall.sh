@@ -19,7 +19,7 @@ apt-get -qq -y install \
     pdmenu \
 	htop &>/dev/null
 
-curl https://get.docker.com | sh &>/dev/null
+curl -sSL https://get.docker.com | sh
 
 #dpkg --configure -a
 # clone repo and pull images
@@ -83,7 +83,7 @@ if [ -z "$DISTRIB_DESCRIPTION" ] && [ -x /usr/bin/lsb_release ]; then
         DISTRIB_DESCRIPTION=$(lsb_release -s -d)
 fi
 
-printf "Welcome to LoginVSI NG!(tm)\n"
+printf "Welcome to LoginPI3(tm) BETA!\n"
 printf "%s (%s %s %s)\n" "$DISTRIB_DESCRIPTION" "$(uname -o)" "$(uname -r)" "$(uname -m)"
 
 ' > /etc/update-motd.d/00-header
