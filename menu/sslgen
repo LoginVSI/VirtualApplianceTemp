@@ -40,7 +40,7 @@ Generate self-signed TLS certificate using OpenSSL
   -d|--duration        Validity duration of the certificate (in days)
   -h|--help            Display this help and exit
   -v|--verbose         Verbose output
-  -p|--password		   password to set for the private key
+  -w|--password		   password to set for the private key
 "
 }
 
@@ -68,7 +68,7 @@ while [ "$1" != "" ]; do
     -p|--path) OUTPATH=$VALUE; testPath ;;
 	-d|--duration) DURATION=$VALUE ;;
     -v|--verbose) VERBOSE=1 ;;
-	-p|--password) PASSWORD=$VALUE ;;
+	-w|--password) PASSWORD=$VALUE ;;
     *) echo "ERROR: unknown parameter \"$PARAM\""; help; exit 1 ;;
   esac
   shift
