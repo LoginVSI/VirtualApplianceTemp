@@ -42,7 +42,7 @@ echo 8@0OIS58MajY | docker login -u vsiplayaccount --password-stdin
 docker pull portainer/portainer | cat 
 docker pull httpd:2.4-alpine | cat
 
-cd /dockerrepo/latest/Development/InternalDB
+cd /dockerrepo/latest/Production/StandaloneInternalDB
 docker-compose pull --quiet &>/dev/null
 
 docker logout &>/dev/null
@@ -54,8 +54,8 @@ mkdir /loginvsi
 mkdir /loginvsi/img
 wget -q -O /loginvsi/img/logo_alt.png https://www.loginvsi.com/images/logos/login-vsi-company-logo.png
 cp /loginvsi/img/logo_alt.png /loginvsi/img/logo.png
-cp -r "/dockerrepo/latest/Development/InternalDB/docker-compose.yml" /loginvsi/
-cp -r "/dockerrepo/latest/Development/InternalDB/.env" /loginvsi/
+cp -r "/dockerrepo/latest/Production/StandaloneInternalDB/docker-compose.yml" /loginvsi/
+#cp -r "/dockerrepo/latest/Production/InternalDB/.env" /loginvsi/
 rm -rf /dockerrepo
 cp -r -f $SCRIPT_PATH/menu /loginvsi/menu
 cp -f $SCRIPT_PATH/pdmenurc /etc/

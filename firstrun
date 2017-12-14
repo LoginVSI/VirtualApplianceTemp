@@ -179,17 +179,18 @@ EOF
     #openssl ecparam -genkey secp3841r1 -out /certificates/portainer.key &>/dev/null
     #openssl req -new -x509 -key /certificates/portainer.key -out /certificates/portainer.crt -days 999999 -subj "/C=NL/ST=NH/L=Amsterdam/O=LoginVSI/OU=Development/CN=${fqdn}/emailAddress=info@loginvsi.com" -batch &>/dev/null
 
-    echo "Initting docker swarm..."  
+    #echo "Initting docker swarm..."  
     docker rmi httpd:2.4-alpine &>/dev/null
-    docker swarm init &>/dev/null	
-    echo "foobar" | docker secret create VSI_SSL_CERTIFICATE_KEY_PASSWORD - &>/dev/null
-    
+    #docker swarm init &>/dev/null	
+    #echo "foobar" | docker secret create VSI_SSL_CERTIFICATE_KEY_PASSWORD - &>/dev/null
+    echo foobar >/certifcates/password
+    echo "SSL_CERTIFICATE_KEY_PASSWORD_PATH=/certificates/password" >/loginvsi/.env
     
 
     chmod +x /usr/bin/loginvsid
     chown root:root /usr/bin/loginvsid
 	
-    echo "SSL_CERTIFICATE_KEY_PATH=/certificates/${fqdn}.key" >/loginvsi/.env
+    echo "SSL_CERTIFICATE_KEY_PATH=/certificates/${fqdn}.key" >>/loginvsi/.env
     echo "SSL_CERTIFICATE_PATH=/certificates/${fqdn}.crt" >>/loginvsi/.env
     echo "GATEWAY_PORT=443" >>/loginvsi/.env
     #echo "HOST_URL=https://${fqdn}" >>/loginvsi/.env
