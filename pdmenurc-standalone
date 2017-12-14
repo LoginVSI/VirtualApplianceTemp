@@ -5,7 +5,7 @@
 color:base:black:black
 color:desktop:blue:black
 #Define the main menu:
-title: LoginVSI Soon(tm!)
+title: {{TITLE}}
 
 menu:main:Maintenance Menu
 	exit:Logout

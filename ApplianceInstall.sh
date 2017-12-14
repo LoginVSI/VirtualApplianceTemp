@@ -1,6 +1,6 @@
 #!/bin/bash
 SCRIPT_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-SWARM="false"
+SWARM="{{SWARM}}"
 cd /
 export DEBIAN_FRONTEND=noninteractive
 # get latest versions of packages
@@ -63,7 +63,12 @@ fi
 
 rm -rf /dockerrepo
 cp -r -f $SCRIPT_PATH/menu /loginvsi/menu
-cp -f $SCRIPT_PATH/pdmenurc /etc/
+if [ $SWARM == "true" ]; then
+    cp -f $SCRIPT_PATH/pdmenurc-swarm /etc/pdmenurc
+else
+    cp -f $SCRIPT_PATH/pdmenurc-standalone /etc/pdmenurc
+fi
+
 cp -f $SCRIPT_PATH/loginvsid /usr/bin/
 cp -f $SCRIPT_PATH/loginvsid.service /etc/systemd/system/
 cp -f $SCRIPT_PATH/firstrun /loginvsi/
@@ -98,7 +103,7 @@ if [ -z "$DISTRIB_DESCRIPTION" ] && [ -x /usr/bin/lsb_release ]; then
         DISTRIB_DESCRIPTION=$(lsb_release -s -d)
 fi
 
-printf "Welcome to LoginPI3(tm) BETA\n"
+printf "Welcome to {{TITLE}}\n"
 printf "%s (%s %s %s)\n" "$DISTRIB_DESCRIPTION" "$(uname -o)" "$(uname -r)" "$(uname -m)"
 
 ' > /etc/update-motd.d/00-header

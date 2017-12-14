@@ -1,24 +1,29 @@
 #!/bin/bash
 SCRIPT_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-SWARM="false"
+SWARM="{{SWARM}}"
 cd /
 export DEBIAN_FRONTEND=noninteractive
 # get latest versions of packages
-apt-get -qq update &>/dev/null
-apt-get -qq -y dist-upgrade &>/dev/null
+apt-get -qq update 2>&1
+apt-get -qq -y dist-upgrade 2>&1
 # install security updates
 #unattended-upgrades &>/dev/null 
 
 # install docker-ce
 
-apt-get -qq -y remove docker docker-engine | cat
+#apt-get -qq -y remove docker docker-engine | cat
+wget -q -O /pdmenu.deb http://ftp.nl.debian.org/debian/pool/main/p/pdmenu/pdmenu_1.3.4+b1_amd64.deb
 apt-get -qq -y install \
     apt-transport-https \
     ca-certificates \
     curl \
+    /pdmenu.deb \
     software-properties-common \
-    pdmenu \
-	htop &>/dev/null
+	htop \
+    sudo 2>&1
+
+#dpkg -i /pdmenu.deb 2>&1
+#pdmenu \
 
 #curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add - &>/dev/null
 #add-apt-repository \
@@ -27,11 +32,11 @@ apt-get -qq -y install \
 #   stable" &>/dev/null
 #apt-get -qq update &>/dev/null
 #apt-get -qq -y install docker-ce &>/dev/null
-curl -sSL https://get.docker.com | sh &>/dev/null
+curl -sSL https://get.docker.com | sh 2>&1
 
 # install docker-compose
-#curl -s -S -L https://github.com/docker/compose/releases/download/1.17.1/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
-#chmod +x /usr/local/bin/docker-compose
+curl -s -S -L https://github.com/docker/compose/releases/download/1.17.1/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
+chmod +x /usr/local/bin/docker-compose
 
 #dpkg --configure -a
 # clone repo and pull images
@@ -41,13 +46,13 @@ fi
 git clone -q -b master ssh://tfs.loginvsi.com/tfs/NextGen/Shared/_git/P_Hosting /dockerrepo
 cd /dockerrepo/
 echo 8@0OIS58MajY | docker login -u vsiplayaccount --password-stdin
-docker pull portainer/portainer | cat 
-docker pull httpd:2.4-alpine | cat
+docker pull portainer/portainer 2>&1
+docker pull httpd:2.4-alpine 2>&1
 
 cd /dockerrepo/latest/Production/StandaloneInternalDB
-docker-compose pull --quiet &>/dev/null
+docker-compose pull  2>&1
 
-docker logout &>/dev/null
+docker logout 2>&1
 
 if [ -d /loginvsi ]; then
     rm -rf /loginvsi
@@ -64,7 +69,11 @@ fi
 
 rm -rf /dockerrepo
 cp -r -f $SCRIPT_PATH/menu /loginvsi/menu
-cp -f $SCRIPT_PATH/pdmenurc /etc/
+if [ $SWARM == "true" ]; then
+    cp -f $SCRIPT_PATH/pdmenurc-swarm /etc/pdmenurc
+else
+    cp -f $SCRIPT_PATH/pdmenurc-standalone /etc/pdmenurc
+fi
 cp -f $SCRIPT_PATH/loginvsid /usr/bin/
 cp -f $SCRIPT_PATH/loginvsid.service /etc/systemd/system/
 cp -f $SCRIPT_PATH/firstrun /loginvsi/
@@ -99,7 +108,7 @@ if [ -z "$DISTRIB_DESCRIPTION" ] && [ -x /usr/bin/lsb_release ]; then
         DISTRIB_DESCRIPTION=$(lsb_release -s -d)
 fi
 
-printf "Welcome to LoginPI3(tm) BETA\n"
+printf "Welcome to {{TITLE}}\n"
 printf "%s (%s %s %s)\n" "$DISTRIB_DESCRIPTION" "$(uname -o)" "$(uname -r)" "$(uname -m)"
 
 ' > /etc/update-motd.d/00-header

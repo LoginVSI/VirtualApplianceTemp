@@ -1,5 +1,5 @@
 #!/bin/bash
-SWARM="false"
+SWARM="{{SWARM}}"
 # add first_run script
 netadapters=$(ip -o link show | while read -r num dev fam mtulabel mtusize qlabel queu statelabel state modelabel mode grouplabel group qlenlabel qlen maclabel mac brdlabel brcast; do 
         if [[ ${mac} != brd && ${mac} != 00:00:00:00:00:00 && ${dev} != br-*  && ${dev} != veth* ]]; then
@@ -27,7 +27,7 @@ trap 'echo "You cannot cancel this script"' SIGINT
         stty sane
 
         # ask questions
-        echo "Welcome to LoginPI3(tm) BETA"
+        echo "Welcome to {{TITLE}}"
         echo "Please help answer the following questions to get the system setup..."
         
         read -ep " Please enter your preferred hostname ($(hostname)):" new_hostname        
@@ -125,8 +125,8 @@ iface $netadapter inet dhcp
     hostname "$new_hostname"
 	
 	echo "   
-    Welcome to Login PI3(tm) BETA
-    Login PI3 appliance is not yet configured!
+    Welcome to{{TITLE}}
+    {{TITLE}} appliance is not yet configured!
     Logon with admin and the password you set previously
 	"  > /etc/issue
     update-grub &>/dev/null
@@ -210,8 +210,8 @@ EOF
 	passwd -dl root &>/dev/null
     head -n -2 /etc/issue > /etc/issue.tmp; mv /etc/issue.tmp /etc/issue
     echo "   
-    Welcome to Login PI3(tm) BETA
-    Login PI3 appliance is configured!
+    Welcome to {{TITLE}}
+    {{TITLE}} appliance is configured!
     Main interface https://\4{$netadapter} or https://\n.\o
     Admin interface: https://\4{$netadapter}:9000 or https://\n.\o:9000
     "  > /etc/issue
