@@ -4,10 +4,10 @@ SWARM="{{SWARM}}"
 cd /
 export DEBIAN_FRONTEND=noninteractive
 # get latest versions of packages
-apt-get -qq update &>/dev/null
-apt-get -qq -y upgrade &>/dev/null
+apt-get -qq update 2>&1
+apt-get -qq -y upgrade 2>&1
 # install security updates
-unattended-upgrades &>/dev/null 
+unattended-upgrades2>&1
 
 # install docker-ce
 
@@ -18,15 +18,15 @@ apt-get -qq -y install \
     curl \
     software-properties-common \
     pdmenu \
-	htop &>/dev/null
+	htop 2>&1
 
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add - &>/dev/null
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add - 2>&1
 add-apt-repository \
    "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
    $(lsb_release -cs) \
    stable" &>/dev/null
-apt-get -qq update &>/dev/null
-apt-get -qq -y install docker-ce &>/dev/null
+apt-get -qq update 2>&1
+apt-get -qq -y install docker-ce 2>&1
 
 # install docker-compose
 curl -s -S -L https://github.com/docker/compose/releases/download/1.17.1/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
@@ -40,13 +40,13 @@ fi
 git clone -q -b master ssh://tfs.loginvsi.com/tfs/NextGen/Shared/_git/P_Hosting /dockerrepo
 cd /dockerrepo/
 echo 8@0OIS58MajY | docker login -u vsiplayaccount --password-stdin
-docker pull portainer/portainer | cat 
-docker pull httpd:2.4-alpine | cat
+docker pull portainer/portainer 2>&1
+docker pull httpd:2.4-alpine 2>&1
 
 cd /dockerrepo/latest/Production/StandaloneInternalDB
-docker-compose pull --quiet &>/dev/null
+docker-compose pull --quiet 2>&1
 
-docker logout &>/dev/null
+docker logout 2>&1
 
 if [ -d /loginvsi ]; then
     rm -rf /loginvsi
