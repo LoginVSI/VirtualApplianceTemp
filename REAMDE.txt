@@ -1,4 +1,0 @@
-Install VM with ubuntu server LTS (16.04.2 at time of writing)
-
-copy the "ApplianceInstall.sh" to /appliance folder
-make it runnable, and run it as root/sudo

@@ -5,9 +5,9 @@ cd /
 export DEBIAN_FRONTEND=noninteractive
 # get latest versions of packages
 apt-get -qq update &>/dev/null
-apt-get -qq -y upgrade &>/dev/null
+apt-get -qq -y dist-upgrade &>/dev/null
 # install security updates
-unattended-upgrades &>/dev/null 
+#unattended-upgrades &>/dev/null 
 
 # install docker-ce
 
@@ -20,17 +20,18 @@ apt-get -qq -y install \
     pdmenu \
 	htop &>/dev/null
 
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add - &>/dev/null
-add-apt-repository \
-   "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
-   $(lsb_release -cs) \
-   stable" &>/dev/null
-apt-get -qq update &>/dev/null
-apt-get -qq -y install docker-ce &>/dev/null
+#curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add - &>/dev/null
+#add-apt-repository \
+#   "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+#   $(lsb_release -cs) \
+#   stable" &>/dev/null
+#apt-get -qq update &>/dev/null
+#apt-get -qq -y install docker-ce &>/dev/null
+curl -sSL https://get.docker.com | sh &>/dev/null
 
 # install docker-compose
-curl -s -S -L https://github.com/docker/compose/releases/download/1.17.1/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
-chmod +x /usr/local/bin/docker-compose
+#curl -s -S -L https://github.com/docker/compose/releases/download/1.17.1/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
+#chmod +x /usr/local/bin/docker-compose
 
 #dpkg --configure -a
 # clone repo and pull images
