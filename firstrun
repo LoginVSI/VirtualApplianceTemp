@@ -144,11 +144,11 @@ iface $netadapter inet dhcp
 	chmod +x /home/admin/.bash_profile
 
 	
-	reboot  
-	trap SIGINT	
-fi 
-if [ ! -f "/loginvsi/second_run.chk" ]; then
-	trap 'echo "You cannot cancel this script"' SIGINT
+	#reboot  
+	#trap SIGINT	
+#fi 
+#if [ ! -f "/loginvsi/second_run.chk" ]; then
+	#trap 'echo "You cannot cancel this script"' SIGINT
 	echo "Resetting SSH keys..."
     rm /etc/ssh/ssh_host_*
     dpkg-reconfigure openssh-server &>/dev/null
@@ -183,7 +183,7 @@ EOF
     docker rmi httpd:2.4-alpine &>/dev/null
     #docker swarm init &>/dev/null	
     #echo "foobar" | docker secret create VSI_SSL_CERTIFICATE_KEY_PASSWORD - &>/dev/null
-    echo foobar >/certifcates/password
+    echo foobar >/certificates/password
     echo "SSL_CERTIFICATE_KEY_PASSWORD_PATH=/certificates/password" >/loginvsi/.env
     
 
