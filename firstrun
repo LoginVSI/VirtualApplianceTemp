@@ -154,7 +154,7 @@ iface $netadapter inet dhcp
     dpkg-reconfigure openssh-server &>/dev/null
     /etc/init.d/ssh restart &>/dev/null
     echo "Generating self-signed certificates..."
-	export fqdn=$(hostname).$(domainname)
+	#export fqdn=$(hostname).$(domainname)
 	mkdir /certificates
 	
 	cat << EOF > /certificates/v3.ext

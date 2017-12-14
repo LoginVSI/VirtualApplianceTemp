@@ -41,7 +41,7 @@ start() {
 }
 
 stop() { 
-  #printf "Stopping LoginVSI services \r\n"
+  printf "Stopping LoginVSI services \r\n"
   #docker stop $(docker ps -qf name=VSI_) &>/dev/null    
   #printf "Stopping LoginVSI services: \e[32m[DONE]\e[39m \r\n"
 }
@@ -52,7 +52,7 @@ restart() {
 }
 
 update() {
-  #cd /loginvsi
+  cd /loginvsi
   #wget #URL to download latest yml from
   #docker rmi $(docker image ls loginvsi/* -q)
   #export $(cat .env); docker stack deploy --compose-file ./docker-compose.yml VSI &>/dev/null
