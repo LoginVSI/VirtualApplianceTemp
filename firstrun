@@ -1,5 +1,5 @@
 #!/bin/bash
-
+SWARM="false"
 # add first_run script
 netadapters=$(ip -o link show | while read -r num dev fam mtulabel mtusize qlabel queu statelabel state modelabel mode grouplabel group qlenlabel qlen maclabel mac brdlabel brcast; do 
         if [[ ${mac} != brd && ${mac} != 00:00:00:00:00:00 && ${dev} != br-*  && ${dev} != veth* ]]; then
@@ -181,18 +181,24 @@ EOF
 
     #echo "Initting docker swarm..."  
     docker rmi httpd:2.4-alpine &>/dev/null
-    #docker swarm init &>/dev/null	
-    #echo "foobar" | docker secret create VSI_SSL_CERTIFICATE_KEY_PASSWORD - &>/dev/null
-    echo foobar >/certificates/password
-    echo "SSL_CERTIFICATE_KEY_PASSWORD_PATH=/certificates/password" >/loginvsi/.env
-    
+
+    echo "SSL_CERTIFICATE_KEY_PATH=/certificates/${fqdn}.key" >/loginvsi/.env
+    echo "SSL_CERTIFICATE_PATH=/certificates/${fqdn}.crt" >>/loginvsi/.env
+    echo "GATEWAY_PORT=443" >>/loginvsi/.env
+
+    if [ $SWARM == "true" ]; then
+        docker swarm init &>/dev/null	
+        echo "foobar" | docker secret create VSI_SSL_CERTIFICATE_KEY_PASSWORD - &>/dev/null
+    else
+        echo foobar >/certificates/password
+        echo "SSL_CERTIFICATE_KEY_PASSWORD_PATH=/certificates/password" >>/loginvsi/.env
+    fi
 
     chmod +x /usr/bin/loginvsid
     chown root:root /usr/bin/loginvsid
 	
-    echo "SSL_CERTIFICATE_KEY_PATH=/certificates/${fqdn}.key" >>/loginvsi/.env
-    echo "SSL_CERTIFICATE_PATH=/certificates/${fqdn}.crt" >>/loginvsi/.env
-    echo "GATEWAY_PORT=443" >>/loginvsi/.env
+    
+    
     #echo "HOST_URL=https://${fqdn}" >>/loginvsi/.env
 
     #sed -i s,GATEWAY_PORT=3000,GATEWAY_PORT=443, /loginvsi/.env

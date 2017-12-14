@@ -1,5 +1,6 @@
 #!/bin/bash
 SCRIPT_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+SWARM="false"
 cd /
 export DEBIAN_FRONTEND=noninteractive
 # get latest versions of packages
@@ -54,8 +55,12 @@ mkdir /loginvsi
 mkdir /loginvsi/img
 wget -q -O /loginvsi/img/logo_alt.png https://www.loginvsi.com/images/logos/login-vsi-company-logo.png
 cp /loginvsi/img/logo_alt.png /loginvsi/img/logo.png
-cp -r "/dockerrepo/latest/Production/StandaloneInternalDB/docker-compose.yml" /loginvsi/
-#cp -r "/dockerrepo/latest/Production/InternalDB/.env" /loginvsi/
+if [ $SWARM == "true" ]; then
+    cp -r "/dockerrepo/latest/Production/InternalDB/.env" /loginvsi/
+else
+    cp -r "/dockerrepo/latest/Production/StandaloneInternalDB/docker-compose.yml" /loginvsi/
+fi
+
 rm -rf /dockerrepo
 cp -r -f $SCRIPT_PATH/menu /loginvsi/menu
 cp -f $SCRIPT_PATH/pdmenurc /etc/

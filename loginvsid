@@ -8,24 +8,31 @@
 # Short-Description: loginvsid
 # Description:       loginvsid
 ### END INIT INFO
+SWARM="false"
 
 start() {
   cd /loginvsi
   export fqdn=$(hostname).$(domainname)
   docker run -d -p 9000:9000 -v /loginvsi/img:/images -v /certificates:/certs -v /var/run/docker.sock:/var/run/docker.sock -v /opt/portainer:/data --name portainer portainer/portainer --ssl --sslkey /certs/${fqdn}.key.un --sslcert /certs/${fqdn}.crt --admin-password '{{ADMIN_PASS}}' -H unix:///var/run/docker.sock
   docker-compose up -d
+  if [ $SWARM != "true" ]; then
+    export $(cat .env); docker stack deploy --resolve-image never --compose-file ./docker-compose.yml VSI &>/dev/null
+    sleep 5 &>/dev/null
+    TOTAL=$(docker ps -qa -f name=loginvsi_ | wc -l)
+  else
+    TOTAL=$(docker stack services VSI --format "{{.Replicas}}" | wc -l)
+  fi
   
-  #export $(cat .env); docker stack deploy --resolve-image never --compose-file ./docker-compose.yml VSI &>/dev/null
-  sleep 5 &>/dev/null
-  TOTAL=$(docker ps -qa -f name=loginvsi_ | wc -l)
-  #TOTAL=$(docker stack services VSI --format "{{.Replicas}}" | wc -l)
   MAXCOUNT=600
   COUNT=0
   while [ $COUNT -le $MAXCOUNT ];
   do    
     COUNT=$((COUNT+1))
-    RUNNING=$(docker ps -q -f name=loginvsi_ -f status=running | wc -l)
-    #RUNNING=$(docker stack services VSI --format "{{.Replicas}}" | grep "1/1" | wc -l)
+    if [ $SWARM != "true" ]; then
+      RUNNING=$(docker ps -q -f name=loginvsi_ -f status=running | wc -l)
+    else
+      RUNNING=$(docker stack services VSI --format "{{.Replicas}}" | grep "1/1" | wc -l)
+    fi
     if [ $TOTAL -eq $RUNNING ]; then
       printf "Starting LoginVSI services: \e[32m[DONE]\e[39m \r\n" 
       DONE="true" 
