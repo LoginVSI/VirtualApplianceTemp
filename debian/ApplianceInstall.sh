@@ -21,7 +21,7 @@ apt-get -qq -y install \
     software-properties-common \
 	htop \
     sudo 2>&1
-
+echo "admin ALL = (ALL:ALL) ALL" >>/etc/sudoers
 #dpkg -i /pdmenu.deb 2>&1
 #pdmenu \
 
@@ -79,7 +79,7 @@ cp -f $SCRIPT_PATH/loginvsid.service /etc/systemd/system/
 cp -f $SCRIPT_PATH/firstrun /loginvsi/
 #cp -f $SCRIPT_PATH/.env /loginvsi/
 cp -f $SCRIPT_PATH/sshd_config /etc/ssh/
-cp -f $SCRIPT_PATH/grub /etc/default/
+#cp -f $SCRIPT_PATH/grub /etc/default/
 
 
 echo "loginvsi-ng" > /etc/hostname
