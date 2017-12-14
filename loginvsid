@@ -12,16 +12,20 @@
 start() {
   cd /loginvsi
   export fqdn=$(hostname).$(domainname)
-  docker run -d -p 9000:9000 -v /loginvsi/img:/images -v /certificates:/certs -v /var/run/docker.sock:/var/run/docker.sock -v /opt/portainer:/data --name portainer portainer/portainer --ssl --sslkey /certs/${fqdn}.key.un --sslcert /certs/${fqdn}.crt --admin-password '{{ADMIN_PASS}}' -H unix:///var/run/docker.sock
-  export $(cat .env); docker stack deploy --resolve-image never --compose-file ./docker-compose.yml VSI &>/dev/null
+  #docker run -d -p 9000:9000 -v /loginvsi/img:/images -v /certificates:/certs -v /var/run/docker.sock:/var/run/docker.sock -v /opt/portainer:/data --name portainer portainer/portainer --ssl --sslkey /certs/${fqdn}.key.un --sslcert /certs/${fqdn}.crt --admin-password '{{ADMIN_PASS}}' -H unix:///var/run/docker.sock
+  docker-compose up -d
+  
+  #export $(cat .env); docker stack deploy --resolve-image never --compose-file ./docker-compose.yml VSI &>/dev/null
   sleep 5 &>/dev/null
-  TOTAL=$(docker stack services VSI --format "{{.Replicas}}" | wc -l)
-  MAXCOUNT=600
+  TOTAL=$(docker ps -qa | wc -l)
+  #TOTAL=$(docker stack services VSI --format "{{.Replicas}}" | wc -l)
+  #MAXCOUNT=600
   COUNT=0
   while [ $COUNT -le $MAXCOUNT ];
   do    
     COUNT=$((COUNT+1))
-    RUNNING=$(docker stack services VSI --format "{{.Replicas}}" | grep "1/1" | wc -l)
+    RUNNING=$(docker ps -f status=running | wc -l)
+    #RUNNING=$(docker stack services VSI --format "{{.Replicas}}" | grep "1/1" | wc -l)
     if [ $TOTAL -eq $RUNNING ]; then
       printf "Starting LoginVSI services: \e[32m[DONE]\e[39m \r\n" 
       DONE="true" 
@@ -37,9 +41,9 @@ start() {
 }
 
 stop() { 
-  printf "Stopping LoginVSI services \r\n"
-  docker stop $(docker ps -qf name=VSI_) &>/dev/null    
-  printf "Stopping LoginVSI services: \e[32m[DONE]\e[39m \r\n"
+  #printf "Stopping LoginVSI services \r\n"
+  #docker stop $(docker ps -qf name=VSI_) &>/dev/null    
+  #printf "Stopping LoginVSI services: \e[32m[DONE]\e[39m \r\n"
 }
 
 restart() {
@@ -48,10 +52,10 @@ restart() {
 }
 
 update() {
-  cd /loginvsi
-  wget #URL to download latest yml from
-  docker rmi $(docker image ls loginvsi/* -q)
-  export $(cat .env); docker stack deploy --compose-file ./docker-compose.yml VSI &>/dev/null
+  #cd /loginvsi
+  #wget #URL to download latest yml from
+  #docker rmi $(docker image ls loginvsi/* -q)
+  #export $(cat .env); docker stack deploy --compose-file ./docker-compose.yml VSI &>/dev/null
 }
 
 case $1 in

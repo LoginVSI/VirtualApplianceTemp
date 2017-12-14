@@ -54,8 +54,8 @@ mkdir /loginvsi
 mkdir /loginvsi/img
 wget -q -O /loginvsi/img/logo_alt.png https://www.loginvsi.com/images/logos/login-vsi-company-logo.png
 cp /loginvsi/img/logo_alt.png /loginvsi/img/logo.png
-cp -r "/dockerrepo/latest/Production/InternalDB/docker-compose.yml" /loginvsi/
-cp -r "/dockerrepo/latest/Production/InternalDB/.env" /loginvsi/
+cp -r "/dockerrepo/latest/Development/InternalDB/docker-compose.yml" /loginvsi/
+cp -r "/dockerrepo/latest/Development/InternalDB/.env" /loginvsi/
 rm -rf /dockerrepo
 cp -r -f $SCRIPT_PATH/menu /loginvsi/menu
 cp -f $SCRIPT_PATH/pdmenurc /etc/
