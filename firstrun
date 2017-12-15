@@ -144,11 +144,11 @@ iface $netadapter inet dhcp
 	chmod +x /home/admin/.bash_profile
 
 	
-	#reboot  
-	#trap SIGINT	
-#fi 
-#if [ ! -f "/loginvsi/second_run.chk" ]; then
-	#trap 'echo "You cannot cancel this script"' SIGINT
+	reboot  
+	trap SIGINT	
+fi 
+if [ ! -f "/loginvsi/second_run.chk" ]; then
+	trap 'echo "You cannot cancel this script"' SIGINT
 	echo "Resetting SSH keys..."
     rm /etc/ssh/ssh_host_*
     dpkg-reconfigure openssh-server &>/dev/null
