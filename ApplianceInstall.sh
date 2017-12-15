@@ -7,7 +7,7 @@ export DEBIAN_FRONTEND=noninteractive
 apt-get -qq update 2>&1
 apt-get -qq -y upgrade 2>&1
 # install security updates
-unattended-upgrades2>&1
+unattended-upgrades 2>&1
 
 # install docker-ce
 
