@@ -16,10 +16,11 @@ menu:main:Maintenance Menu
 	nop
 	nop:Diagnosis
 	nop:--------------------------------------
+	preproc: /loginvsi/menu/getversion
 	exec:Ping:edit,pause:clear;ping ~Address:~
 	exec:Show netstat:display:netstat -tuna
-	exec:Show LoginVSI service status:display:docker service ls -f name=VSI_
-	exec:Restart LoginVSI services::docker restart $(docker ps -aqf name=VSI_)
+	exec:Show LoginVSI service status:display:docker ps -a -f name=loginvsi_
+	exec:Restart LoginVSI services::docker restart $(docker ps -aqf name=loginvsi_)
 	exec:Open bash shell::/bin/bash
 	
 		

@@ -5,7 +5,7 @@
 color:base:black:black
 color:desktop:blue:black
 #Define the main menu:
-title: {{TITLE}}
+title: {{TITLE}} {{VERSION}}
 
 menu:main:Maintenance Menu
 	exit:Logout

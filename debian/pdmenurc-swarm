@@ -16,6 +16,7 @@ menu:main:Maintenance Menu
 	nop
 	nop:Diagnosis
 	nop:--------------------------------------
+	preproc: /loginvsi/menu/getversion
 	exec:Ping:edit,pause:clear;ping ~Address:~
 	exec:Show netstat:display:netstat -tuna
 	exec:Show LoginVSI service status:display:docker service ls -f name=VSI_
