@@ -129,7 +129,7 @@ iface $netadapter inet dhcp
     {{TITLE}} appliance is not yet configured!
     Logon with admin and the password you set previously
 	"  > /etc/issue
-    update-grub &>/dev/null
+    
 	
 	adminpass=$(docker run --rm httpd:2.4-alpine htpasswd -nbB admin ${password} | cut -d ":" -f 2)
 	sed -i s,{{ADMIN_PASS}},${adminpass}, /usr/bin/loginvsid
@@ -214,8 +214,7 @@ EOF
     {{TITLE}} appliance is configured!
     Main interface https://\4{$netadapter} or https://\n.\o
     Admin interface: https://\4{$netadapter}:9000 or https://\n.\o:9000
-    "  > /etc/issue
-    update-grub &>/dev/null
+    "  > /etc/issue    
 
     echo "#!/bin/bash
     sudo pdmenu -c -q" > /usr/bin/startmenu
@@ -227,7 +226,12 @@ EOF
 	
 	#cleanup
 	echo "Cleaning up..."
-	
+	# Cleanup
+    rm -rf /home/admin/*
+    rm -rf /home/admin/.bash_history
+    rm -rf /root/.bash_history
+    rm -rf /root/.ssh
+
 	
 trap SIGINT
 

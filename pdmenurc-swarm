@@ -11,13 +11,14 @@ menu:main:Maintenance Menu
 	exit:Logout
 	exec:Reboot:sudo reboot
 	nop
-	exec:Change your password:p:passwd
+	exec:Change your password:p:/loginsvi/menu/changepassword
 	preproc: /loginvsi/menu/gethostname
 	show:Network Configuration::network_conf
 	nop
 	nop:Troubleshooting
 	nop:--------------------------------------	
-	exec:Restart portainer:pause:clear;docker restart portainer
+	exec:Start SSH server:pause:/etc/init.d/ssh start
+	exec:Restart portainer:pause:docker restart portainer
 	exec:Ping:edit,pause:clear;ping ~Address:~
 	exec:Show netstat:display:netstat -tuna
 	exec:Show LoginVSI service status:display:docker service ls -f name=VSI_

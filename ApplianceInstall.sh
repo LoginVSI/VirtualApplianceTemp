@@ -77,14 +77,13 @@ fi
 cp -f $SCRIPT_PATH/loginvsid /usr/bin/
 cp -f $SCRIPT_PATH/loginvsid.service /etc/systemd/system/
 cp -f $SCRIPT_PATH/firstrun /loginvsi/
-#cp -f $SCRIPT_PATH/.env /loginvsi/
 cp -f $SCRIPT_PATH/sshd_config /etc/ssh/
-#cp -f $SCRIPT_PATH/grub /etc/default/
+
 
 
 echo "loginvsi-ng" > /etc/hostname
 hostname "loginvsi-ng"
-#update-grub &>/dev/null
+
 
 echo "#!/bin/bash" > /home/admin/.bash_profile
 echo "if [ ! -f '/loginvsi/first_run.chk' ]; then"  >> /home/admin/.bash_profile
@@ -128,8 +127,18 @@ fi
 if [ -f "/loginvsi/first_run.chk" ]; then
     rm /loginvsi/first_run.chk
 fi
+
+echo "
+net.ipv6.conf.all.disable_ipv6 = 1
+net.ipv6.conf.default.disable_ipv6 = 1
+net.ipv6.conf.lo.disable_ipv6 = 1
+" >>/etc/sysctl.conf
+
+updaterc.d ssh disable
+
+
+# Cleanup
 rm -rf /home/admin/*
-
-
-#docker rm -f $(docker ps -a -q)
-#docker network prune -f
+rm -rf /home/admin/.bash_history
+rm -rf /root/.bash_history
+rm -rf /root/.ssh
