@@ -5,17 +5,19 @@
 color:base:black:black
 color:desktop:blue:black
 #Define the main menu:
-title: {{TITLE}} {{VERSION}}
+preproc: /loginvsi/menu/getversion
 
 menu:main:Maintenance Menu
 	exit:Logout
+	exec:Reboot:sudo reboot
 	nop
 	exec:Change your password:p:passwd
 	preproc: /loginvsi/menu/gethostname
-	show:Network Configration::network_conf
+	show:Network Configuration::network_conf
 	nop
-	nop:Diagnosis
-	nop:--------------------------------------
+	nop:Troubleshooting
+	nop:--------------------------------------	
+	exec:Restart portainer:pause:clear;docker restart portainer
 	exec:Ping:edit,pause:clear;ping ~Address:~
 	exec:Show netstat:display:netstat -tuna
 	exec:Show LoginVSI service status:display:docker service ls -f name=VSI_
