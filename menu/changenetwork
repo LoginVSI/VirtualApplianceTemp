@@ -28,8 +28,10 @@ else
   awk -f /loginvsi/menu/changeInterface.awk /etc/network/interfaces device=${netadapter} mode=static action=add address=${ip} netmask=${netmask} "dns=${nameservers}" "dnssearch=${search}" gateway=${gateway} >/etc/network/interfaces2;
   rm /etc/network/interfaces;mv /etc/network/interfaces2 /etc/network/interfaces;
   sed -i 's,dnssearch,dns-search,g' /etc/network/interfaces
-  tac /etc/network/interfaces | sed '1,/gateway/{s/gateway/#gateway/}' | tac >/etc/network/interfaces
+  tac /etc/network/interfaces | sed '1,/gateway/{s/gateway/#gateway/}' | tac >/etc/network/interfaces2
+  rm /etc/network/interfaces;mv /etc/network/interfaces2 /etc/network/interfaces;
 fi
-echo "Done, restarting network interface"
+cat /etc/network/interfaces
+echo "Done, restarting network interface $netadapter"
 ifdown $netadapter
 ifup --ignore-errors $netadapter

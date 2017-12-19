@@ -21,7 +21,8 @@ for netadapter in $(echo $netadapters); do
 
     echo "nop:${netadapter} [Currently ${currentmode}\: ${ip}]"
     echo "nop:------------------------"
-    echo "exec:Use DHCP for ${netadapter}:pause:clear;/loginvsi/menu/changenetwork ${netadapter} dhcp" 
-    echo "exec:Set static IP for ${netadapter}:edit,pause:clear;/loginvsi/menu/changenetwork ${netadapter} static ~New IP Address:${ip}~ ~New netmask:${netmask}~ ~Gateway:${gateway}~ \"~DNS search domains:${dnssuffix}~\" \"~DNS nameservers:${nameservers}~\""
+    echo "exec:Use DHCP for ${netadapter}:pause:clear;/loginvsi/menu/changenetwork ${netadapter} dhcp" \
+    echo "Setting $netadapter with mode $dhcp $ip $netmask $gateway $nameservers $search"
+    echo "exec:Set static IP for ${netadapter}:edit,pause:clear;/loginvsi/menu/changenetwork ${netadapter} static ~New IP Address:${ip}~ ~New netmask:${netmask}~ ~Gateway:${gateway}~ \"~DNS nameservers:${nameservers}~\" \"~DNS search domains:${dnssuffix}~\""
     echo "nop"
 done 
