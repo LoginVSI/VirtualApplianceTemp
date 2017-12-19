@@ -5,28 +5,34 @@ cd /
 export DEBIAN_FRONTEND=noninteractive
 # get latest versions of packages
 apt-get -qq update 2>&1
-apt-get -qq -y upgrade 2>&1
+apt-get -qq -y dist-upgrade 2>&1
 # install security updates
-unattended-upgrades 2>&1
+#unattended-upgrades &>/dev/null 
 
 # install docker-ce
 
-apt-get -qq -y remove docker docker-engine | cat
+#apt-get -qq -y remove docker docker-engine | cat
+wget -q -O /pdmenu.deb http://ftp.nl.debian.org/debian/pool/main/p/pdmenu/pdmenu_1.3.4+b1_amd64.deb
 apt-get -qq -y install \
     apt-transport-https \
     ca-certificates \
     curl \
+    /pdmenu.deb \
     software-properties-common \
-    pdmenu \
-	htop 2>&1
+	htop \
+    sudo 2>&1
+echo "admin ALL = (ALL:ALL) ALL" >>/etc/sudoers
+#dpkg -i /pdmenu.deb 2>&1
+#pdmenu \
 
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add - 2>&1
-add-apt-repository \
-   "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
-   $(lsb_release -cs) \
-   stable" &>/dev/null
-apt-get -qq update 2>&1
-apt-get -qq -y install docker-ce 2>&1
+#curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add - &>/dev/null
+#add-apt-repository \
+#   "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+#   $(lsb_release -cs) \
+#   stable" &>/dev/null
+#apt-get -qq update &>/dev/null
+#apt-get -qq -y install docker-ce &>/dev/null
+curl -sSL https://get.docker.com | sh 2>&1
 
 # install docker-compose
 curl -s -S -L https://github.com/docker/compose/releases/download/1.17.1/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
@@ -44,7 +50,7 @@ docker pull portainer/portainer 2>&1
 docker pull httpd:2.4-alpine 2>&1
 
 cd /dockerrepo/latest/Production/StandaloneInternalDB
-docker-compose pull --quiet 2>&1
+docker-compose pull  2>&1
 
 docker logout 2>&1
 
@@ -68,13 +74,12 @@ if [ $SWARM == "true" ]; then
 else
     cp -f $SCRIPT_PATH/pdmenurc-standalone /etc/pdmenurc
 fi
-
 cp -f $SCRIPT_PATH/loginvsid /usr/bin/
 cp -f $SCRIPT_PATH/loginvsid.service /etc/systemd/system/
 cp -f $SCRIPT_PATH/firstrun /loginvsi/
 #cp -f $SCRIPT_PATH/.env /loginvsi/
 cp -f $SCRIPT_PATH/sshd_config /etc/ssh/
-cp -f $SCRIPT_PATH/grub /etc/default/
+#cp -f $SCRIPT_PATH/grub /etc/default/
 
 
 echo "loginvsi-ng" > /etc/hostname

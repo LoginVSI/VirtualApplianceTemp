@@ -13,7 +13,7 @@ SWARM="{{SWARM}}"
 start() {
   cd /loginvsi
   export fqdn=$(hostname).$(domainname)
-  docker run -d -p 9000:9000 --restart always -v /loginvsi/img:/images -v /certificates:/certs -v /var/run/docker.sock:/var/run/docker.sock -v /opt/portainer:/data --name portainer portainer/portainer --ssl --sslkey /certs/${fqdn}.key.un --sslcert /certs/${fqdn}.crt --admin-password '{{ADMIN_PASS}}' -H unix:///var/run/docker.sock
+  docker run -d -p 9000:9000 --restart=always -v /loginvsi/img:/images -v /certificates:/certs -v /var/run/docker.sock:/var/run/docker.sock -v /opt/portainer:/data --name portainer portainer/portainer --ssl --sslkey /certs/${fqdn}.key.un --sslcert /certs/${fqdn}.crt --admin-password '{{ADMIN_PASS}}' -H unix:///var/run/docker.sock
   if [ $SWARM == "true" ]; then
     export $(cat .env); docker stack deploy --resolve-image never --compose-file ./docker-compose.yml VSI &>/dev/null
     sleep 5 &>/dev/null
@@ -31,7 +31,6 @@ start() {
     COUNT=$((COUNT+1))
     if [ $SWARM != "true" ]; then
       RUNNING=$(docker ps -q -f name=loginvsi_ -f status=running | wc -l)
-      SEEDER=$(docker inspect loginvsi_)
     else
       RUNNING=$(docker stack services VSI --format "{{.Replicas}}" | grep "1/1" | wc -l)
     fi

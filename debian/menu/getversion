@@ -1,3 +1,0 @@
-#!/bin/bash
-version=$(cat /loginvsi/docker-compose.yml | grep "Version__Number" | cut -d':' -f2 | cut -d"'" -f2) 
-echo "title: {{TITLE}} (${version})"
