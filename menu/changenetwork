@@ -13,7 +13,7 @@ gateway=$5
 nameservers="$6"
 search="$7"
 
-echo "Setting $netadapter with mode $dhcp $ip $netmask $search $gateway $nameservers"
+echo "Setting $netadapter with mode $dhcp $ip $netmask $gateway $nameservers $search"
 if [[ $dhcp == "dhcp" ]]; then
   
   cp /etc/network/interfaces /etc/network/interfaces.bck
