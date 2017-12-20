@@ -77,37 +77,37 @@ done
 # Prompt for variables that were not provided in arguments
 checkVariables() {
   # Country
-  if [ -z $C ]; then
+  if [ -z "$C" ]; then
     echo -n "Country Name (2 letter code) [AU]:"
     read C
   fi
 
   # State
-  if [ -z $ST ]; then
+  if [ -z "$ST" ]; then
     echo -n "State or Province Name (full name) [Some-State]:"
     read ST
   fi
 
   # Locality
-  if [ -z $L ]; then
+  if [ -z "$L" ]; then
     echo -n "Locality Name (eg, city) []:"
     read L
   fi
 
   # Organization
-  if [ -z $O ]; then
+  if [ -z "$O" ]; then
     echo -n "Organization Name (eg, company) [Internet Widgits Pty Ltd]:"
     read O
   fi
 
   # Organizational Unit
-  if [ -z $OU ]; then
+  if [ -z "$OU" ]; then
     echo -n "Organizational Unit Name (eg, section) []:"
     read OU
   fi
 
   # Common Name
-  if [ -z $CN ]; then
+  if [ -z "$CN" ]; then
     echo -n "Common Name (e.g. server FQDN or YOUR name) []:"
     read CN
   fi
@@ -120,7 +120,7 @@ checkVariables() {
   if [ -z $PASSWORD ]; then
     while :       
         do        
-            read -ersp " Please enter a new password for admin: " PASSWORD
+            read -ersp " Please enter a new password the key: " PASSWORD
             read -ersp " Please confirm the new password: " PASSWORD2
             if [ $PASSWORD != $PASSWORD2 ]; then
                 echo "Passwords do not match, try again..."
@@ -192,8 +192,8 @@ EOF
 # Build TLS Certificate
 build() {
   # Generate CA key & crt
-  openssl genrsa -out ${OUTPATH}/CA.key 2048
-  openssl req -x509 -new -nodes -key ${OUTPATH}}/CA.key -sha256 -days ${DURATION} -out ${OUTPATH}/CA.crt -subj "/C=${C}/ST=${ST}/L=${L}/O=${O}/OU=${OU}/CN=${CN}/emailAddress=${emailAddress}"
+  openssl genrsa -out ${OUTPATH}CA.key 2048
+  openssl req -x509 -new -nodes -key ${OUTPATH}}CA.key -sha256 -days ${DURATION} -out ${OUTPATH}CA.crt -subj "/C=${C}/ST=${ST}/L=${L}/O=${O}/OU=${OU}/CN=${CN}/emailAddress=${emailAddress}"
 
   # CSR Configuration
   buildCsrCnf
@@ -205,7 +205,7 @@ build() {
   openssl req -new -sha256 -nodes -out ${OUTPATH}${CN}.csr -newkey rsa:2048 -keyout ${OUTPATH}${CN}.key -config <( cat ${tmp}/tmp.csr.cnf )
   
   # Server certificate
-  openssl x509 -req -in ${OUTPATH}${CN}.csr -CA ${OUTPATH}/CA.crt -CAkey ${OUTPATH}/CA.key -CAcreateserial -out ${OUTPATH}${CN}.crt -days ${DURATION} -sha256 -extfile ${tmp}/v3.ext
+  openssl x509 -req -in ${OUTPATH}${CN}.csr -CA ${OUTPATH}CA.crt -CAkey ${OUTPATH}/CA.key -CAcreateserial -out ${OUTPATH}${CN}.crt -days ${DURATION} -sha256 -extfile ${tmp}/v3.ext
   openssl rsa -aes256 -in ${OUTPATH}${CN}.key -out ${OUTPATH}${CN}.key.enc -passout pass:$PASSWORD
   mv ${OUTPATH}${CN}.key ${OUTPATH}${CN}.key.un
   mv ${OUTPATH}${CN}.key.enc ${OUTPATH}${CN}.key

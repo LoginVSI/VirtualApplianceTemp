@@ -46,6 +46,14 @@ start() {
   done
   if [ -z $DONE ]; then
     echo "Starting services timedout after $MAXCOUNT seconds"
+  else
+    echo "Copying CA.crt to contentDelivery..."
+    services=$(docker service ps -q VSI_contentdelivery)
+    for f in $services; do
+      node=$(docker inspect --format "{{.NodeID}}" $f)
+      container=$(docker inspect --format "{{.Status.ContainerStatus.ContainerID}}" $f)
+      docker cp /certificates/CA.crt $container:/app/wwwroot/content
+    done
   fi
 }
 
