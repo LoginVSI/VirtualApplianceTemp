@@ -169,17 +169,7 @@ EOF
 	#Docker (encrypted key)
     /loginvsi/menu/sslgen -c=NL -s=Noord-Holland -l=Amsterdam -o="Login VSI B.V." -u=Development -n=${fqdn} -e=info@loginvsi.com -d=999999 -w=foobar -p=/certificates/
 
-	#openssl genrsa -out /certificates/certificate.key 2048 -noout -passout pass:foobar &>/dev/null
-    #openssl req -new -sha256 -key /certificates/certificate.key -out /certificates/csr.csr -subj "/C=NL/ST=NH/L=Amsterdam/O=LoginVSI/OU=Development/CN=${fqdn}/emailAddress=info@loginvsi.com" -batch
-    #openssl req -x509 -sha256 -days 999999 -key /certificates/certificate.key -in /certificates/csr.csr -out /certificates/certificate.crt -passin pass:foobar -extfile /certificates/v3.ext
-    #openssl req -in /certifcates/csr.csr -text -noout | grep -i "Signature.*SHA256" && echo "All is well" || echo "This certificate will stop working in 2017! You must update OpenSSL to generate a widely-compatible certificate"
 	
-	# Portainer (non-encrypted key)
-	#openssl genrsa -out /certificates/portainer.key 2048 -noout &>/dev/null
-    #openssl ecparam -genkey secp3841r1 -out /certificates/portainer.key &>/dev/null
-    #openssl req -new -x509 -key /certificates/portainer.key -out /certificates/portainer.crt -days 999999 -subj "/C=NL/ST=NH/L=Amsterdam/O=LoginVSI/OU=Development/CN=${fqdn}/emailAddress=info@loginvsi.com" -batch &>/dev/null
-
-    #echo "Initting docker swarm..."  
     docker rmi httpd:2.4-alpine &>/dev/null
 
     echo "SSL_CERTIFICATE_KEY_PATH=/certificates/${fqdn}.key" >/loginvsi/.env
@@ -187,12 +177,24 @@ EOF
     echo "GATEWAY_PORT=443" >>/loginvsi/.env
 
     if [ $SWARM == "true" ]; then
+        echo "Initting docker swarm..."  
         docker swarm init &>/dev/null	
         echo "foobar" | docker secret create VSI_SSL_CERTIFICATE_KEY_PASSWORD - &>/dev/null
     else
         echo foobar >/certificates/password
         echo "SSL_CERTIFICATE_KEY_PASSWORD_PATH=/certificates/password" >>/loginvsi/.env
     fi
+
+    # create data volume folders for the dbs
+    mkdir /loginvsi/data
+    echo "DB_ROOT=/loginvsi/data" >>/loginvsi/.env
+    for f in $(cat /loginvsi/docker-compose.yml | grep "{DB_ROOT}")
+    do 
+        file=$(echo $f |cut -d"-" -f2 |cut -d"/" -f2 | cut -d":" -f1) 
+        if [ ! -z $file ]; then        
+            mkdir /loginvsi/data/$file; 
+        fi
+    done
 
     chmod +x /usr/bin/loginvsid
     chown root:root /usr/bin/loginvsid
