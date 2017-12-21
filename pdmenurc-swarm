@@ -9,7 +9,7 @@ preproc: /loginvsi/menu/getversion
 
 menu:main:Maintenance Menu
 	exit:Logout
-	exec:Reboot:sudo reboot
+	exec:Reboot::sudo reboot
 	nop
 	exec:Change your password:p:/loginsvi/menu/changepassword
 	preproc: /loginvsi/menu/gethostname
