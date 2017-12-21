@@ -193,7 +193,7 @@ EOF
 build() {
   # Generate CA key & crt
   openssl genrsa -out ${OUTPATH}CA.key 2048
-  openssl req -x509 -new -nodes -key ${OUTPATH}}CA.key -sha256 -days ${DURATION} -out ${OUTPATH}CA.crt -subj "/C=${C}/ST=${ST}/L=${L}/O=${O}/OU=${OU}/CN=${CN}/emailAddress=${emailAddress}"
+  openssl req -x509 -new -nodes -key ${OUTPATH}CA.key -sha256 -days ${DURATION} -out ${OUTPATH}CA.crt -subj "/C=${C}/ST=${ST}/L=${L}/O=${O}/OU=${OU}/CN=${CN}/emailAddress=${emailAddress}"
 
   # CSR Configuration
   buildCsrCnf
@@ -205,7 +205,7 @@ build() {
   openssl req -new -sha256 -nodes -out ${OUTPATH}${CN}.csr -newkey rsa:2048 -keyout ${OUTPATH}${CN}.key -config <( cat ${tmp}/tmp.csr.cnf )
   
   # Server certificate
-  openssl x509 -req -in ${OUTPATH}${CN}.csr -CA ${OUTPATH}CA.crt -CAkey ${OUTPATH}/CA.key -CAcreateserial -out ${OUTPATH}${CN}.crt -days ${DURATION} -sha256 -extfile ${tmp}/v3.ext
+  openssl x509 -req -in ${OUTPATH}${CN}.csr -CA ${OUTPATH}CA.crt -CAkey ${OUTPATH}CA.key -CAcreateserial -out ${OUTPATH}${CN}.crt -days ${DURATION} -sha256 -extfile ${tmp}/v3.ext
   openssl rsa -aes256 -in ${OUTPATH}${CN}.key -out ${OUTPATH}${CN}.key.enc -passout pass:$PASSWORD
   mv ${OUTPATH}${CN}.key ${OUTPATH}${CN}.key.un
   mv ${OUTPATH}${CN}.key.enc ${OUTPATH}${CN}.key
