@@ -15,7 +15,7 @@ ip=$(ip -o addr show $netadapter primary scope global | while read -r num dev fa
     done
     )
 gateway=$(ip -o route list | grep default | while read -r default via gateway dev net; do echo $gateway;done )
-netmask=$(ifconfig $netadapter | sed -rn '2s/ .*:(.*)$/\1/p')
+netmask=$(ifconfig $netadapter | grep netmask | cut -d" " -f13)
 nameserversarray=$(cat /etc/resolv.conf | grep -i nameserver|head -n2|cut -d ' ' -f2)
 nameservers=$(echo $(echo "${nameserversarray[@]}"))
 broadcast=$(ip a s dev $netadapter | awk '/inet / {print $4}')
