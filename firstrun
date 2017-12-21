@@ -168,9 +168,7 @@ EOF
     
 	#Docker (encrypted key)
     /loginvsi/menu/sslgen -c=NL -s=Noord-Holland -l=Amsterdam -o="Login VSI B.V." -u=Development -n=${fqdn} -e=info@loginvsi.com -d=999999 -w=foobar -p=/certificates/
-
-	
-    docker rmi httpd:2.4-alpine &>/dev/null
+	   
 
     echo "SSL_CERTIFICATE_KEY_PATH=/certificates/${fqdn}.key" >/loginvsi/.env
     echo "SSL_CERTIFICATE_PATH=/certificates/${fqdn}.crt" >>/loginvsi/.env
@@ -209,7 +207,8 @@ EOF
     #sed -i s,SSL_CERTIFICATE_PATH=..\..\..\Certificates\certificate.crt,SSL_CERTIFICATE_PATH=/certifcates/certificate.crt, /loginvsi/.env
     systemctl enable loginvsid &>/dev/null
     touch -f /loginvsi/second_run.chk
-	passwd -dl root &>/dev/null
+	
+    #passwd -dl root &>/dev/null
     head -n -2 /etc/issue > /etc/issue.tmp; mv /etc/issue.tmp /etc/issue
     echo "   
     Welcome to {{TITLE}}

@@ -13,8 +13,8 @@ SWARM="{{SWARM}}"
 start() {
   export fqdn=$(hostname).$(domainname)
   cd /loginvsi
-  if [ $(docker ps -a --format "{{.Image}}") == "portainer/portainer" ]; then
-    echo "Portainer container, already exists, not recreating.."
+  if [ $(docker ps -a -f name=portainer --format "{{.Image}}") == "portainer/portainer" ]; then
+    echo "Portainer container already exists, not recreating.."
   else
     ADMINPASS='{{ADMIN_PASS}}'
     docker run -d -p 9000:9000 --restart=always -v /loginvsi/img:/images -v /certificates:/certs -v /var/run/docker.sock:/var/run/docker.sock -v /opt/portainer:/data --name portainer portainer/portainer --ssl --sslkey /certs/${fqdn}.key.un --sslcert /certs/${fqdn}.crt --admin-password $ADMINPASS -H unix:///var/run/docker.sock  
