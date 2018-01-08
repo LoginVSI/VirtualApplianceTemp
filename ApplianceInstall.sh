@@ -43,7 +43,7 @@ chmod +x /usr/local/bin/docker-compose
 if [ -d "/dockerrepo" ]; then
     rm -rf /dockerrepo
 fi
-git clone -q -b stable ssh://tfs.loginvsi.com/tfs/NextGen/Shared/_git/P_Hosting /dockerrepo
+git clone -q -b stable ssh://tfs.loginvsi.com/tfs/NextGen/Shared/_git/Hosting /dockerrepo
 cd /dockerrepo/
 echo 8@0OIS58MajY | docker login -u vsiplayaccount --password-stdin
 docker pull portainer/portainer 2>&1
