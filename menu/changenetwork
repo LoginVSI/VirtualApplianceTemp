@@ -10,11 +10,11 @@ netadapter=$1
 dhcp=$2
 ip=$3
 netmask=$4
-gateway=$5
-nameservers="$6"
-search="$7"
+nameservers="$5"
+search="$6"
+gateway=$7
 
-echo "Setting $netadapter with mode $dhcp $ip $netmask $gateway $nameservers $search"
+echo "Setting $netadapter with mode $dhcp $ip $netmask $nameservers $search $gateway"
 if [[ $dhcp == "dhcp" ]]; then
   
   cp /etc/network/interfaces /etc/network/interfaces.bck
@@ -22,11 +22,18 @@ if [[ $dhcp == "dhcp" ]]; then
   rm /etc/network/interfaces; mv /etc/network/interfaces2 /etc/network/interfaces;
   awk -f /loginvsi/menu/changeInterface.awk /etc/network/interfaces device=${netadapter} mode=dhcp action=add >/etc/network/interfaces2;
   rm /etc/network/interfaces;mv /etc/network/interfaces2 /etc/network/interfaces
+  ifdown $netadapter
+  ifup --ignore-errors $netadapter
 else
   cp /etc/network/interfaces /etc/network/interfaces.bck
   awk -f /loginvsi/menu/changeInterface.awk /etc/network/interfaces device=${netadapter} mode=static action=remove >/etc/network/interfaces2;
   rm /etc/network/interfaces;mv /etc/network/interfaces2 /etc/network/interfaces;
-  awk -f /loginvsi/menu/changeInterface.awk /etc/network/interfaces device=${netadapter} mode=static action=add address=${ip} netmask=${netmask} "dns=${nameservers}" "dnssearch=${search}" gateway=${gateway} >/etc/network/interfaces2;
+  if [ -z $gateway ]; then
+    awk -f /loginvsi/menu/changeInterface.awk /etc/network/interfaces device=${netadapter} mode=static action=add address=${ip} netmask=${netmask} "dns=${nameservers}" "dnssearch=${search}" >/etc/network/interfaces2;
+  else 
+    awk -f /loginvsi/menu/changeInterface.awk /etc/network/interfaces device=${netadapter} mode=static action=add address=${ip} netmask=${netmask} "dns=${nameservers}" "dnssearch=${search}" gateway=${gateway} >/etc/network/interfaces2;
+  fi 
+  
   rm /etc/network/interfaces;mv /etc/network/interfaces2 /etc/network/interfaces;
   sed -i 's,dnssearch,dns-search,g' /etc/network/interfaces
   
@@ -36,14 +43,28 @@ else
         fi     
     done
     )   
-  netadapterscount = echo $netadapters | wc -w
+  netadapterscount=$(echo $netadapters | wc -w)
   
   if [ $netadapterscount -gt 1 ]; then  
     tac /etc/network/interfaces | sed '1,/gateway/{s/gateway/#gateway/}' | tac >/etc/network/interfaces2
     rm /etc/network/interfaces;mv /etc/network/interfaces2 /etc/network/interfaces;
+    existing_gateway=$(ip -o route list | grep default | while read -r default via gatewayds dev net; do echo $gatewayds;done )    
+    if [ ! -z $gateway ]; then
+      read -ep "There's already a default gateway configured (${existing_gateway}), do you want to overwrite it with $gateway? (Y/n)" answer
+      if [ -z $answer ]; then
+        answer="y"
+      fi
+      if [ ${answer,,} == "y" ]; then
+        route del default &>/dev/null
+        route add default gw $gateway
+      fi
+    fi
+  else
+    [[ -z $gateway ]] && route del default &>/dev/null
+    [[ ! -z $gateway ]] && route del default &>/dev/null; route add default gw $gateway
   fi
+  ifconfig $netadapter $ip netmask $netmask
+  
 fi
 cat /etc/network/interfaces
 echo "Done, restarting network interface $netadapter"
-ifdown $netadapter
-ifup --ignore-errors $netadapter

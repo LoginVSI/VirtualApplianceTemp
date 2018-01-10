@@ -47,6 +47,10 @@ trap 'echo "You cannot cancel this script"' SIGINT
                 [[ -z "$new_dnssuffix" ]] && new_dnssuffix=$new_domain
                 [[ ! -z "$new_ip" ]] && ip=$new_ip                                
                 [[ ! -z "$new_netmask" ]] && netmask=$new_netmask
+                [[ ! -z "$new_gateway" ]] && gateway=$new_gateway
+                [[ ! -z "$new_nameservers" ]] && nameservers=$new_nameservers
+                
+                [[ ! -z "$new_dnssuffix" ]] && dnssuffix=$new_dnssuffix
                 
                 
                 
@@ -65,11 +69,11 @@ auto $netadapter
 iface $netadapter inet static        
     address $ip
     netmask $netmask
-" >/etc/network/interfaces
-            [[ ! -z "$new_gateway" ]] && echo "gateway $new_gateway" >>/etc/network/interfaces
-            [[ ! -z "$new_nameservers" ]] && echo "dns-nameservers $new_nameservers" >>/etc/network/interfaces
-            [[ ! -z "$new_dnssuffix" ]] && echo "dns-search $new_dnssuffix" >>/etc/network/interfaces                        
-            ;;
+    gateway $gateway
+    dns-search $dnssuffix
+    dns-nameservers $nameservers
+                " > /etc/network/interfaces
+                ;;
             *)
                 echo "Configuring network using dhcp..."
                echo "

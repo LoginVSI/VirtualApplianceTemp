@@ -24,6 +24,6 @@ for netadapter in $(echo $netadapters); do
     echo "nop:------------------------"
     echo "exec:Use DHCP for ${netadapter}:pause:clear;/loginvsi/menu/changenetwork ${netadapter} dhcp" \
     echo "Setting $netadapter with mode $dhcp $ip $netmask $gateway $nameservers $search"
-    echo "exec:Set static IP for ${netadapter}:edit,pause:clear;/loginvsi/menu/changenetwork ${netadapter} static ~New IP Address:${ip}~ ~New netmask:${netmask}~ ~Gateway:${gateway}~ \"~DNS nameservers:${nameservers}~\" \"~DNS search domains:${dnssuffix}~\""
+    echo "exec:Set static IP for ${netadapter}:edit,pause:clear;/loginvsi/menu/changenetwork ${netadapter} static ~New IP Address:${ip}~ ~New netmask:${netmask}~ \"~DNS nameservers:${nameservers}~\" \"~DNS search domains:${dnssuffix}~\" ~Gateway:${gateway}~"
     echo "nop"
 done 
