@@ -47,10 +47,6 @@ trap 'echo "You cannot cancel this script"' SIGINT
                 [[ -z "$new_dnssuffix" ]] && new_dnssuffix=$new_domain
                 [[ ! -z "$new_ip" ]] && ip=$new_ip                                
                 [[ ! -z "$new_netmask" ]] && netmask=$new_netmask
-                [[ ! -z "$new_gateway" ]] && gateway=$new_gateway
-                [[ ! -z "$new_nameservers" ]] && nameservers=$new_nameservers
-                
-                [[ ! -z "$new_dnssuffix" ]] && dnssuffix=$new_dnssuffix
                 
                 
                 
@@ -69,11 +65,11 @@ auto $netadapter
 iface $netadapter inet static        
     address $ip
     netmask $netmask
-    gateway $gateway
-    dns-search $dnssuffix
-    dns-nameservers $nameservers
-                " > /etc/network/interfaces
-                ;;
+" >/etc/network/interfaces
+            [[ ! -z "$new_gateway" ]] && echo "gateway $new_gateway" >>/etc/network/interfaces
+            [[ ! -z "$new_nameservers" ]] && echo "dns-nameservers $new_nameservers" >>/etc/network/interfaces
+            [[ ! -z "$new_dnssuffix" ]] && echo "dns-search $new_dnssuffix" >>/etc/network/interfaces                        
+            ;;
             *)
                 echo "Configuring network using dhcp..."
                echo "
@@ -156,18 +152,9 @@ if [ ! -f "/loginvsi/second_run.chk" ]; then
     echo "Generating self-signed certificates..."
 	export fqdn=$(hostname).$(domainname)
 	mkdir /certificates
-	
-	cat << EOF > /certificates/v3.ext
-authorityKeyIdentifier=keyid,issuer
-basicConstraints=CA:FALSE
-keyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment
-subjectAltName = @alt_names
-[alt_names]
-DNS.1 = ${fqdn}
-EOF
-    
+	cert_password=$(openssl rand -hex 32)    
 	#Docker (encrypted key)
-    /loginvsi/menu/sslgen -c=NL -s=Noord-Holland -l=Amsterdam -o="Login VSI B.V." -u=Development -n=${fqdn} -e=info@loginvsi.com -d=999999 -w=foobar -p=/certificates/
+    /loginvsi/menu/sslgen -c=NL -s=Noord-Holland -l=Amsterdam -o="Login VSI B.V." -u=Development -n=${fqdn} -e=info@loginvsi.com -d=999999 -w=$cert_password -p=/certificates/
 	   
 
     echo "SSL_CERTIFICATE_KEY_PATH=/certificates/${fqdn}.key" >/loginvsi/.env
@@ -177,9 +164,9 @@ EOF
     if [ $SWARM == "true" ]; then
         echo "Initting docker swarm..."  
         docker swarm init &>/dev/null	
-        echo "foobar" | docker secret create VSI_SSL_CERTIFICATE_KEY_PASSWORD - &>/dev/null
+        echo $cert_password | docker secret create VSI_SSL_CERTIFICATE_KEY_PASSWORD - &>/dev/null
     else
-        echo foobar >/certificates/password
+        echo $cert_password >/certificates/password
         echo "SSL_CERTIFICATE_KEY_PASSWORD_PATH=/certificates/password" >>/loginvsi/.env
     fi
 

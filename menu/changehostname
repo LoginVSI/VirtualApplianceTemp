@@ -21,3 +21,10 @@ sed -i "s@$current_hostname@$new_hostname@g" /etc/hosts
 
 hostname "$new_hostname"
 domainname "$new_domain"
+read -ep "Do you want to regenerate the self-signed certificates? (Y/n) " regen
+if [ -z $regen ]; then
+  regen="y"
+fi
+if [ ${regen,,} == "y" ]; then
+  /loginvsi/menu/regeneratessl
+fi 
