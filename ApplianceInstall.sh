@@ -69,11 +69,8 @@ fi
 
 rm -rf /dockerrepo
 cp -r -f $SCRIPT_PATH/menu /loginvsi/menu
-if [ $SWARM == "true" ]; then
-    cp -f $SCRIPT_PATH/pdmenurc-swarm /etc/pdmenurc
-else
-    cp -f $SCRIPT_PATH/pdmenurc-standalone /etc/pdmenurc
-fi
+
+cp -f $SCRIPT_PATH/pdmenurc /etc/pdmenurc
 cp -f $SCRIPT_PATH/loginvsid /usr/bin/
 cp -f $SCRIPT_PATH/loginvsid.service /etc/systemd/system/
 cp -f $SCRIPT_PATH/firstrun /loginvsi/

@@ -199,7 +199,7 @@ if [ ! -f "/loginvsi/second_run.chk" ]; then
     systemctl enable loginvsid &>/dev/null
     touch -f /loginvsi/second_run.chk
 	
-    #passwd -dl root &>/dev/null
+    passwd -dl root &>/dev/null
     head -n -2 /etc/issue > /etc/issue.tmp; mv /etc/issue.tmp /etc/issue
     echo "   
     Welcome to {{TITLE}}

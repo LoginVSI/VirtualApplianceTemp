@@ -73,6 +73,14 @@ restart() {
   start
 }
 
+status() {
+   if [ $SWARM != "true" ]; then
+      docker ps -a -f name=loginvsi_
+    else
+      docker service ls -f name=VSI_
+    fi
+}
+
 update() {
   cd /loginvsi
   #wget #URL to download latest yml from
@@ -81,5 +89,5 @@ update() {
 }
 
 case $1 in
-  start|stop|restart|update) "$1" ;;
+  start|stop|restart|update|status) "$1" ;;
 esac
