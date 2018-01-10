@@ -116,6 +116,8 @@ echo "[Link]
 NamePolicy=kernel database onboard slot path
 MACAddressPolicy=none" > /etc/systemd/network/99-default.link
 
+rm /etc/motd
+
 if [ -f '/etc/update-motd.d/10-help-text' ]; then
 	rm /etc/update-motd.d/10-help-text
 fi
