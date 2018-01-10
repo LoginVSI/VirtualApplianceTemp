@@ -2,8 +2,11 @@
 
 #Note that the above bang-path isn't required, but it lets you run this
 #file directly as a sort of pdmenu script.
+color:title:black:lightgray
 color:base:black:black
 color:desktop:blue:black
+color:menu:black:lightgray
+color:selbar:lightgray:black
 #Define the main menu:
 preproc: /loginvsi/menu/getversion
 
@@ -36,7 +39,6 @@ menu:troublshoot:Troubleshooting
 	exit:Back to main menu
 	nop:--------------------------
 	exec:Start SSH server:pause:/etc/init.d/ssh start
-	exec:Stop SSH server:pause:/etc/init.d/ssh stop
 	exec:Restart portainer:pause:docker restart portainer
 	exec:Ping:edit,pause:clear;ping ~Address:~
 	exec:Show netstat:display:netstat -tuna
