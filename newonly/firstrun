@@ -211,7 +211,7 @@ if [ ! -f "/loginvsi/second_run.chk" ]; then
     "  > /etc/issue    
 
     echo "#!/bin/bash
-    sudo pdmenu -c -q" > /usr/bin/startmenu
+    sudo pdmenu -c -q /loginvsi/menu/pdmenurc" > /usr/bin/startmenu
     chmod +x /usr/bin/startmenu
     echo "admin ALL = (root) NOPASSWD: /usr/bin/pdmenu" >>/etc/sudoers
     sed -i 's#admin:x:1000:1000:administrator,,,:/home/admin:/bin/bash#admin:x:1000:1000:administrator,,,:/home/admin:/usr/bin/startmenu#' /etc/passwd

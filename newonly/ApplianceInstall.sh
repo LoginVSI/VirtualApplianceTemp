@@ -77,7 +77,7 @@ rm -rf /dockerrepo
 
  
 rm /etc/pdmenurc
-mv /loginvsi/menu/pdmenurc /etc/pdmenurc
+
 cp -f $SCRIPT_PATH/../loginvsid /usr/bin/
 cp -f $SCRIPT_PATH/../loginvsid.service /etc/systemd/system/
 cp -f $SCRIPT_PATH/firstrun /loginvsi/
