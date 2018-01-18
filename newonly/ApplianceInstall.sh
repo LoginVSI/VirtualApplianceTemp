@@ -45,7 +45,7 @@ if [ -d "/dockerrepo" ]; then
 fi
 git clone -q -b stable https://github.com/LoginVSI/Hosting /dockerrepo
 cd /dockerrepo/
-cp -f $SCRIPT_PATH/.play /root/.play
+cp -f $SCRIPT_PATH/../.play /root/.play
 chmod 700 /root/.play
 echo $(cat /root/.play) | base64 -d | docker login -u vsiplayaccount --password-stdin
 docker pull portainer/portainer 2>&1
@@ -78,10 +78,10 @@ rm -rf /dockerrepo
  
 rm /etc/pdmenurc
 mv /loginvsi/menu/pdmenurc /etc/pdmenurc
-cp -f $SCRIPT_PATH/loginvsid /usr/bin/
-cp -f $SCRIPT_PATH/loginvsid.service /etc/systemd/system/
-cp -f $SCRIPT_PATH/newonly/firstrun /loginvsi/
-cp -f $SCRIPT_PATH/newonly/sshd_config /etc/ssh/
+cp -f $SCRIPT_PATH/../loginvsid /usr/bin/
+cp -f $SCRIPT_PATH/../loginvsid.service /etc/systemd/system/
+cp -f $SCRIPT_PATH/firstrun /loginvsi/
+cp -f $SCRIPT_PATH/sshd_config /etc/ssh/
 
 
 
