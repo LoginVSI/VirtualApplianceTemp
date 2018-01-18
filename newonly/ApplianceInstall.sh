@@ -100,8 +100,8 @@ chmod +x /loginvsi/menu/*
 chmod +x /loginvsi/bin/*
 
 echo "admin:admin" | chpasswd
-cp $SCRIPT_PATH/newonly/issue /etc/
-cp $SCRIPT_PATH/newonly/hosts /etc/
+cp $SCRIPT_PATH/../newonly/issue /etc/
+cp $SCRIPT_PATH/../newonly/hosts /etc/
 echo "This system is not yet configured, please logon with username: admin and password: admin" >> /etc/issue
 
 echo '#!/bin/sh
