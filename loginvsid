@@ -90,7 +90,7 @@ update() {
   cp -f hosting/latest/Production/InternalDB/docker-compose.yml /loginvsi
   
   #copy latest loginvsi folder
-  cp -f -r update/loginvsi /loginvsi 
+  cp -f -r update/loginvsi/* /loginvsi/
 
   # copy loginvsid.service and loginvsid
   cp -f update/loginvsid /usr/bin/
@@ -100,7 +100,7 @@ update() {
   chown root:root /usr/bin/loginvsid
   systemctl disable loginvsid &>/dev/null
   systemctl enable loginvsid &>/dev/null
-  
+
   # Check if any new entries in new .env and add them to the current .env
   for i in $(diff -y hosting/latest/Production/InternalDB/.env .env | grep ">" | cut -d ">" -f2 | xargs); do
     echo $i >> .env
