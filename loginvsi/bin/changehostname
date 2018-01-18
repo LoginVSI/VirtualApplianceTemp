@@ -26,5 +26,5 @@ if [ -z $regen ]; then
   regen="y"
 fi
 if [ ${regen,,} == "y" ]; then
-  /loginvsi/menu/regeneratessl
+  /loginvsi/bin/regeneratessl
 fi 

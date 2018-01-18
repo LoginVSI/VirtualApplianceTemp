@@ -14,9 +14,9 @@ menu:main:Maintenance Menu
 	exit:Logout
 	exec:Reboot::sudo reboot
 	nop
-	exec:Change your password:pause:/loginvsi/menu/changepassword
+	exec:Change your password:pause:/loginvsi/bin/changepassword
 	preproc: /loginvsi/menu/gethostname
-	exec:Regenerate self-signed certificates:pause:/loginvsi/menu/regeneratessl
+	exec:Regenerate self-signed certificates:pause:/loginvsi/bin/regeneratessl
 	nop
 	group:Network Configuration
 	exec::makemenu: (\

@@ -158,7 +158,7 @@ if [ ! -f "/loginvsi/second_run.chk" ]; then
 	mkdir /certificates
 	cert_password=$(openssl rand -hex 32)    
 	#Docker (encrypted key)
-    /loginvsi/menu/sslgen -c=NL -s=Noord-Holland -l=Amsterdam -o="Login VSI B.V." -u=Development -n=${fqdn} -e=info@loginvsi.com -d=999999 -w=$cert_password -p=/certificates/
+    /loginvsi/bin/sslgen -c=NL -s=Noord-Holland -l=Amsterdam -o="Login VSI B.V." -u=Development -n=${fqdn} -e=info@loginvsi.com -d=999999 -w=$cert_password -p=/certificates/
 	   
 
     echo "SSL_CERTIFICATE_KEY_PATH=/certificates/${fqdn}.key" >/loginvsi/.env
@@ -179,9 +179,11 @@ if [ ! -f "/loginvsi/second_run.chk" ]; then
     echo "DB_ROOT=/loginvsi/data" >>/loginvsi/.env
     for f in $(cat /loginvsi/docker-compose.yml | grep "{DB_ROOT}")
     do 
-        file=$(echo $f |cut -d"-" -f2 |cut -d"/" -f2 | cut -d":" -f1) 
-        if [ ! -z $file ]; then        
-            mkdir /loginvsi/data/$file; 
+        folder=$(echo $f | cut -d"-" -f2 | cut -d"/" -f2 | cut -d":" -f1) 
+        if [ ! -z $folder ]; then
+          if [ ! -d /loginvsi/data/$folder ]; then        
+              mkdir /loginvsi/data/$folder; 
+          fi
         fi
     done
 

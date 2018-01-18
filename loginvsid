@@ -83,9 +83,47 @@ status() {
 
 update() {
   cd /loginvsi
-  #wget #URL to download latest yml from
-  #docker rmi $(docker image ls loginvsi/* -q)
-  #export $(cat .env); docker stack deploy --compose-file ./docker-compose.yml VSI &>/dev/null
+  # Get the hosting and appliance repo's
+  git clone https://github.com/LoginVSI/VirtualAppliance.git update
+  git clone -b stable https://github.com/LoginVSI/Hosting.git hosting
+  # copy latest compose file from hosting
+  cp -f hosting/latest/Production/InternalDB/docker-compose.yml /loginvsi
+  
+  #copy latest loginvsi folder
+  cp -f -r update/loginvsi /loginvsi 
+
+  # copy loginvsid.service and loginvsid
+  cp -f update/loginvsid /usr/bin/
+  cp -f update/loginvsid.service /etc/systemd/system/
+  
+  chmod +x /usr/bin/loginvsid
+  chown root:root /usr/bin/loginvsid
+  systemctl disable loginvsid &>/dev/null
+  systemctl enable loginvsid &>/dev/null
+  
+  # Check if any new entries in new .env and add them to the current .env
+  for i in $(diff -y hosting/latest/Production/InternalDB/.env .env | grep ">" | cut -d ">" -f2 | xargs); do
+    echo $i >> .env
+  done
+
+  # create new db folders if needed
+   for f in $(cat /loginvsi/docker-compose.yml | grep "{DB_ROOT}")
+    do 
+        folder=$(echo $f | cut -d"-" -f2 | cut -d"/" -f2 | cut -d":" -f1) 
+        if [ ! -z $folder ]; then
+          if [ ! -d /loginvsi/data/$folder ]; then        
+              mkdir /loginvsi/data/$folder; 
+          fi
+        fi
+    done
+
+  # pull the new images from dockerhub
+  echo $(cat /root/.play) | base64 -d | docker login -u vsiplayaccount --password-stdin
+  docker-compose pull 2>&1
+  docker logout 2>&1
+  # start the stack (will update containers automatically)
+  start
+
 }
 
 case $1 in

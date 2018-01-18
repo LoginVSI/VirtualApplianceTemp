@@ -9,7 +9,7 @@ fqdn=$(hostname).$(domainname)
 
 #Generate random password and new self-signed certs
 cert_password=$(openssl rand -hex 32)
-/loginvsi/menu/sslgen -c=NL -s=Noord-Holland -l=Amsterdam -o="Login VSI B.V." -u=Development -n=${fqdn} -e=info@loginvsi.com -d=999999 -w=$cert_password -p=/certificates/
+/loginvsi/bin/sslgen -c=NL -s=Noord-Holland -l=Amsterdam -o="Login VSI B.V." -u=Development -n=${fqdn} -e=info@loginvsi.com -d=999999 -w=$cert_password -p=/certificates/
 
 # replace the paths in the .env file
 sed -i '/SSL_CERTIFICATE_KEY_PATH=/d' /loginvsi/.env

@@ -43,9 +43,11 @@ chmod +x /usr/local/bin/docker-compose
 if [ -d "/dockerrepo" ]; then
     rm -rf /dockerrepo
 fi
-git clone -q -b stable ssh://tfs.loginvsi.com/tfs/NextGen/Shared/_git/Hosting /dockerrepo
+git clone -q -b stable https://github.com/LoginVSI/Hosting /dockerrepo
 cd /dockerrepo/
-echo 8@0OIS58MajY | docker login -u vsiplayaccount --password-stdin
+cp -f $SCRIPT_PATH/.play /root/.play
+chmod 700 /root/.play
+echo $(cat /root/.play) | base64 -d | docker login -u vsiplayaccount --password-stdin
 docker pull portainer/portainer 2>&1
 docker pull httpd:2.4-alpine 2>&1
 
@@ -54,10 +56,14 @@ docker-compose pull  2>&1
 
 docker logout 2>&1
 
+
+
 if [ -d /loginvsi ]; then
     rm -rf /loginvsi
 fi
-mkdir /loginvsi
+
+cp -r -f $SCRIPT_PATH/loginvsi /loginvsi/
+#mkdir /loginvsi
 mkdir /loginvsi/img
 wget -q -O /loginvsi/img/logo_alt.png https://www.loginvsi.com/images/logos/login-vsi-company-logo.png
 cp /loginvsi/img/logo_alt.png /loginvsi/img/logo.png
@@ -68,13 +74,14 @@ else
 fi
 
 rm -rf /dockerrepo
-cp -r -f $SCRIPT_PATH/menu /loginvsi/menu
 
-cp -f $SCRIPT_PATH/pdmenurc /etc/pdmenurc
+ 
+rm /etc/pdmenurc
+mv /loginvsi/menu/pdmenurc /etc/pdmenurc
 cp -f $SCRIPT_PATH/loginvsid /usr/bin/
 cp -f $SCRIPT_PATH/loginvsid.service /etc/systemd/system/
-cp -f $SCRIPT_PATH/firstrun /loginvsi/
-cp -f $SCRIPT_PATH/sshd_config /etc/ssh/
+cp -f $SCRIPT_PATH/newonly/firstrun /loginvsi/
+cp -f $SCRIPT_PATH/newonly/sshd_config /etc/ssh/
 
 
 
@@ -90,10 +97,11 @@ echo "fi" >> /home/admin/.bash_profile
 chmod +x /home/admin/.bash_profile
 chmod +x /loginvsi/firstrun
 chmod +x /loginvsi/menu/*
+chmod +x /loginvsi/bin/*
 
 echo "admin:admin" | chpasswd
-cp $SCRIPT_PATH/issue /etc/
-cp $SCRIPT_PATH/hosts /etc/
+cp $SCRIPT_PATH/newonly/issue /etc/
+cp $SCRIPT_PATH/newonly/hosts /etc/
 echo "This system is not yet configured, please logon with username: admin and password: admin" >> /etc/issue
 
 echo '#!/bin/sh

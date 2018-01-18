@@ -18,20 +18,20 @@ echo "Setting $netadapter with mode $dhcp $ip $netmask $nameservers $search $gat
 if [[ $dhcp == "dhcp" ]]; then
   
   cp /etc/network/interfaces /etc/network/interfaces.bck
-  awk -f /loginvsi/menu/changeInterface.awk /etc/network/interfaces device=${netadapter} mode=dhcp action=remove >/etc/network/interfaces2;
+  awk -f /loginvsi/bin/changeInterface.awk /etc/network/interfaces device=${netadapter} mode=dhcp action=remove >/etc/network/interfaces2;
   rm /etc/network/interfaces; mv /etc/network/interfaces2 /etc/network/interfaces;
-  awk -f /loginvsi/menu/changeInterface.awk /etc/network/interfaces device=${netadapter} mode=dhcp action=add >/etc/network/interfaces2;
+  awk -f /loginvsi/bin/changeInterface.awk /etc/network/interfaces device=${netadapter} mode=dhcp action=add >/etc/network/interfaces2;
   rm /etc/network/interfaces;mv /etc/network/interfaces2 /etc/network/interfaces
   ifdown $netadapter
   ifup --ignore-errors $netadapter
 else
   cp /etc/network/interfaces /etc/network/interfaces.bck
-  awk -f /loginvsi/menu/changeInterface.awk /etc/network/interfaces device=${netadapter} mode=static action=remove >/etc/network/interfaces2;
+  awk -f /loginvsi/bin/changeInterface.awk /etc/network/interfaces device=${netadapter} mode=static action=remove >/etc/network/interfaces2;
   rm /etc/network/interfaces;mv /etc/network/interfaces2 /etc/network/interfaces;
   if [ -z $gateway ]; then
-    awk -f /loginvsi/menu/changeInterface.awk /etc/network/interfaces device=${netadapter} mode=static action=add address=${ip} netmask=${netmask} "dns=${nameservers}" "dnssearch=${search}" gateway=0.0.0.0 >/etc/network/interfaces2;
+    awk -f /loginvsi/bin/changeInterface.awk /etc/network/interfaces device=${netadapter} mode=static action=add address=${ip} netmask=${netmask} "dns=${nameservers}" "dnssearch=${search}" gateway=0.0.0.0 >/etc/network/interfaces2;
   else 
-    awk -f /loginvsi/menu/changeInterface.awk /etc/network/interfaces device=${netadapter} mode=static action=add address=${ip} netmask=${netmask} "dns=${nameservers}" "dnssearch=${search}" gateway=${gateway} >/etc/network/interfaces2;
+    awk -f /loginvsi/bin/changeInterface.awk /etc/network/interfaces device=${netadapter} mode=static action=add address=${ip} netmask=${netmask} "dns=${nameservers}" "dnssearch=${search}" gateway=${gateway} >/etc/network/interfaces2;
   fi 
   
   rm /etc/network/interfaces;mv /etc/network/interfaces2 /etc/network/interfaces;
@@ -58,7 +58,7 @@ else
         route del default &>/dev/null
         route add default gw $gateway
         sed -i '/gateway/d' /etc/network/interfaces
-        awk -f /loginvsi/menu/changeInterface.awk /etc/network/interfaces device=${netadapter} mode=static action=add address=${ip} netmask=${netmask} "dns=${nameservers}" "dnssearch=${search}" gateway=${gateway} >/etc/network/interfaces2;
+        awk -f /loginvsi/bin/changeInterface.awk /etc/network/interfaces device=${netadapter} mode=static action=add address=${ip} netmask=${netmask} "dns=${nameservers}" "dnssearch=${search}" gateway=${gateway} >/etc/network/interfaces2;
         rm /etc/network/interfaces;mv /etc/network/interfaces2 /etc/network/interfaces;
       fi
     fi
