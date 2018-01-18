@@ -62,7 +62,7 @@ if [ -d /loginvsi ]; then
     rm -rf /loginvsi
 fi
 
-cp -r -f $SCRIPT_PATH/loginvsi /loginvsi/
+cp -r -f $SCRIPT_PATH/../loginvsi /loginvsi/
 #mkdir /loginvsi
 mkdir /loginvsi/img
 wget -q -O /loginvsi/img/logo_alt.png https://www.loginvsi.com/images/logos/login-vsi-company-logo.png
