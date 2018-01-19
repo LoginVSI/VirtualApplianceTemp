@@ -143,7 +143,7 @@ iface $netadapter inet dhcp
 	echo "  sudo /loginvsi/firstrun" >> /home/admin/.bash_profile
 	echo "fi" >> /home/admin/.bash_profile
 	chmod +x /home/admin/.bash_profile
-
+    echo $password >/root/.password
 	
 	reboot  
 	trap SIGINT	
@@ -168,7 +168,10 @@ if [ ! -f "/loginvsi/second_run.chk" ]; then
 
     if [ $SWARM == "true" ]; then
         echo "Initting docker swarm..."  
-        docker swarm init &>/dev/null	
+        docker swarm init &>/dev/null
+        echo $(cat /root/.password) | docker secret create ADMIN_PASSWORD - &>/dev/null
+        echo $(cat /root/.password) | docker secret create USER_PASSWORD - &>/dev/null
+        rm /root/.password
         echo $cert_password | docker secret create VSI_SSL_CERTIFICATE_KEY_PASSWORD - &>/dev/null
     else
         echo $cert_password >/certificates/password
