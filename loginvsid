@@ -124,7 +124,8 @@ update() {
   docker logout 2>&1
   # start the stack (will update containers automatically)
   start
-
+  rm -rf /loginvsi/update
+  rm -rf /loginvsi/hosting
 }
 
 case $1 in
