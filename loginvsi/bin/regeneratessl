@@ -4,7 +4,7 @@ if [ "$EUID" -ne 0 ]
   exit
 fi
 
-SWARM=$([ -f /root/.swarm ] && echo true)
+SWARM=$([ -f /loginvsi/.swarm ] && echo true)
 
 fqdn=$(hostname).$(domainname)
 

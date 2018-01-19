@@ -1,6 +1,7 @@
 #!/bin/bash
 SCRIPT_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-SWARM=$([ -f /root/.swarm ] && echo true)
+SWARM=$([ -f /loginvsi/.swarm ] && echo true)
+TITLE=$(cat /loginvsi/.title)
 cd /
 export DEBIAN_FRONTEND=noninteractive
 # get latest versions of packages
@@ -102,7 +103,8 @@ chmod +x /loginvsi/bin/*
 echo "admin:admin" | chpasswd
 cp $SCRIPT_PATH/../newonly/issue /etc/
 cp $SCRIPT_PATH/../newonly/hosts /etc/
-echo "This system is not yet configured, please logon with username: admin and password: admin" >> /etc/issue
+echo "Welcome to $TITLE
+This system is not yet configured, please logon with username: admin and password: admin" > /etc/issue
 
 echo '#!/bin/sh
 [ -r /etc/lsb-release ] && . /etc/lsb-release
@@ -112,7 +114,7 @@ if [ -z "$DISTRIB_DESCRIPTION" ] && [ -x /usr/bin/lsb_release ]; then
         DISTRIB_DESCRIPTION=$(lsb_release -s -d)
 fi
 
-printf "Welcome to {{TITLE}}\n"
+printf "Welcome to %s\n" "$TITLE"
 printf "%s (%s %s %s)\n" "$DISTRIB_DESCRIPTION" "$(uname -o)" "$(uname -r)" "$(uname -m)"
 
 ' > /etc/update-motd.d/00-header
