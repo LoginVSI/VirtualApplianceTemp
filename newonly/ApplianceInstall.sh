@@ -1,6 +1,6 @@
 #!/bin/bash
 SCRIPT_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-SWARM="{{SWARM}}"
+SWARM=$([ -f /root/.swarm ] && echo true)
 cd /
 export DEBIAN_FRONTEND=noninteractive
 # get latest versions of packages

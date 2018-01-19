@@ -1,5 +1,5 @@
 #!/bin/bash
-SWARM="{{SWARM}}"
+SWARM=$([ -f /root/.swarm ] && echo true)
 # add first_run script
 netadapters=$(ip -o link show | while read -r num dev fam mtulabel mtusize qlabel queu statelabel state modelabel mode grouplabel group qlenlabel qlen maclabel mac brdlabel brcast; do 
         if [[ ${mac} != brd && ${mac} != 00:00:00:00:00:00 && ${dev} != br-*  && ${dev} != veth* ]]; then

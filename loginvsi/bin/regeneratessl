@@ -4,6 +4,7 @@ if [ "$EUID" -ne 0 ]
   exit
 fi
 
+SWARM=$([ -f /root/.swarm ] && echo true)
 
 fqdn=$(hostname).$(domainname)
 
@@ -17,12 +18,19 @@ sed -i '/SSL_CERTIFICATE_PATH=/d' /loginvsi/.env
 echo "SSL_CERTIFICATE_KEY_PATH=/certificates/${fqdn}.key" >>/loginvsi/.env
 echo "SSL_CERTIFICATE_PATH=/certificates/${fqdn}.crt" >>/loginvsi/.env
 
-# Remove and recreate the secrets
-docker service rm VSI_gateway &>/dev/null
-docker secret rm VSI_SSL_CERTIFICATE_KEY_PASSWORD &>/dev/null
-docker secret rm VSI_VSI_SSL_CERTIFICATE &>/dev/null
-docker secret rm VSI_VSI_SSL_CERTIFICATE_KEY &>/dev/null
-echo $cert_password | docker secret create VSI_SSL_CERTIFICATE_KEY_PASSWORD - &>/dev/null
+ if [ $SWARM == "true" ]; then
+      # Remove and recreate the secrets
+      docker service rm VSI_gateway &>/dev/null
+      docker secret rm VSI_SSL_CERTIFICATE_KEY_PASSWORD &>/dev/null
+      docker secret rm VSI_VSI_SSL_CERTIFICATE &>/dev/null
+      docker secret rm VSI_VSI_SSL_CERTIFICATE_KEY &>/dev/null
+      echo $cert_password | docker secret create VSI_SSL_CERTIFICATE_KEY_PASSWORD - &>/dev/null
+    else
+        echo $cert_password >/certificates/password
+        echo "SSL_CERTIFICATE_KEY_PASSWORD_PATH=/certificates/password" >>/loginvsi/.env
+    fi
+
+
 
 #restart portainer and the gateway
 docker rm -f portainer &>/dev/null
