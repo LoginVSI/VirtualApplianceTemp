@@ -131,8 +131,8 @@ update() {
   echo $(cat /root/.play) | base64 -d | docker login -u vsiplayaccount --password-stdin
   docker-compose pull 2>&1
   docker logout 2>&1
-  # start the stack (will update containers automatically)
-  start
+
+  loginvsid start
   rm -rf /loginvsi/update
   rm -rf /loginvsi/hosting
 }
