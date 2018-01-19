@@ -59,9 +59,7 @@ docker logout 2>&1
 
 
 
-if [ -d /loginvsi ]; then
-    rm -rf /loginvsi
-fi
+
 
 cp -r -f $SCRIPT_PATH/../loginvsi /loginvsi/
 #mkdir /loginvsi
