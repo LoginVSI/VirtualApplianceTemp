@@ -95,6 +95,7 @@ update() {
 
   # copy loginvsid.service and loginvsid
   cp -f update/loginvsid /usr/bin/
+  sed -i "s,{{SWARM}},$SWARM," /usr/bin/loginvsid
   cp -f update/loginvsid.service /etc/systemd/system/
   
   chmod +x /usr/bin/loginvsid
