@@ -20,6 +20,8 @@ start() {
     docker run -d -p 9000:9000 --restart=always -v /loginvsi/img:/images -v /certificates:/certs -v /var/run/docker.sock:/var/run/docker.sock -v /opt/portainer:/data --name portainer portainer/portainer --ssl --sslkey /certs/${fqdn}.key.un --sslcert /certs/${fqdn}.crt --admin-password $ADMINPASS -H unix:///var/run/docker.sock  
   fi
   sed -i '/ALLOWED_CLIENT_URLS=/d' /loginvsi/.env
+  sed -i '/COMPOSE_PROJECT_NAME=/d' /loginvsi/.env
+  echo COMPOSE_PROJECT_NAME=VSI >>/loginvsi/.env
   echo ALLOWED_CLIENT_URLS=https://$(hostname).$(domainname) >>/loginvsi/.env
   if [ $SWARM == "true" ]; then
     export $(cat .env); docker stack deploy --resolve-image never --compose-file ./docker-compose.yml VSI &>/dev/null
