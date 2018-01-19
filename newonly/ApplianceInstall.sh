@@ -61,7 +61,7 @@ docker logout 2>&1
 
 
 
-cp -r -f $SCRIPT_PATH/../loginvsi /loginvsi/
+cp -r -f $SCRIPT_PATH/../loginvsi/* /loginvsi/
 #mkdir /loginvsi
 mkdir /loginvsi/img
 wget -q -O /loginvsi/img/logo_alt.png https://www.loginvsi.com/images/logos/login-vsi-company-logo.png
@@ -99,7 +99,6 @@ chmod +x /loginvsi/menu/*
 chmod +x /loginvsi/bin/*
 
 echo "admin:admin" | chpasswd
-cp $SCRIPT_PATH/../newonly/issue /etc/
 cp $SCRIPT_PATH/../newonly/hosts /etc/
 echo "Welcome to $TITLE
 This system is not yet configured, please logon with username: admin and password: admin" > /etc/issue
