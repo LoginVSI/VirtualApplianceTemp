@@ -24,7 +24,7 @@ start() {
   echo COMPOSE_PROJECT_NAME=VSI >>/loginvsi/.env
   echo ALLOWED_CLIENT_URLS=https://$(hostname).$(domainname) >>/loginvsi/.env
   if [ $SWARM == "true" ]; then
-    export $(cat .env); docker stack deploy --resolve-image never --compose-file ./docker-compose.yml VSI &>/dev/null
+    export $(cat .env); docker stack deploy --resolve-image never --compose-file ./docker-compose.yml VSI
     sleep 5 &>/dev/null
     TOTAL=$(docker stack services VSI --format "{{.Replicas}}" | wc -l)
   else
