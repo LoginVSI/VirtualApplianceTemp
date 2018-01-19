@@ -84,6 +84,12 @@ status() {
 
 update() {
   cd /loginvsi
+  if [ -d /loginvsi/update ]; then
+    rm -rf /loginvsi/update
+  fi
+  if [ -d /loginvsi/hosting ]; then
+    rm -rf /loginvsi/hosting
+  fi 
   # Get the hosting and appliance repo's
   git clone https://github.com/LoginVSI/VirtualAppliance.git update
   git clone -b stable https://github.com/LoginVSI/Hosting.git hosting
