@@ -23,7 +23,7 @@ for netadapter in $(echo $netadapters); do
         fi       
     done
     )
-    ips+=";$ip" 
+    allowed_ips+=";https://$ip" 
 done
 
 start() {
@@ -38,7 +38,7 @@ start() {
   sed -i '/ALLOWED_CLIENT_URLS=/d' /loginvsi/.env
   sed -i '/COMPOSE_PROJECT_NAME=/d' /loginvsi/.env
   echo COMPOSE_PROJECT_NAME=VSI >>/loginvsi/.env
-  echo ALLOWED_CLIENT_URLS=https://$fqdn$ips >>/loginvsi/.env
+  echo ALLOWED_CLIENT_URLS=https://$fqdn$allowed_ips >>/loginvsi/.env
   if [ $SWARM == "true" ]; then
     export $(cat .env); docker stack deploy --resolve-image never --compose-file ./docker-compose.yml VSI
     sleep 5 &>/dev/null
