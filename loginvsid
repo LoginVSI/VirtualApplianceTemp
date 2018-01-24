@@ -10,6 +10,22 @@
 ### END INIT INFO
 SWARM=$([ -f /loginvsi/.swarm ] && echo true)
 
+netadapters=$(ip -o link show | while read -r num dev fam mtulabel mtusize qlabel queu statelabel state modelabel mode grouplabel group qlenlabel qlen maclabel mac brdlabel brcast; do 
+        if [[ ${mac} != brd && ${mac} != 00:00:00:00:00:00 && ${dev} != br-*  && ${dev} != veth* ]]; then
+            echo ${dev%/*} | awk '{split($1,n,":");print n[1]}'; 
+        fi     
+    done
+    )   
+for netadapter in $(echo $netadapters); do
+    ip=$(ip -o addr show $netadapter primary scope global | while read -r num dev fam addr rest; do 
+        if [[ ${dev} != docker* ]]; then
+            echo ${addr%/*}; 
+        fi       
+    done
+    )
+    ips+=";$ip" 
+done
+
 start() {
   export fqdn=$(hostname).$(domainname)
   cd /loginvsi
@@ -22,7 +38,7 @@ start() {
   sed -i '/ALLOWED_CLIENT_URLS=/d' /loginvsi/.env
   sed -i '/COMPOSE_PROJECT_NAME=/d' /loginvsi/.env
   echo COMPOSE_PROJECT_NAME=VSI >>/loginvsi/.env
-  echo ALLOWED_CLIENT_URLS=https://$(hostname).$(domainname) >>/loginvsi/.env
+  echo ALLOWED_CLIENT_URLS=https://$fqdn$ips >>/loginvsi/.env
   if [ $SWARM == "true" ]; then
     export $(cat .env); docker stack deploy --resolve-image never --compose-file ./docker-compose.yml VSI
     sleep 5 &>/dev/null
