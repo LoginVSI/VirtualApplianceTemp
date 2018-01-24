@@ -10,7 +10,7 @@ color:selbar:lightgray:black
 #Define the main menu:
 preproc: /loginvsi/menu/getversion
 
-menu:main:Maintenance Menu
+menu:main:Maintenance Menu, Dennis is awesomely awkward
 	exit:Logout
 	exec:Reboot::sudo reboot
 	nop
