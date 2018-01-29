@@ -39,7 +39,7 @@ start() {
     echo "ApplianceManagement container already exists, not recreating.."
   else
     ADMINPASS='{{ADMIN_PASS}}'
-    docker run -d -p 8000:80 --restart=always --name -v /certificates:/certs appliancemanagement loginvsi/appliancemanagement /certs/${fqdn}.key.un /certs/${fqdn}.crt --admin-password $ADMINPASS  
+    docker run -d -p 8000:80 --restart=always --name appliancemanagement loginvsi/appliancemanagement --admin-password $ADMINPASS
   fi
   sed -i '/ALLOWED_CLIENT_URLS=/d' /loginvsi/.env
   sed -i '/COMPOSE_PROJECT_NAME=/d' /loginvsi/.env
