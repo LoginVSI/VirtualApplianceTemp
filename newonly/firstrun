@@ -174,7 +174,7 @@ if [ ! -f "/loginvsi/second_run.chk" ]; then
         rm /root/.password
         echo $cert_password | docker secret create VSI_SSL_CERTIFICATE_KEY_PASSWORD - &>/dev/null
         echo $cert_password | docker secret create APPLIANCEMANAGEMENT_PFX_PASSWORD - &>/dev/null
-        cat /certificates/${fqdn}.pfx | docker secret create APPLIANCEMANAGEMENT_PFX - &>/dev/null
+        echo $(cat /certificates/${fqdn}.pfx) | docker secret create APPLIANCEMANAGEMENT_PFX - &>/dev/null
     else
         echo $cert_password >/certificates/password
         echo "SSL_CERTIFICATE_KEY_PASSWORD_PATH=/certificates/password" >>/loginvsi/.env
