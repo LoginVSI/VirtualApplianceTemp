@@ -1,0 +1,34 @@
+#!/bin/bash
+while $true 
+do
+    instruction=$(docker exec -it vsi_mgmt cat appliancerun)
+      case $instruction in
+        regenerateselfsignedcerts)
+            echo "$(date -Iseconds) Regenerating self-signed certificates..." >> /var/log/vsi_mgmt
+            /loginvsi/bin/regeneratessl
+            docker exec -it vsi_mgmt echo "done" >appliancerun
+        ;;
+        importuserdefinedcerts)
+            echo "$(date -Iseconds) Starting import of user defined certificates..." >> /var/log/vsi_mgmt
+            echo "$(date -Iseconds) Getting certificates locations from docker container..." >> /var/log/vsi_mgmt
+            crt=$(docker exec -it vsi_mgmt [ -f crt ] && cat crt)
+            key=$(docker exec -it vsi_mgmt [ -f key ] && cat key)
+            password=$(docker exec -it vsi_mgmt [ -f password ] && password)
+            #ca=$(docker exec -it vsi_mgmt [ -f ca ] && cat ca)
+            if [ -z $crt ] || [ -z $key ] || [ -z $password ]; then
+                echo "$(date -Iseconds) Error importing user defined certificates: crt, key or password was empty" >> /var/log/vsi_mgmt
+            else
+            echo "$(date -Iseconds) Copying user defined certificates from docker container..." >> /var/log/vsi_mgmt
+            docker cp vsi_mgmt:$crt /certificates/usercertificate.crt
+            docker cp vsi_mgmt:$key /certificates/usercertificate.key
+            #docker cp vsi_mgmt:$ca /certificates/ca.crt
+            echo "$(date -Iseconds) Importing user defined certificates..." >> /var/log/vsi_mgmt
+            /loginvsi/bin/importuserdefinedcerts /certificates/usercertificate.crt /certificates/usercertificate.key $password
+            docker exec -it vsi_mgmt echo "done" >appliancerun
+        ;;
+        *)
+        # default do nothing
+        ;;
+    esac
+    sleep 10     
+done
