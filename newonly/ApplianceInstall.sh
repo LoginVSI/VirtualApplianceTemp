@@ -54,6 +54,7 @@ docker pull loginvsi/appliancemaintenance 2>&1
 
 cd /dockerrepo/latest/Production/InternalDB
 version=$(cat docker-compose.yml | grep "Version__Number" | cut -d':' -f2 | cut -d"'" -f2)
+echo $version >/loginvsi/.version
 
 docker-compose pull  2>&1
 
@@ -146,5 +147,3 @@ rm -rf /home/admin/*
 rm -rf /home/admin/.bash_history
 rm -rf /root/.bash_history
 rm -rf /root/.ssh
-
-echo $version
