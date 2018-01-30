@@ -147,4 +147,4 @@ rm -rf /home/admin/.bash_history
 rm -rf /root/.bash_history
 rm -rf /root/.ssh
 
-return $version
+echo $version
