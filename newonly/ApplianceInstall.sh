@@ -1,6 +1,5 @@
 #!/bin/bash
 SCRIPT_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-SWARM=$([ -f /loginvsi/.swarm ] && echo true)
 TITLE=$(cat /loginvsi/.title)
 cd /
 export DEBIAN_FRONTEND=noninteractive
@@ -51,8 +50,11 @@ chmod 700 /root/.play
 echo $(cat /root/.play) | base64 -d | docker login -u vsiplayaccount --password-stdin
 docker pull portainer/portainer 2>&1
 docker pull httpd:2.4-alpine 2>&1
+docker pull loginvsi/appliancemaintenance 2>&1
 
-cd /dockerrepo/latest/Production/StandaloneInternalDB
+cd /dockerrepo/latest/Production/InternalDB
+version=$(cat docker-compose.yml | grep "Version__Number" | cut -d':' -f2 | cut -d"'" -f2)
+
 docker-compose pull  2>&1
 
 docker logout 2>&1
@@ -66,11 +68,7 @@ cp -r -f $SCRIPT_PATH/../loginvsi/* /loginvsi/
 mkdir /loginvsi/img
 wget -q -O /loginvsi/img/logo_alt.png https://www.loginvsi.com/images/logos/login-vsi-company-logo.png
 cp /loginvsi/img/logo_alt.png /loginvsi/img/logo.png
-if [ $SWARM == "true" ]; then
-    cp -r "/dockerrepo/latest/Production/InternalDB/docker-compose.yml" /loginvsi/
-else
-    cp -r "/dockerrepo/latest/Production/StandaloneInternalDB/docker-compose.yml" /loginvsi/
-fi
+cp -r "/dockerrepo/latest/Production/InternalDB/docker-compose.yml" /loginvsi/
 
 rm -rf /dockerrepo
 
@@ -148,3 +146,5 @@ rm -rf /home/admin/*
 rm -rf /home/admin/.bash_history
 rm -rf /root/.bash_history
 rm -rf /root/.ssh
+
+return $version

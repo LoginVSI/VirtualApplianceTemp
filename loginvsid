@@ -8,7 +8,6 @@
 # Short-Description: loginvsid
 # Description:       loginvsid
 ### END INIT INFO
-SWARM=$([ -f /loginvsi/.swarm ] && echo true)
 
 netadapters=$(ip -o link show | while read -r num dev fam mtulabel mtusize qlabel queu statelabel state modelabel mode grouplabel group qlenlabel qlen maclabel mac brdlabel brcast; do 
         if [[ ${mac} != brd && ${mac} != 00:00:00:00:00:00 && ${dev} != br-*  && ${dev} != veth* ]]; then
@@ -42,31 +41,22 @@ start() {
   #  ADMINPASS='{{ADMIN_PASS}}'
   #  docker run -d -p 8000:80 --restart=always --name appliancemanagement loginvsi/appliancemanagement $ADMINPASS
   #fi
-  
+
   sed -i '/ALLOWED_CLIENT_URLS=/d' /loginvsi/.env
   sed -i '/COMPOSE_PROJECT_NAME=/d' /loginvsi/.env
   echo COMPOSE_PROJECT_NAME=loginvsi >>/loginvsi/.env
   echo ALLOWED_CLIENT_URLS=https://$fqdn$allowed_ips >>/loginvsi/.env
-  if [ $SWARM == "true" ]; then
-    export $(cat .env); docker stack deploy --resolve-image never --compose-file ./docker-compose.yml VSI
-    sleep 5 &>/dev/null
-    TOTAL=$(docker stack services VSI --format "{{.Replicas}}" | wc -l)
-  else
-    docker-compose up -d
-    sleep 5 &>/dev/null
-    TOTAL=$(docker ps -qa -f name=loginvsi_ | wc -l)
-  fi
   
+  export $(cat .env); docker stack deploy --resolve-image never --compose-file ./docker-compose.yml VSI
+  sleep 5 &>/dev/null
+  TOTAL=$(docker stack services VSI --format "{{.Replicas}}" | wc -l)
+
   MAXCOUNT=30
   COUNT=0
   while [ $COUNT -le $MAXCOUNT ];
   do    
-    COUNT=$((COUNT+1))
-    if [ $SWARM != "true" ]; then
-      RUNNING=$(docker ps -q -f name=loginvsi_ -f status=running | wc -l)
-    else
-      RUNNING=$(docker stack services VSI --format "{{.Replicas}}" | grep "1/1" | wc -l)
-    fi
+    COUNT=$((COUNT+1))    
+    RUNNING=$(docker stack services VSI --format "{{.Replicas}}" | grep "1/1" | wc -l)    
     if [ $TOTAL -eq $RUNNING ]; then
       printf "Starting LoginVSI services: \e[32m[DONE]\e[39m \r\n" 
       DONE="true" 
@@ -80,17 +70,13 @@ start() {
     echo "Starting services timedout after $MAXCOUNT seconds"
   else
     if [ -f /certificates/CA.crt ]; then
-      echo "Copying CA.crt to contentDelivery..."
-      if [ $SWARM == "true" ]; then
-        services=$(docker service ps -q VSI_contentdelivery)
-        for f in $services; do
-          node=$(docker inspect --format "{{.NodeID}}" $f)
-          container=$(docker inspect --format "{{.Status.ContainerStatus.ContainerID}}" $f)
-          docker cp /certificates/CA.crt $container:/app/wwwroot/content
-        done
-      else
-        docker cp /certificates/CA.crt loginvsi_contentdelivery_1:/app/wwwroot/content
-      fi
+      echo "Copying CA.crt to contentDelivery..."      
+      services=$(docker service ps -q VSI_contentdelivery)
+      for f in $services; do
+        node=$(docker inspect --format "{{.NodeID}}" $f)
+        container=$(docker inspect --format "{{.Status.ContainerStatus.ContainerID}}" $f)
+        docker cp /certificates/CA.crt $container:/app/wwwroot/content
+      done      
     fi    
   fi
 }
@@ -106,12 +92,8 @@ restart() {
   start
 }
 
-status() {
-   if [ $SWARM != "true" ]; then
-      docker ps -a -f name=loginvsi_
-    else
-      docker service ls -f name=VSI_
-    fi
+status() {   
+  docker service ls -f name=VSI_   
 }
 
 update() {

@@ -1,5 +1,4 @@
 #!/bin/bash
-SWARM=$([ -f /loginvsi/.swarm ] && echo true)
 TITLE=$(cat /loginvsi/.title)
 # add first_run script
 netadapters=$(ip -o link show | while read -r num dev fam mtulabel mtusize qlabel queu statelabel state modelabel mode grouplabel group qlenlabel qlen maclabel mac brdlabel brcast; do 
@@ -166,20 +165,16 @@ if [ ! -f "/loginvsi/second_run.chk" ]; then
     echo "SSL_CERTIFICATE_PATH=/certificates/${fqdn}.crt" >>/loginvsi/.env
     echo "GATEWAY_PORT=443" >>/loginvsi/.env
 
-    if [ $SWARM == "true" ]; then
-        echo "Initting docker swarm..."  
-        docker swarm init &>/dev/null
-        echo $(cat /root/.password) | docker secret create ADMIN_PASSWORD - &>/dev/null
-        echo $(cat /root/.password) | docker secret create USER_PASSWORD - &>/dev/null
-        rm /root/.password
-        echo $cert_password | docker secret create VSI_SSL_CERTIFICATE_KEY_PASSWORD - &>/dev/null
-        echo $cert_password | docker secret create APPLIANCEMANAGEMENT_PFX_PASSWORD - &>/dev/null
-        echo $(cat /certificates/${fqdn}.pfx) | docker secret create APPLIANCEMANAGEMENT_PFX - &>/dev/null
-    else
-        echo $cert_password >/certificates/password
-        echo "SSL_CERTIFICATE_KEY_PASSWORD_PATH=/certificates/password" >>/loginvsi/.env
-    fi
-
+    
+    echo "Initting docker swarm..."  
+    docker swarm init &>/dev/null
+    echo $(cat /root/.password) | docker secret create ADMIN_PASSWORD - &>/dev/null
+    echo $(cat /root/.password) | docker secret create USER_PASSWORD - &>/dev/null
+    rm /root/.password
+    echo $cert_password | docker secret create VSI_SSL_CERTIFICATE_KEY_PASSWORD - &>/dev/null
+    echo $cert_password | docker secret create APPLIANCEMANAGEMENT_PFX_PASSWORD - &>/dev/null
+    echo $(cat /certificates/${fqdn}.pfx) | docker secret create APPLIANCEMANAGEMENT_PFX - &>/dev/null
+    
     # create data volume folders for the dbs
     mkdir /loginvsi/data
     echo "DB_ROOT=/loginvsi/data" >>/loginvsi/.env
