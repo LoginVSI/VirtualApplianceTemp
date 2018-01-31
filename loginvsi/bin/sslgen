@@ -211,7 +211,7 @@ build() {
   mv ${OUTPATH}${CN}.key.enc ${OUTPATH}${CN}.key
 
   #create pfx, used by maintenance menu
-  openssl pkcs12 -export -out ${CN}.pfx -inkey ${OUTPATH}${CN}.key.un -in ${OUTPATH}${CN}.crt -certfile ${OUTPATH}CA.crt -passout:$PASSWORD
+  openssl pkcs12 -export -out ${OUTPATH}${CN}.pfx -inkey ${OUTPATH}${CN}.key.un -in ${OUTPATH}${CN}.crt -certfile ${OUTPATH}CA.crt -passout pass:$PASSWORD
 }
 
 checkVariables

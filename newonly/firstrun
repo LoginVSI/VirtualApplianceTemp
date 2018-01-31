@@ -132,7 +132,7 @@ iface $netadapter inet dhcp
     
 	
 	adminpass=$(docker run --rm httpd:2.4-alpine htpasswd -nbB admin ${password} | cut -d ":" -f 2)
-	sed -i s,{{ADMIN_PASS}},${adminpass}, /usr/bin/loginvsid
+	sed -i 's,{{ADMIN_PASS}},${adminpass},g' /usr/bin/loginvsid
 	
 	touch -f /loginvsi/first_run.chk
 	
