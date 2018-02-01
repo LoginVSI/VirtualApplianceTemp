@@ -116,7 +116,7 @@ update() {
   # copy loginvsid.service and loginvsid
   currentpass=$(cat /usr/bin/loginvsid | grep "ADMINPASS=" | cut -d':' -f2 | cut -d"'" -f2) | tail -n1
   cp -f update/loginvsid /usr/bin/
-  sed -i 's,{{ADMIN_PASS}},${currentpass},g' /usr/bin/loginvsid
+  sed -i "s,{{ADMIN_PASS}},${currentpass},g" /usr/bin/loginvsid
   cp -f update/loginvsid.service /etc/systemd/system/
   
   chmod +x /usr/bin/loginvsid
