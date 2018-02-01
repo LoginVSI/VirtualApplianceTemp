@@ -30,9 +30,8 @@ start() {
   cd /loginvsi
   if [ ! -z $(docker ps -a -f name=portainer --format "{{.Image}}") ]; then
     echo "Portainer container already exists, not recreating.."
-  else
-    ADMINPASS='{{ADMIN_PASS}}'
-    docker run -d -p 9000:9000 --restart=always -v /loginvsi/img:/images -v /certificates:/certs -v /var/run/docker.sock:/var/run/docker.sock -v /opt/portainer:/data --name portainer portainer/portainer --ssl --sslkey /certs/${fqdn}.key.un --sslcert /certs/${fqdn}.crt --admin-password $ADMINPASS -H unix:///var/run/docker.sock  
+  else    
+    docker run -d -p 9000:9000 --restart=always -v /loginvsi/img:/images -v /certificates:/certs -v /var/run/docker.sock:/var/run/docker.sock -v /opt/portainer:/data --name portainer portainer/portainer --ssl --sslkey /certs/${fqdn}.key.un --sslcert /certs/${fqdn}.crt --admin-password $(cat /root/.vapp | base64 -d) -H unix:///var/run/docker.sock  
   fi
   
   #if [ ! -z $(docker ps -a -f name=appliancemanagement --format "{{.Image}}") ]; then
@@ -113,9 +112,7 @@ update() {
   cp -f -r update/loginvsi/* /loginvsi/
 
   # copy loginvsid.service and loginvsid
-  currentpass=$(cat /usr/bin/loginvsid | grep "ADMINPASS=" | cut -d'=' -f2 | cut -d"'" -f2 | head -n1)
   cp -f update/loginvsid /usr/bin/
-  sed -i "s,{{ADMIN_PASS}},${currentpass},g" /usr/bin/loginvsid
   cp -f update/loginvsid.service /etc/systemd/system/
   
   chmod +x /usr/bin/loginvsid
