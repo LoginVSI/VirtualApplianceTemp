@@ -119,8 +119,8 @@ iface $netadapter inet dhcp
     # update hostname
     echo "$new_hostname" > /etc/hostname
     echo "kernel.domainname=$new_domain" >>/etc/sysctl.conf
-    sed -i "s@loginvsi-ng.loginvsi-ng@$fqdn@g" /etc/hosts
-    sed -i "s@loginvsi-ng@$new_hostname@g" /etc/hosts
+    sed -i "s@{{fqdn}}@$fqdn@g" /etc/hosts
+    sed -i "s@{{hostname}}@$new_hostname@g" /etc/hosts
     
     hostname "$new_hostname"
 	

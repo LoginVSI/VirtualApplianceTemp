@@ -1,5 +1,5 @@
-127.0.0.1	localhost loginvsi-ng loginvsi-ng.loginvsi-ng
-127.0.1.1	loginvsi-ng.loginvsi-ng
+127.0.0.1	localhost {{hostname}} {{fqdn}}
+127.0.1.1	{{fqdn}}
 # The following lines are desirable for IPv6 capable hosts
 ::1     localhost ip6-localhost ip6-loopback
 ff02::1 ip6-allnodes
