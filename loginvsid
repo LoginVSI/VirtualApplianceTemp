@@ -37,8 +37,7 @@ start() {
   
   #if [ ! -z $(docker ps -a -f name=appliancemanagement --format "{{.Image}}") ]; then
   #  echo "ApplianceManagement container already exists, not recreating.."
-  #else
-  #  ADMINPASS='{{ADMIN_PASS}}'
+  #else  
   #  docker run -d -p 8000:80 --restart=always --name appliancemanagement loginvsi/appliancemanagement $ADMINPASS
   #fi
 
