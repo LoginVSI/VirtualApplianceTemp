@@ -132,7 +132,6 @@ iface $netadapter inet dhcp
     
 	
 	adminpass=$(docker run --rm httpd:2.4-alpine htpasswd -nbB admin ${password} | cut -d ":" -f 2)
-	sed -i "s,{{ADMIN_PASS}},${adminpass},g" /usr/bin/loginvsid
 	
 	touch -f /loginvsi/first_run.chk
 	
@@ -142,9 +141,12 @@ iface $netadapter inet dhcp
 	echo "  sudo /loginvsi/firstrun" >> /home/admin/.bash_profile
 	echo "fi" >> /home/admin/.bash_profile
 	chmod +x /home/admin/.bash_profile
-    echo $password | base64 >/root/.vapp
-	chmod 700 /root/.vapp
-    
+    echo $password | base64 >/root/.password
+    echo $adminpass >/root/.portainer
+
+	chmod 700 /root/.password
+    chmod 700 /root/.portainer
+
 	reboot  
 	trap SIGINT	
 fi 
@@ -169,8 +171,9 @@ if [ ! -f "/loginvsi/second_run.chk" ]; then
     
     echo "Initting docker swarm..."  
     docker swarm init &>/dev/null
-    echo $(cat /root/.vapp | base64 -d) | docker secret create ADMIN_PASSWORD - &>/dev/null
-    echo $(cat /root/.vapp | base64 -d) | docker secret create USER_PASSWORD - &>/dev/null    
+    echo $(cat /root/.password | base64 -d) | docker secret create ADMIN_PASSWORD - &>/dev/null
+    echo $(cat /root/.password | base64 -d) | docker secret create USER_PASSWORD - &>/dev/null    
+    rm /root/.password
     echo $cert_password | docker secret create VSI_SSL_CERTIFICATE_KEY_PASSWORD - &>/dev/null
     echo $cert_password | docker secret create APPLIANCEMANAGEMENT_PFX_PASSWORD - &>/dev/null
     echo $(cat /certificates/${fqdn}.pfx) | docker secret create APPLIANCEMANAGEMENT_PFX - &>/dev/null
