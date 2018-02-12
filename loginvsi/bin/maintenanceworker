@@ -1,35 +1,44 @@
 #!/bin/bash
-containername="vsi_mgmt"
+services=$(docker service ps -q appliancemanagement)
+for f in $services; do    
+    containername=$(docker inspect --format "{{.Status.ContainerStatus.ContainerID}}" "$f")        
+done      
 while $true 
 do
-    instruction=$(docker exec -it $containername cat appliancerun)
+    instruction=$(docker exec -it "$containername" cat appliancerun | grep -v "No such file" | tr -d '\r')
+    echo $instruction
       case $instruction in
         regenerateselfsignedcerts)
-            echo "$(date -Iseconds) Regenerating self-signed certificates..." >> /var/log/$containername
+            echo "$(date -Iseconds) Regenerating self-signed certificates..." 
             /loginvsi/bin/regeneratessl
-            docker exec -it $containername echo "done" >appliancerun
-        ;;
+            echo "done" >appliancerun
+            docker cp appliancerun $containername:/app
+            rm appliancerun
+            sleep 10
+            ;;
         importuserdefinedcerts)
-            echo "$(date -Iseconds) Starting import of user defined certificates..." >> /var/log/$containername
-            echo "$(date -Iseconds) Getting certificates locations from docker container..." >> /var/log/$containername
-            crt=$(docker exec -it $containername [ -f crt ] && cat crt)
-            key=$(docker exec -it $containername [ -f key ] && cat key)
-            password=$(docker exec -it $containername [ -f password ] && password)
-            #ca=$(docker exec -it vsi_mgmt [ -f ca ] && cat ca)
-            if [ -z $crt ] || [ -z $key ] || [ -z $password ]; then
-                echo "$(date -Iseconds) Error importing user defined certificates: crt, key or password was empty" >> /var/log/$containername
+            echo "$(date -Iseconds) Starting import of user defined certificates..." 
+            echo "$(date -Iseconds) Getting certificates locations from docker container..." 
+            crt=$(docker exec -it "$containername" cat crt | grep -v "No such file" | tr -d '\r')
+            key=$(docker exec -it "$containername" cat key | grep -v "No such file"| tr -d '\r')
+            password=$(docker exec -it "$containername" password | grep -v "No such file"| tr -d '\r')            
+            if [ -z "$crt" ] || [ -z "$key" ] || [ -z "$password" ]; then
+                echo "$(date -Iseconds) Error importing user defined certificates: crt, key or password was empty"
             else
-            echo "$(date -Iseconds) Copying user defined certificates from docker container..." >> /var/log/$containername
-            docker cp $containername:$crt /certificates/usercertificate.crt
-            docker cp $containername:$key /certificates/usercertificate.key
-            #docker cp vsi_mgmt:$ca /certificates/ca.crt
-            echo "$(date -Iseconds) Importing user defined certificates..." >> /var/log/$containername
-            /loginvsi/bin/importuserdefinedcerts /certificates/usercertificate.crt /certificates/usercertificate.key $password
-            docker exec -it $containername echo "done" >appliancerun
-        ;;
+                echo "$(date -Iseconds) Copying user defined certificates from docker container..." 
+                docker cp $containername:$crt /certificates/usercertificate.crt
+                docker cp $containername:$key /certificates/usercertificate.key            
+                echo "$(date -Iseconds) Importing user defined certificates..." 
+                /loginvsi/bin/importuserdefinedcerts /certificates/usercertificate.crt /certificates/usercertificate.key $password
+                echo "done" >appliancerun
+                docker cp appliancerun $containername:/app
+                rm appliancerun
+                sleep 10
+            fi
+            ;;
         *)
-        # default do nothing
-        ;;
+            echo "nothing to do"
+            ;;
     esac
     sleep 10     
 done

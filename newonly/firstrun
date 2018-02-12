@@ -181,7 +181,7 @@ if [ ! -f "/loginvsi/second_run.chk" ]; then
     rm /root/.password
     echo $cert_password | docker secret create VSI_SSL_CERTIFICATE_KEY_PASSWORD - &>/dev/null
     echo $cert_password | docker secret create APPLIANCEMANAGEMENT_PFX_PASSWORD - &>/dev/null
-    echo $(cat /certificates/${fqdn}.pfx) | docker secret create APPLIANCEMANAGEMENT_PFX - &>/dev/null
+    echo $(cat /certificates/${fqdn}.b64) | docker secret create APPLIANCEMANAGEMENT_PFX - &>/dev/null
     
     # create data volume folders for the dbs
     mkdir /loginvsi/data

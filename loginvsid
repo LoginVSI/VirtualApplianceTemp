@@ -37,7 +37,7 @@ start() {
   #if [ ! -z $(docker ps -a -f name=appliancemanagement --format "{{.Image}}") ]; then
   #  echo "ApplianceManagement container already exists, not recreating.."
   #else  
-  #  docker service create --name appliancemanagement --publish 8000:8000 --secret ADMIN_PASSWORD --secret APPLIANCEMANAGEMENT_PFX --secret APPLIANCEMANAGEMENT_PFX_PASSWORD loginvsi/appliancemanagement
+  #  docker service create --name appliancemanagement --publish 8000:8000 --secret ADMIN_PASSWORD --secret APPLIANCEMANAGEMENT_PFX --secret APPLIANCEMANAGEMENT_PFX_PASSWORD loginvsi/appliancemanagement:stable
   #fi
 
   sed -i '/ALLOWED_CLIENT_URLS=/d' /loginvsi/.env
