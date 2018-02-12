@@ -50,7 +50,7 @@ chmod 700 /root/.play
 echo $(cat /root/.play) | base64 -d | docker login -u vsiplayaccount --password-stdin
 docker pull portainer/portainer 2>&1
 docker pull httpd:2.4-alpine 2>&1
-docker pull loginvsi/appliancemaintenance 2>&1
+docker pull loginvsi/appliancemaintenance:stable 2>&1
 
 cd /dockerrepo/latest/Production/InternalDB
 version=$(cat docker-compose.yml | grep "Version__Number" | cut -d':' -f2 | cut -d"'" -f2)
