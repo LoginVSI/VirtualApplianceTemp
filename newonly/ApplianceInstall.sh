@@ -1,7 +1,7 @@
 #!/bin/bash
 SCRIPT_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 TITLE=$(cat /loginvsi/.title)
-cd /
+cd / || exit
 export DEBIAN_FRONTEND=noninteractive
 # get latest versions of packages
 apt-get -qq update 2>&1
@@ -35,7 +35,7 @@ echo "admin ALL = (ALL:ALL) ALL" >>/etc/sudoers
 curl -sSL https://get.docker.com | sh 2>&1
 
 # install docker-compose
-curl -s -S -L https://github.com/docker/compose/releases/download/1.17.1/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose
+curl -s -S -L https://github.com/docker/compose/releases/download/1.17.1/docker-compose-"$(uname -s)-$(uname -m)" > /usr/local/bin/docker-compose
 chmod +x /usr/local/bin/docker-compose
 
 #dpkg --configure -a
@@ -44,16 +44,16 @@ if [ -d "/dockerrepo" ]; then
     rm -rf /dockerrepo
 fi
 git clone -q -b stable https://github.com/LoginVSI/Hosting /dockerrepo
-cd /dockerrepo/
+cd /dockerrepo/ || exit
 cp -f $SCRIPT_PATH/../.play /root/.play
 chmod 700 /root/.play
-echo $(cat /root/.play) | base64 -d | docker login -u vsiplayaccount --password-stdin
+base64 -d < /root/.play | docker login -u vsiplayaccount --password-stdin
 docker pull portainer/portainer 2>&1
 docker pull httpd:2.4-alpine 2>&1
 docker pull loginvsi/appliancemaintenance:stable 2>&1
 
-cd /dockerrepo/latest/Production/InternalDB
-version=$(cat docker-compose.yml | grep "Version__Number" | cut -d':' -f2 | cut -d"'" -f2)
+cd /dockerrepo/latest/Production/InternalDB || exit
+version=$(grep "Version__Number" < docker-compose.yml | cut -d':' -f2 | cut -d"'" -f2)
 echo $version >/loginvsi/.version
 
 docker-compose pull  2>&1

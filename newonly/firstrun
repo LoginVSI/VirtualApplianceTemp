@@ -97,7 +97,7 @@ iface $netadapter inet dhcp
         do        
             read -ersp " Please enter a new password for admin: " password
             read -ersp " Please confirm the new password: " password2
-            if [ $password != $password2 ]; then
+            if [ "$password" != "$password2" ]; then
                 echo "Passwords do not match, try again..."
             else
                 echo "admin:$password" | chpasswd
@@ -136,20 +136,19 @@ iface $netadapter inet dhcp
 	"  > /etc/issue
     
 	
-	adminpass=$(docker run --rm httpd:2.4-alpine htpasswd -nbB admin ${password} | cut -d ":" -f 2)
+	adminpass=$(docker run --rm httpd:2.4-alpine htpasswd -nbB admin "$password" | cut -d ":" -f 2)
 	
 	touch -f /loginvsi/first_run.chk
 	
 	echo "#!/bin/bash" > /home/admin/.bash_profile
 	echo "if [ ! -f '/loginvsi/second_run.chk' ]; then"  >> /home/admin/.bash_profile
-	echo "  echo ${password} | sudo -S -p '' echo 'Starting LoginVSI configuration tool...'" >> /home/admin/.bash_profile
+	echo "  base64 -d < /home/admin/.password | sudo -S -p '' echo 'Starting LoginVSI configuration tool...'" >> /home/admin/.bash_profile
 	echo "  sudo /loginvsi/firstrun" >> /home/admin/.bash_profile
 	echo "fi" >> /home/admin/.bash_profile
 	chmod +x /home/admin/.bash_profile
-    echo $password | base64 >/root/.password
-    echo $adminpass >/root/.portainer
-
-	chmod 700 /root/.password
+    echo "$password" | base64 >/home/admin/.password
+    echo "$adminpass" >/root/.portainer
+	
     chmod 700 /root/.portainer
 
 	reboot  
@@ -176,12 +175,12 @@ if [ ! -f "/loginvsi/second_run.chk" ]; then
     
     echo "Initting docker swarm..."  
     docker swarm init &>/dev/null
-    echo $(cat /root/.password | base64 -d) | docker secret create ADMIN_PASSWORD - &>/dev/null
-    echo $(cat /root/.password | base64 -d) | docker secret create USER_PASSWORD - &>/dev/null    
-    rm /root/.password
-    echo $cert_password | docker secret create VSI_SSL_CERTIFICATE_KEY_PASSWORD - &>/dev/null
-    echo $cert_password | docker secret create APPLIANCEMANAGEMENT_PFX_PASSWORD - &>/dev/null
-    echo $(cat /certificates/${fqdn}.b64) | docker secret create APPLIANCEMANAGEMENT_PFX - &>/dev/null
+    base64 -d < /home/admin/.password | docker secret create ADMIN_PASSWORD - &>/dev/null
+    base64 -d < /home/admin/.password | docker secret create USER_PASSWORD - &>/dev/null    
+    rm /home/admin/.password
+    echo "$cert_password" | docker secret create VSI_SSL_CERTIFICATE_KEY_PASSWORD - &>/dev/null
+    echo "$cert_password" | docker secret create APPLIANCEMANAGEMENT_PFX_PASSWORD - &>/dev/null
+    docker secret create APPLIANCEMANAGEMENT_PFX - </certificates/$fqdn.b64 &>/dev/null
     
     # create data volume folders for the dbs
     mkdir /loginvsi/data
