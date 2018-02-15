@@ -83,8 +83,16 @@ cp -f $SCRIPT_PATH/sshd_config /etc/ssh/
 
 
 
-echo "loginvsi-ng" > /etc/hostname
-hostname "loginvsi-ng"
+echo "loginpi3" > /etc/hostname
+hostname "loginpi3"
+
+echo "127.0.0.1	localhost loginpi3 loginpi3.local
+    127.0.1.1	loginpi3.local
+    # The following lines are desirable for IPv6 capable hosts
+    ::1     localhost ip6-localhost ip6-loopback
+    ff02::1 ip6-allnodes
+    ff02::2 ip6-allrouters
+" > /etc/hosts
 
 
 echo "#!/bin/bash" > /home/admin/.bash_profile
