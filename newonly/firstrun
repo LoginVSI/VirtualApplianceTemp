@@ -147,7 +147,7 @@ iface $netadapter inet dhcp
 	echo "fi" >> /home/admin/.bash_profile
 	chmod +x /home/admin/.bash_profile
     echo "$password" | base64 >/home/admin/.password
-    echo "$adminpass" >/root/.portainer
+    echo $adminpass >/root/.portainer
 	
     chmod 700 /root/.portainer
 
