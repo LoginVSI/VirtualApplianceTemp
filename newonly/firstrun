@@ -99,6 +99,8 @@ iface $netadapter inet dhcp
             read -ersp " Please confirm the new password: " password2
             if [ "$password" != "$password2" ]; then
                 echo "Passwords do not match, try again..."
+            elif [[ "$password" == *[\"]* ]]; then
+                echo "Password cannot contain a double quote (\") character" 
             else
                 echo "admin:$password" | chpasswd
                 echo "Password updated successfully"
