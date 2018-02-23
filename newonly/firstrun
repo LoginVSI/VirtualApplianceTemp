@@ -239,7 +239,7 @@ if [ ! -f "/loginvsi/second_run.chk" ]; then
 
 	
 trap SIGINT
-
+update-rc.d ssh disable
 reboot    
    
 fi

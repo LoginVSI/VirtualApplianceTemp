@@ -147,7 +147,7 @@ net.ipv6.conf.default.disable_ipv6 = 1
 net.ipv6.conf.lo.disable_ipv6 = 1
 " >>/etc/sysctl.conf
 
-update-rc.d ssh disable
+passwd -dl root &>/dev/null
 
 
 # Cleanup
