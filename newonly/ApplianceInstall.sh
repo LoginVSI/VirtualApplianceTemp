@@ -149,6 +149,29 @@ net.ipv6.conf.lo.disable_ipv6 = 1
 
 passwd -dl root &>/dev/null
 
+netadapters=$(ip -o link show | while read -r num dev fam mtulabel mtusize qlabel queu statelabel state modelabel mode grouplabel group qlenlabel qlen maclabel mac brdlabel brcast; do 
+        if [[ ${mac} != brd && ${mac} != 00:00:00:00:00:00 && ${dev} != br-*  && ${dev} != veth* ]]; then
+            echo ${dev%/*}; 
+        fi     
+    done
+    )
+netadapter=$(echo $netadapters | tail -1 | awk '{split($1,n,":");print n[1]}')
+
+
+echo "
+# This file describes the network interfaces available on your system
+# and how to activate them. For more information, see interfaces(5).
+
+source /etc/network/interfaces.d/*
+
+# The loopback network interface
+auto lo
+iface lo inet loopback
+
+# The primary network interface
+auto $netadapter
+iface $netadapter inet dhcp        
+    " > /etc/network/interfaces
 
 # Cleanup
 rm -rf /home/admin/*
