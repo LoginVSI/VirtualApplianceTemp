@@ -1,6 +1,10 @@
 #!/bin/bash
+HOSTINGREPO="$1"
+HOSTINGBRANCH="$2"
+INITIALHOSTNAME="$3"
 SCRIPT_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 TITLE=$(cat /loginvsi/.title)
+
 cd / || exit
 export DEBIAN_FRONTEND=noninteractive
 # get latest versions of packages
@@ -43,7 +47,7 @@ chmod +x /usr/local/bin/docker-compose
 if [ -d "/dockerrepo" ]; then
     rm -rf /dockerrepo
 fi
-git clone -q -b stable https://github.com/LoginVSI/Hosting /dockerrepo
+git clone -q -b $HOSTINGBRANCH $HOSTINGREPO /dockerrepo
 cd /dockerrepo/ || exit
 cp -f $SCRIPT_PATH/../.play /root/.play
 chmod 700 /root/.play
@@ -83,11 +87,11 @@ cp -f $SCRIPT_PATH/sshd_config /etc/ssh/
 
 
 
-echo "loginpi3" > /etc/hostname
-hostname "loginpi3"
+echo $INITIALHOSTNAME > /etc/hostname
+hostname $INITIALHOSTNAME
 
-echo "127.0.0.1	localhost loginpi3 loginpi3.local
-    127.0.1.1	loginpi3.local
+echo "127.0.0.1	localhost $INITIALHOSTNAME $INITIALHOSTNAME.local
+    127.0.1.1	$INITIALHOSTNAME.local
     # The following lines are desirable for IPv6 capable hosts
     ::1     localhost ip6-localhost ip6-loopback
     ff02::1 ip6-allnodes
