@@ -21,7 +21,7 @@ nameservers=$(echo $(echo "${nameserversarray[@]}"))
 broadcast=$(ip a s dev $netadapter | awk '/inet / {print $4}')
 dnssuffix=$(grep search /etc/resolv.conf | while read -r search suffix; do echo $suffix;done )
 if [ ! -f "/loginvsi/first_run.chk" ]; then
-trap 'echo "You cannot cancel this script"' SIGINT
+trap 'echo "You cannot cancel this script!"' SIGINT
     # check for interactive shell
     if ! grep -q "noninteractive" /proc/cmdline ; then
         stty sane
