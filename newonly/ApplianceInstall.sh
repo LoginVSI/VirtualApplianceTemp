@@ -58,7 +58,7 @@ docker pull loginvsi/appliancemaintenance:stable 2>&1
 
 cd /dockerrepo/latest/Production/InternalDB || exit
 versions=$(grep "Version__Number" < docker-compose.yml | cut -d':' -f2 | cut -d"'" -f2) 
-version=${versions[1]}
+version=${versions[${#versions[@]}-1]}
 echo $version >/loginvsi/.version
 
 docker-compose pull  2>&1
