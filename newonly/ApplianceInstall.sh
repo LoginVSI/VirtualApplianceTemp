@@ -57,7 +57,8 @@ docker pull httpd:2.4-alpine 2>&1
 docker pull loginvsi/appliancemaintenance:stable 2>&1
 
 cd /dockerrepo/latest/Production/InternalDB || exit
-version=$(grep "Version__Number" < docker-compose.yml | cut -d':' -f2 | cut -d"'" -f2)
+versions=$(grep "Version__Number" < docker-compose.yml | cut -d':' -f2 | cut -d"'" -f2) 
+version=${versions[-1]}
 echo $version >/loginvsi/.version
 
 docker-compose pull  2>&1
