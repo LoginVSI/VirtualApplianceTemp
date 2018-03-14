@@ -40,7 +40,7 @@ menu:troublshoot:Troubleshooting
 	nop:--------------------------
 	exec:Start SSH server:pause:/etc/init.d/ssh start
 	exec:Restart portainer:pause:docker restart portainer
-	exec:Ping:edit,pause:clear;ping ~Address:~
+	exec:Ping:edit,pause:clear;ping -c 10 ~Address:~
 	exec:Show netstat:display:netstat -tuna
 	exec:Show LoginVSI service status:display:loginvsid status
 	exec:Restart LoginVSI services:pause:loginvsid restart
