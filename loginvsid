@@ -60,7 +60,7 @@ start() {
       DONE="true" 
       break
     else
-      printf "Starting LoginVSI services: \e[36m[%s]\e[39m:\r\n" "$RUNNING/$TOTAL"
+      printf "Starting LoginVSI services: \e[36m[%s]\e[39m\r\n" "$RUNNING/$TOTAL"
     fi
     sleep 30 &>/dev/null  
   done
@@ -86,8 +86,15 @@ stop() {
 }
 
 restart() {
-  stop
-  start
+  docker stack rm VSI  
+  printf "Waiting for networks to clear up...\r\n"
+  while [[ ! -z $(docker network ls -qf name=VSI_) ]];
+  do    
+    docker network prune -f &>/dev/null
+    sleep 5
+  done
+ printf "Waiting for networks to clear up... \e[32m[DONE]\e[39m \r\n"
+ start
 }
 
 status() {   
