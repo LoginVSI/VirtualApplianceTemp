@@ -66,16 +66,40 @@ start() {
   done
   if [ -z $DONE ]; then
     echo "Starting services timedout after $MAXCOUNT seconds"
-  else
-    if [ -f /certificates/CA.crt ]; then
-      echo "Copying CA.crt to contentDelivery..."      
-      services=$(docker service ps -q VSI_contentdelivery)
-      for f in $services; do
-        node=$(docker inspect --format "{{.NodeID}}" $f)
-        container=$(docker inspect --format "{{.Status.ContainerStatus.ContainerID}}" $f)
+  else       
+    services=$(docker service ps -q VSI_contentdelivery)
+    for f in $services; do        
+      container=$(docker inspect --format "{{.Status.ContainerStatus.ContainerID}}" $f) # needs to be checked when more then 1 instance of contentdelivery is running
+      if [ -f /certificates/CA.crt ]; then
+        echo "Copying CA.crt to contentDelivery..."      
         docker cp /certificates/CA.crt $container:/app/wwwroot/content
-      done      
-    fi    
+      fi      
+      
+      #echo "Injecting Engine secret"
+      #docker cp $container:/app/wwwroot/content/zip/engine.zip /tmp
+      #unzip -q -j /tmp/engine.zip appsettings.json -d /tmp/engine
+      #enginesecret=$(grep ENGINE_SECRET < /loginvsi/.env | cut -d'=' -f2)
+      #sed -i "/\"Secret\":*./ c\ \"Secret\":\"${enginesecret}\"" /tmp/engine/appsettings.json
+      #cd /tmp/engine
+      #zip -qu /tmp/engine.zip appsettings.json
+      #docker cp /tmp/engine.zip $container:/app/wwwroot/content/zip/engine.zip
+      #cd /loginvsi
+      #rm -rf /tmp/engine*
+
+      echo "Injecting Launcher secret"
+      docker cp $container:/app/wwwroot/content/zip/launcher-win10-x64.zip /tmp
+      unzip -q -j /tmp/launcher-win10-x64.zip appsettings.json -d /tmp/launcher
+      launchersecret=$(grep LAUNCHER_SECRET < /loginvsi/.env | cut -d'=' -f2)
+      sed -i "/\"Secret\":*./ c\ \"Secret\":\"${launchersecret}\"" /tmp/launcher/appsettings.json
+      cd /tmp/launcher
+      zip -qu /tmp/launcher-win10-x64.zip appsettings.json
+      docker cp /tmp/launcher-win10-x64.zip $container:/app/wwwroot/content/zip/launcher-win10-x64.zip
+      cd /loginvsi
+      rm -rf /tmp/launcher*
+    done      
+    
+    
+
   fi
 }
 

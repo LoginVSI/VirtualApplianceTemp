@@ -24,6 +24,8 @@ apt-get -qq -y install \
     /pdmenu.deb \
     software-properties-common \
 	htop \
+    zip \
+    unzip \
     sudo 2>&1
 echo "admin ALL = (ALL:ALL) ALL" >>/etc/sudoers
 #dpkg -i /pdmenu.deb 2>&1
