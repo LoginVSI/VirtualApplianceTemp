@@ -73,29 +73,7 @@ start() {
       if [ -f /certificates/CA.crt ]; then
         echo "Copying CA.crt to contentDelivery..."      
         docker cp /certificates/CA.crt $container:/app/wwwroot/content
-      fi      
-      
-      #echo "Injecting Engine secret"
-      #docker cp $container:/app/wwwroot/content/zip/engine.zip /tmp
-      #unzip -q -j /tmp/engine.zip appsettings.json -d /tmp/engine
-      #enginesecret=$(grep ENGINE_SECRET < /loginvsi/.env | cut -d'=' -f2)
-      #sed -i "/\"Secret\":*./ c\ \"Secret\":\"${enginesecret}\"" /tmp/engine/appsettings.json
-      #cd /tmp/engine
-      #zip -qu /tmp/engine.zip appsettings.json
-      #docker cp /tmp/engine.zip $container:/app/wwwroot/content/zip/engine.zip
-      #cd /loginvsi
-      #rm -rf /tmp/engine*
-
-      echo "Injecting Launcher secret"
-      docker cp $container:/app/wwwroot/content/zip/launcher-win10-x64.zip /tmp
-      unzip -q -j /tmp/launcher-win10-x64.zip appsettings.json -d /tmp/launcher
-      launchersecret=$(grep LAUNCHER_SECRET < /loginvsi/.env | cut -d'=' -f2)
-      sed -i "/\"Secret\":*./ c\ \"Secret\":\"${launchersecret}\"" /tmp/launcher/appsettings.json
-      cd /tmp/launcher
-      zip -qu /tmp/launcher-win10-x64.zip appsettings.json
-      docker cp /tmp/launcher-win10-x64.zip $container:/app/wwwroot/content/zip/launcher-win10-x64.zip
-      cd /loginvsi
-      rm -rf /tmp/launcher*
+      fi            
     done      
     
     

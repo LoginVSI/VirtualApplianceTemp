@@ -184,12 +184,8 @@ if [ ! -f "/loginvsi/second_run.chk" ]; then
     echo "$cert_password" | docker secret create APPLIANCEMANAGEMENT_PFX_PASSWORD - &>/dev/null
     docker secret create APPLIANCEMANAGEMENT_PFX - </certificates/$fqdn.b64 &>/dev/null
     
-    # create engine and launcher secrets
-    launchersecret=$(openssl rand -hex 40 | head -c 40 | tr [:lower:] [:upper:])
-    enginesecret=$(openssl rand -hex 40 |  head -c 40 | tr [:lower:] [:upper:])
-    echo "ENGINE_SECRET=$enginesecret" >>/loginvsi/.env
-    echo "LAUNCHER_SECRET=$launchersecret" >>/loginvsi/.env
-
+    # create launcher secret
+    openssl rand -hex 40 | head -c 40 | tr [:lower:] [:upper:] | docker secret create LAUNCHER_SECRET - &>/dev/null
     # create data volume folders for the dbs
     mkdir /loginvsi/data
     echo "DB_ROOT=/loginvsi/data" >>/loginvsi/.env
