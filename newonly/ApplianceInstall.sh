@@ -2,6 +2,7 @@
 HOSTINGREPO="$1"
 HOSTINGBRANCH="$2"
 INITIALHOSTNAME="$3"
+HOSTINGFOLDER="$4"
 SCRIPT_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 TITLE=$(cat /loginvsi/.title)
 
@@ -58,7 +59,7 @@ docker pull portainer/portainer 2>&1
 docker pull httpd:2.4-alpine 2>&1
 docker pull loginvsi/appliancemaintenance:stable 2>&1
 
-cd /dockerrepo/latest/Production/InternalDB || exit
+cd /dockerrepo/$HOSTINGFOLDER || exit
 version=$(grep "Version__Number" < docker-compose.yml | cut -d':' -f2 | cut -d"'" -f2 | tail -1)
 echo $version >/loginvsi/.version
 
@@ -75,7 +76,7 @@ cp -r -f $SCRIPT_PATH/../loginvsi/* /loginvsi/
 mkdir /loginvsi/img
 wget -q -O /loginvsi/img/logo_alt.png https://www.loginvsi.com/images/logos/login-vsi-company-logo.png
 cp /loginvsi/img/logo_alt.png /loginvsi/img/logo.png
-cp -r "/dockerrepo/latest/Production/InternalDB/docker-compose.yml" /loginvsi/
+cp -r "/dockerrepo/$HOSTINGFOLDER/docker-compose.yml" /loginvsi/
 
 rm -rf /dockerrepo
 
