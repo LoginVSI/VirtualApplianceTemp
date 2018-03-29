@@ -159,10 +159,10 @@ fi
 if [ ! -f "/loginvsi/second_run.chk" ]; then
 	trap 'echo "You cannot cancel this script"' SIGINT
 	echo "Resetting SSH keys..."
-    /etc/init.d/ssh stop &>/dev/null
+    /etc/init.d/ssh stop
     rm -f /etc/ssh/ssh_host_*
-    dpkg-reconfigure openssh-server &>/dev/null
-    /etc/init.d/ssh start &>/dev/null
+    dpkg-reconfigure openssh-server 
+    /etc/init.d/ssh start 
     echo "Generating self-signed certificates..."
 	export fqdn=$(hostname).$(domainname)
 	mkdir /certificates
