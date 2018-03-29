@@ -161,7 +161,7 @@ if [ ! -f "/loginvsi/second_run.chk" ]; then
 	echo "Resetting SSH keys..."
     /etc/init.d/ssh stop
     rm -f /etc/ssh/ssh_host_*
-    dpkg-reconfigure openssh-server 
+    dpkg-reconfigure -f noninteractive openssh-server
     /etc/init.d/ssh start 
     echo "Generating self-signed certificates..."
 	export fqdn=$(hostname).$(domainname)

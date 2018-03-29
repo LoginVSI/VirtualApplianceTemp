@@ -86,7 +86,7 @@ rm /etc/pdmenurc
 cp -f $SCRIPT_PATH/../loginvsid /usr/bin/
 cp -f $SCRIPT_PATH/../loginvsid.service /etc/systemd/system/
 cp -f $SCRIPT_PATH/firstrun /loginvsi/
-cp -f $SCRIPT_PATH/sshd_config /etc/ssh/
+#cp -f $SCRIPT_PATH/sshd_config /etc/ssh/
 
 
 
