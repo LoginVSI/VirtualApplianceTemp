@@ -57,7 +57,7 @@ chmod 700 /root/.play
 base64 -d < /root/.play | docker login -u vsiplayaccount --password-stdin
 docker pull portainer/portainer 2>&1
 docker pull httpd:2.4-alpine 2>&1
-docker pull loginvsi/appliancemaintenance:stable 2>&1
+docker pull meltwater/docker-cleanup:latest
 
 cd /dockerrepo/$HOSTINGFOLDER || exit
 version=$(grep "Version__Number" < docker-compose.yml | cut -d':' -f2 | cut -d"'" -f2 | tail -1)
@@ -85,6 +85,7 @@ rm /etc/pdmenurc
 
 cp -f $SCRIPT_PATH/../loginvsid /usr/bin/
 cp -f $SCRIPT_PATH/../loginvsid.service /etc/systemd/system/
+cp -f $SCRIPT_PATH/../docker-cleanup.service /etc/systemd/system/
 cp -f $SCRIPT_PATH/firstrun /loginvsi/
 #cp -f $SCRIPT_PATH/sshd_config /etc/ssh/
 
