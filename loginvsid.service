@@ -8,6 +8,6 @@ ExecStart=/usr/bin/loginvsid start
 ExecStop=/usr/bin/loginvsid stop
 ExecReload=/usr/bin/loginvsid restart
 RemainAfterExit=true
-TimeoutSec=360
+TimeoutSec=30min 00s
 [Install]
 WantedBy=multi-user.target

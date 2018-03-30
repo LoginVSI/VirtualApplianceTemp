@@ -1,6 +1,6 @@
 [Unit]
 Description=Cleanup of exited containers and unused images/volumes
-After=docker.service
+After=loginvsid.service
 Requires=docker.service
 
 [Install]

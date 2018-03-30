@@ -74,11 +74,8 @@ start() {
         echo "Copying CA.crt to contentDelivery..."      
         docker cp /certificates/CA.crt $container:/app/wwwroot/content
       fi            
-    done      
-    
-    
-
-  fi
+    done              
+  fi  
 }
 
 stop() { 
