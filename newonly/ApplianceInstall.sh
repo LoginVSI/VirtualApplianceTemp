@@ -54,7 +54,7 @@ git clone -q -b $HOSTINGBRANCH $HOSTINGREPO /dockerrepo
 cd /dockerrepo/ || exit
 cp -f $SCRIPT_PATH/../.play /root/.play
 chmod 700 /root/.play
-base64 -d < /root/.play | docker login -u vsiplayaccount --password-stdin
+base64 -d < /root/.play | docker login -u vsiplayaccount --password-stdin 2>&1
 docker pull portainer/portainer 2>&1
 docker pull httpd:2.4-alpine 2>&1
 docker pull meltwater/docker-cleanup:latest
