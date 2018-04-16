@@ -110,7 +110,7 @@ update() {
   fi 
   # Get the hosting and appliance repo's
   git clone https://github.com/LoginVSI/VirtualAppliance.git update
-  cat /root/.hosting | while read -r branch repo hostingfolder; do
+  cat /root/.hosting | while read -r repo branch hostingfolder; do
     git clone -b "$branch" "$repo" hosting
     folder="$hostingfolder"
   done
