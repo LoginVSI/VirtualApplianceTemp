@@ -110,7 +110,10 @@ update() {
   fi 
   # Get the hosting and appliance repo's
   git clone https://github.com/LoginVSI/VirtualAppliance.git update
-  git clone -b stable https://github.com/LoginVSI/Hosting.git hosting
+  cat /root/.hosting | while read -r branch repo; do
+    git clone -b "$branch" "$repo" hosting
+  done
+  
   # copy latest compose file from hosting
   cp -f hosting/latest/Production/InternalDB/docker-compose.yml /loginvsi
   

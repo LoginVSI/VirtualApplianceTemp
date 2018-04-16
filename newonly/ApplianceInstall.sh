@@ -6,6 +6,9 @@ HOSTINGFOLDER="$4"
 SCRIPT_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 TITLE=$(cat /loginvsi/.title)
 
+echo $HOSTINGREPO $HOSTINGBRANCH >/root/.hosting
+chmod 700 /root/.hosting
+
 cd / || exit
 export DEBIAN_FRONTEND=noninteractive
 # get latest versions of packages
