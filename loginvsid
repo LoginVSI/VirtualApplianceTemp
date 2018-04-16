@@ -113,7 +113,7 @@ update() {
   cat /root/.hosting | while read -r repo branch hostingfolder; do
     git clone -b "$branch" "$repo" hosting
     # copy latest compose file from hosting
-    echo "hosting/$hostingfolder/docker-compose.yml"
+    echo "Copying hosting/$hostingfolder/docker-compose.yml to /loginvsi"
     cp -f "hosting/$hostingfolder/docker-compose.yml" /loginvsi
   done
   
