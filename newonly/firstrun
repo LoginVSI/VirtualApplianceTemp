@@ -1,4 +1,5 @@
 #!/bin/bash
+version=$(grep "Version__Number" < /loginvsi/docker-compose.yml | cut -d':' -f2 | cut -d"'" -f2 | tail -1)
 TITLE=$(cat /loginvsi/.title)
 # add first_run script
 netadapters=$(ip -o link show | while read -r num dev fam mtulabel mtusize qlabel queu statelabel state modelabel mode grouplabel group qlenlabel qlen maclabel mac brdlabel brcast; do 
@@ -132,7 +133,7 @@ iface $netadapter inet dhcp
     hostname "$new_hostname"
 	
 	echo "   
-    Welcome to $TITLE
+    Welcome to $TITLE - version $version
     $TITLE appliance is not yet configured!
     Logon with admin and the password you set previously
 	"  > /etc/issue
@@ -219,10 +220,9 @@ if [ ! -f "/loginvsi/second_run.chk" ]; then
     head -n -2 /etc/issue > /etc/issue.tmp; mv /etc/issue.tmp /etc/issue
     
     echo "   
-    Welcome to $TITLE
+    Welcome to $TITLE - version $version
     $TITLE appliance is configured!
-    Main interface https://\4{$netadapter} or https://\n.\o
-    Admin interface: https://\4{$netadapter}:9000 or https://\n.\o:9000
+    Web interface available at: https://\4{$netadapter} or https://\n.\o    
     "  > /etc/issue    
 
     echo "#!/bin/bash

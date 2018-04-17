@@ -81,6 +81,8 @@ wget -q -O /loginvsi/img/logo_alt.png https://www.loginvsi.com/images/logos/logi
 cp /loginvsi/img/logo_alt.png /loginvsi/img/logo.png
 cp -r "/dockerrepo/$HOSTINGFOLDER/docker-compose.yml" /loginvsi/
 
+version=$(grep "Version__Number" < /loginvsi/docker-compose.yml | cut -d':' -f2 | cut -d"'" -f2 | tail -1)
+
 rm -rf /dockerrepo
 
  
@@ -118,7 +120,7 @@ chmod +x /loginvsi/bin/*
 
 echo "admin:admin" | chpasswd
 
-echo "Welcome to $TITLE
+echo "Welcome to $TITLE - version $version
 This system is not yet configured, please logon with username: admin and password: admin" > /etc/issue
 
 echo '#!/bin/sh
