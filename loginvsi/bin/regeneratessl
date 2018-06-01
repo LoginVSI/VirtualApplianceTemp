@@ -18,6 +18,12 @@ sed -i '/SSL_CERTIFICATE_PATH=/d' /loginvsi/.env
 echo "SSL_CERTIFICATE_KEY_PATH=/certificates/${fqdn}.key" >>/loginvsi/.env
 echo "SSL_CERTIFICATE_PATH=/certificates/${fqdn}.crt" >>/loginvsi/.env
 
+# switch to unsecure mode
+if [ $(docker service ls -q -f name=VSI_systemconfiguration | wc -l) -gt 0 ]; then
+    docker service --env-add SystemConfiguration__AllowUntrustedCertificates="true" VSI_systemconfiguration
+fi  
+
+
 # Remove and recreate the secrets
 docker service rm VSI_gateway &>/dev/null
 docker secret rm VSI_SSL_CERTIFICATE_KEY_PASSWORD &>/dev/null

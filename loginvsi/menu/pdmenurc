@@ -17,6 +17,7 @@ menu:main:Maintenance Menu
 	exec:Change your password:pause:/loginvsi/bin/changepassword
 	preproc: /loginvsi/menu/gethostname
 	exec:Regenerate self-signed certificates:pause:/loginvsi/bin/regeneratessl
+	exec:Apply new certificate:edit,pause:clear; /loginvsi/bin/applypfx ~Path to pfx:~ ~Password:~
 	nop
 	group:Network Configuration
 	exec::makemenu: (\

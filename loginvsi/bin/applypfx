@@ -1,0 +1,39 @@
+#!/bin/bash
+path="$1"
+password="$2"
+
+if [ -z "$password" ]; then
+    echo "No password supplied, unable to continue"
+    exit 1
+fi
+if [ -s "$path" ]; then
+    openssl pkcs12 -in "$path" -out /certificates/cert.crt -nokeys -passin pass:$password
+    openssl pkcs12 -in "$path" -out /certificates/cert.key -nocerts -passin pass:$password -passout pass:$password
+
+    # replace the paths in the .env file
+    sed -i '/SSL_CERTIFICATE_KEY_PATH=/d' /loginvsi/.env
+    sed -i '/SSL_CERTIFICATE_PATH=/d' /loginvsi/.env   
+    echo "SSL_CERTIFICATE_KEY_PATH=/certificates/cert.key" >>/loginvsi/.env
+    echo "SSL_CERTIFICATE_PATH=/certificates/cert.crt" >>/loginvsi/.env
+
+    # Remove CA.crt because we only need it in case of self-signed certificates
+    [ -f /certificates/CA.crt ] && rm /certificates/CA.crt
+
+
+    # Remove and recreate the secrets
+    docker service rm VSI_gateway &>/dev/null
+    docker secret rm VSI_SSL_CERTIFICATE_KEY_PASSWORD &>/dev/null
+    docker secret rm VSI_VSI_SSL_CERTIFICATE &>/dev/null
+    docker secret rm VSI_VSI_SSL_CERTIFICATE_KEY &>/dev/null
+    echo $password | docker secret create VSI_SSL_CERTIFICATE_KEY_PASSWORD - &>/dev/null
+    #restart portainer and the gateway
+    docker rm -f portainer &>/dev/null
+    /usr/bin/loginvsid start
+
+    if [ $(docker service ls -q -f name=VSI_systemconfiguration | wc -l) -gt 0 ]; then
+        docker service --env-add SystemConfiguration__AllowUntrustedCertificates="false" VSI_systemconfiguration
+    fi    
+else    
+    echo "Could not find valid certificate at $path"
+fi
+
