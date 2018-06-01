@@ -1,14 +1,20 @@
 #!/bin/bash
-path="$1"
-password="$2"
+while :
+do 
+    read -erp "Please enter the path to the pfx file: " pfxpath
+    if [ -s "$pfxpath" ]; then
+        break
+    fi
+done
+read -ersp "Please enter a the password for $pfxpath: " password
 
 if [ -z "$password" ]; then
     echo "No password supplied, unable to continue"
     exit 1
 fi
-if [ -s "$path" ]; then
-    openssl pkcs12 -in "$path" -out /certificates/cert.crt -nokeys -passin pass:$password
-    openssl pkcs12 -in "$path" -out /certificates/cert.key -nocerts -passin pass:$password -passout pass:$password
+if [ -s "$pfxpath" ]; then
+    openssl pkcs12 -in "$pfxpath" -out /certificates/cert.crt -nokeys -passin pass:$password
+    openssl pkcs12 -in "$pfxpath" -out /certificates/cert.key -nocerts -passin pass:$password -passout pass:$password
 
     # replace the paths in the .env file
     sed -i '/SSL_CERTIFICATE_KEY_PATH=/d' /loginvsi/.env
@@ -34,6 +40,6 @@ if [ -s "$path" ]; then
         docker service --env-add SystemConfiguration__AllowUntrustedCertificates="false" VSI_systemconfiguration
     fi    
 else    
-    echo "Could not find valid certificate at $path"
+    echo "Could not find valid certificate at $pfxpath"
 fi
 
