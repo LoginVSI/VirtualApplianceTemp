@@ -7,7 +7,7 @@ Requires=docker.service
 WantedBy=multi-user.target
 
 [Service]
-Environment=IMAGE=meltwater/docker-cleanup:latest NAME=docker-cleanup KEEP_IMAGES=*.*
+Environment=IMAGE=meltwater/docker-cleanup:latest NAME=docker-cleanup
 
 # Allow docker pull to take some time
 TimeoutStartSec=600
@@ -23,6 +23,7 @@ ExecStartPre=-/bin/sh -c 'if ! docker images | tr -s " " : | grep "^${IMAGE}:"; 
 ExecStart=/usr/bin/docker run \
     -v /var/run/docker.sock:/var/run/docker.sock:rw \
     -v /var/lib/docker:/var/lib/docker:rw \
+	-e KEEP_IMAGES=*:* \
     --name=${NAME} \
     $IMAGE
 
