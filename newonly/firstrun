@@ -188,6 +188,7 @@ if [ ! -f "/loginvsi/second_run.chk" ]; then
     
     # create launcher secret
     openssl rand -hex 40 | head -c 40 | tr [:lower:] [:upper:] | docker secret create LAUNCHER_SECRET - &>/dev/null
+	openssl rand -hex 40 | head -c 40 | tr [:lower:] [:upper:] | docker secret create ENGINE_SECRET - &>/dev/null
     # create data volume folders for the dbs
     mkdir /loginvsi/data
     echo "DB_ROOT=/loginvsi/data" >>/loginvsi/.env
