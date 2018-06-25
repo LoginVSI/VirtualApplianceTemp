@@ -6,6 +6,9 @@ HOSTINGFOLDER="$4"
 SCRIPT_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 TITLE=$(cat /loginvsi/.title)
 
+echo "INITIALHOSTNAME=\"$INITIALHOSTNAME\"" >> /loginvsi/build.conf
+echo "TITLE=\"$TITLE\"" >> /loginvsi/build.conf
+
 echo $HOSTINGREPO $HOSTINGBRANCH $HOSTINGFOLDER >/root/.hosting
 chmod 700 /root/.hosting
 
@@ -82,6 +85,8 @@ cp /loginvsi/img/logo_alt.png /loginvsi/img/logo.png
 cp -r "/dockerrepo/$HOSTINGFOLDER/docker-compose.yml" /loginvsi/
 
 version=$(grep "Version__Number" < /loginvsi/docker-compose.yml | cut -d':' -f2 | cut -d"'" -f2 | tail -1)
+
+echo "VERSION=\"$version\"" >> /loginvsi/build.conf
 
 rm -rf /dockerrepo
 
