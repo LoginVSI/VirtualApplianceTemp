@@ -59,10 +59,9 @@ if [ -f "/etc/motd" ]; then
 fi
 
 echo Create first run check file
-touch /loginvsi/first_run.chk
-#if [ -f "/loginvsi/first_run.chk" ]; then
-#    rm /loginvsi/first_run.chk
-#fi
+if [ -f "/loginvsi/first_run.chk" ]; then
+    rm /loginvsi/first_run.chk
+fi
 
 echo Remove second run check file
 if [ -f "/loginvsi/second_run.chk" ]; then

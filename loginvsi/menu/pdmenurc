@@ -46,6 +46,6 @@ menu:troublshoot:Troubleshooting
 	exec:Show LoginVSI service status:display:loginvsid status
 	exec:Restart LoginVSI services:pause:loginvsid restart
 	exec:Open bash shell::/bin/bash
-	exec:Factory Reset:/loginvsi/bin/factory_reset.sh
+	exec:Factory Reset::/loginvsi/bin/factory_reset.sh
 	nop
 		
