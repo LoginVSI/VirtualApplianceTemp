@@ -245,7 +245,7 @@ if [ ! -f "/loginvsi/second_run.chk" ]; then
 	
 trap SIGINT
 sed -i 's,PermitRootLogin yes,PermitRootLogin no,g' /etc/ssh/sshd_config
-sed -i 's,/usr/lib/openssh/sftp-server,sftp-internal,g' /etc/ssh/sshd_config
+sed -i 's,/usr/lib/openssh/sftp-server,internal-sftp,g' /etc/ssh/sshd_config
 chown -R admin:administrator /certificates
 reboot    
    
