@@ -92,7 +92,10 @@ done
 
 # pull the new images from dockerhub
 echo $(cat /root/.play) | base64 -d | docker login -u vsiplayaccount --password-stdin
-docker-compose pull 2>&1
+for image in $(grep image: < /loginvsi/docker-compose.yml | cut -d':' -f2,3| sort | uniq);do
+    docker pull $(echo $image | xargs)
+done
+#docker-compose pull 2>&1
 docker logout 2>&1
 
 
