@@ -210,10 +210,8 @@ build() {
   mv ${OUTPATH}${CN}.key ${OUTPATH}${CN}.key.un
   mv ${OUTPATH}${CN}.key.enc ${OUTPATH}${CN}.key
 
-  #create b64 encrypted pfx, used by maintenance menu
-  openssl pkcs12 -export -out ${OUTPATH}${CN}.pfx -inkey ${OUTPATH}${CN}.key.un -in ${OUTPATH}${CN}.crt -certfile ${OUTPATH}CA.crt -passout pass:$PASSWORD
-  openssl base64 -in ${OUTPATH}${CN}.pfx -out ${OUTPATH}${CN}.b64
-  rm -f ${OUTPATH}${CN}.pfx
+  rm -rf ${OUTPATH}${CN}.csr
+  rm -rf ${OUTPATH}CA.srl
 }
 
 checkVariables

@@ -105,59 +105,17 @@ update() {
   if [ -d /loginvsi/update ]; then
     rm -rf /loginvsi/update
   fi
-  if [ -d /loginvsi/hosting ]; then
-    rm -rf /loginvsi/hosting
-  fi 
-  # Get the hosting and appliance repo's
-  git clone https://github.com/LoginVSI/VirtualAppliance.git update
-  cat /root/.hosting | while read -r repo branch hostingfolder; do
-    git clone -b "$branch" "$repo" hosting
-    # copy latest compose file from hosting
-    echo "Copying hosting/$hostingfolder/docker-compose.yml to /loginvsi"
-    cp -f "hosting/$hostingfolder/docker-compose.yml" /loginvsi
-  done
-  
-  
-  
-  
-  #copy latest loginvsi folder
-  cp -f -r update/loginvsi/* /loginvsi/
 
-  # copy loginvsid.service and loginvsid
-  cp -f update/loginvsid /usr/bin/
-  cp -f update/loginvsid.service /etc/systemd/system/
+git clone https://github.com/LoginVSI/VirtualAppliance.git update
+
+  # execute update script
+  update/update
   
-  chmod +x /usr/bin/loginvsid
-  chown root:root /usr/bin/loginvsid
-  systemctl disable loginvsid &>/dev/null
-  systemctl enable loginvsid &>/dev/null
-
-  # Check if any new entries in new .env and add them to the current .env
-  for i in $(diff -y hosting/latest/Production/InternalDB/.env .env | grep ">" | cut -d ">" -f2 | xargs); do
-    echo $i >> .env
-  done
-
-  # create new db folders if needed
-   for f in $(cat /loginvsi/docker-compose.yml | grep "{DB_ROOT}")
-    do 
-        folder=$(echo $f | cut -d"-" -f2 | cut -d"/" -f2 | cut -d":" -f1) 
-        if [ ! -z $folder ]; then
-          if [ ! -d /loginvsi/data/$folder ]; then        
-              mkdir /loginvsi/data/$folder; 
-          fi
-        fi
-    done
-
-  # pull the new images from dockerhub
-  echo $(cat /root/.play) | base64 -d | docker login -u vsiplayaccount --password-stdin
-  docker-compose pull 2>&1
-  docker logout 2>&1
-
   loginvsid start
   rm -rf /loginvsi/update
-  rm -rf /loginvsi/hosting
+
 }
 
-case $1 in
+case "$1" in
   start|stop|restart|update|status) "$1" ;;
 esac

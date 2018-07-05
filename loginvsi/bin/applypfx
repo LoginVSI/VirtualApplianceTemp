@@ -38,6 +38,8 @@ if [ -s "$pfxpath" ]; then
 
     if [ $(docker service ls -q -f name=VSI_systemconfiguration | wc -l) -gt 0 ]; then
         docker service update --env-add SystemConfiguration__AllowUntrustedCertificates="false" VSI_systemconfiguration
+        docker service update --env-add SystemConfiguration__AllowUntrustedCertificates="false" VSI_sessionlogonscripts
+        sed -i 's,SystemConfiguration__AllowUntrustedCertificates: "true",SystemConfiguration__AllowUntrustedCertificates: "false",g' /loginvsi/docker-compose.yml
     fi    
 else    
     echo "Could not find valid certificate at $pfxpath"

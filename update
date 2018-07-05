@@ -1,0 +1,97 @@
+#!/bin/bash
+ cd /loginvsi
+if [ -d /loginvsi/hosting ]; then
+    rm -rf /loginvsi/hosting
+fi 
+
+# Get the hosting repo
+cat /root/.hosting | while read -r repo branch hostingfolder; do
+    git clone -b "$branch" "$repo" hosting
+    # copy latest compose file from hosting
+    echo "Copying hosting/$hostingfolder/docker-compose.yml to /loginvsi"
+    # get the status of trusted/untrusted certs
+    currentcertsetting=$(grep SystemConfiguration__AllowUntrustedCertificates < /loginvsi/docker-compose.yml | head -n1 | cut -d':' -f2 | cut -d '"' -f2)
+    # copy the new compose file
+    cp -f "hosting/$hostingfolder/docker-compose.yml" /loginvsi
+    # persist status of trusted/untrusted certs
+    if [ $currentcertsetting == "true" ]; then
+        sed -i 's,SystemConfiguration__AllowUntrustedCertificates: "false",SystemConfiguration__AllowUntrustedCertificates: "true",g' /loginvsi/docker-compose.yml
+    else
+        sed -i 's,SystemConfiguration__AllowUntrustedCertificates: "true",SystemConfiguration__AllowUntrustedCertificates: "false",g' /loginvsi/docker-compose.yml
+    fi
+    
+done
+
+# clean up hosting repo
+rm -rf /loginvsi/hosting
+
+#copy latest loginvsi folder
+cp -f -r update/loginvsi/* /loginvsi/
+
+# copy loginvsid.service and loginvsid
+cp -f update/loginvsid /usr/bin/
+cp -f update/loginvsid.service /etc/systemd/system/
+
+chmod +x /usr/bin/loginvsid
+chown root:root /usr/bin/loginvsid
+systemctl disable loginvsid &>/dev/null
+systemctl enable loginvsid &>/dev/null
+
+# Check if any new entries in new .env and add them to the current .env
+for i in $(diff -y hosting/latest/Production/InternalDB/.env .env | grep ">" | cut -d ">" -f2 | xargs); do
+echo $i >> .env
+done
+
+# create new db folders if needed
+for f in $(cat /loginvsi/docker-compose.yml | grep "{DB_ROOT}")
+do 
+    folder=$(echo $f | cut -d"-" -f2 | cut -d"/" -f2 | cut -d":" -f1) 
+    if [ ! -z $folder ]; then
+        if [ ! -d /loginvsi/data/$folder ]; then        
+            mkdir /loginvsi/data/$folder; 
+        fi
+    fi
+done
+
+# check if all secrets have been created
+existingsecrets=$(docker secret ls --format "{{.Name}}")
+composesecrets=""
+secretsstartlinenumber=$(grep -n "^secrets:" /loginvsi/docker-compose.yml | cut -d':' -f1)
+servicesstartlinenumber=$(grep -n "^services:" /loginvsi/docker-compose.yml | cut -d':' -f1)
+OLDIFS=$IFS
+IFS=$'\n'
+for line in $(tail -n+$secretsstartlinenumber /loginvsi/docker-compose.yml | head -n $(($servicesstartlinenumber-$secretsstartlinenumber)) | grep "^ "); do
+    
+    if [[ -z $(echo $line | cut -d':' -f2) ]]; then 
+        composesecrets+=$(echo $line | cut -d':' -f1 | xargs)
+        composesecrets+=" "
+    fi
+done
+IFS=$OLDIFS
+
+for newsecret in $(echo $existingsecrets $composesecrets | tr ' ' '\n' | sort | uniq -u); do 
+    case "$newsecret" in
+        *_SSL_CERTIFICATE|*_SSL_CERTIFICATE_KEY) 
+            # we do nothing with SSL_certs during update
+            ;;
+        LAUNCHER_SECRET)
+            echo "Found new secret: $newsecret, creating it now..."
+            openssl rand -hex 40 | head -c 40 | tr [:lower:] [:upper:] | docker secret create LAUNCHER_SECRET - &>/dev/null
+            ;; 
+        ENGINE_SECRET)
+            echo "Found new secret: $newsecret, creating it now..."
+            openssl rand -hex 40 | head -c 40 | tr [:lower:] [:upper:] | docker secret create ENGINE_SECRET - &>/dev/null
+            ;; 
+        *) 
+            echo "WARNING: Found new secret: $newsecret, but this updater does not know how to handle it!"
+            ;;
+    esac    
+done
+
+# pull the new images from dockerhub
+echo $(cat /root/.play) | base64 -d | docker login -u vsiplayaccount --password-stdin
+docker-compose pull 2>&1
+docker logout 2>&1
+
+
+# after this script loginvsid start will be called by the update process

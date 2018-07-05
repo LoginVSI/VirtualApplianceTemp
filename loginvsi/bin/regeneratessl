@@ -21,6 +21,8 @@ echo "SSL_CERTIFICATE_PATH=/certificates/${fqdn}.crt" >>/loginvsi/.env
 # switch to unsecure mode
 if [ $(docker service ls -q -f name=VSI_systemconfiguration | wc -l) -gt 0 ]; then
     docker service --env-add SystemConfiguration__AllowUntrustedCertificates="true" VSI_systemconfiguration
+    docker service update --env-add SystemConfiguration__AllowUntrustedCertificates="true" VSI_sessionlogonscripts
+    sed -i 's,SystemConfiguration__AllowUntrustedCertificates: "false",SystemConfiguration__AllowUntrustedCertificates: "true",g' /loginvsi/docker-compose.yml
 fi  
 
 
@@ -29,11 +31,10 @@ docker service rm VSI_gateway &>/dev/null
 docker secret rm VSI_SSL_CERTIFICATE_KEY_PASSWORD &>/dev/null
 docker secret rm VSI_VSI_SSL_CERTIFICATE &>/dev/null
 docker secret rm VSI_VSI_SSL_CERTIFICATE_KEY &>/dev/null
-docker secret rm APPLIANCEMANAGEMENT_PFX_PASSWORD &>/dev/null
-docker secret rm APPLIANCEMANAGEMENT_PFX &>/dev/null   
+
 echo $cert_password | docker secret create VSI_SSL_CERTIFICATE_KEY_PASSWORD - &>/dev/null
-echo $cert_password | docker secret create APPLIANCEMANAGEMENT_PFX_PASSWORD - &>/dev/null
-echo $(cat /certificates/${fqdn}.b64) | docker secret create APPLIANCEMANAGEMENT_PFX - &>/dev/null
+
+
 
 
 #restart portainer and the gateway

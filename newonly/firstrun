@@ -182,9 +182,7 @@ if [ ! -f "/loginvsi/second_run.chk" ]; then
     base64 -d < /home/admin/.password | docker secret create ADMIN_PASSWORD - &>/dev/null
     base64 -d < /home/admin/.password | docker secret create USER_PASSWORD - &>/dev/null    
     rm /home/admin/.password
-    echo "$cert_password" | docker secret create VSI_SSL_CERTIFICATE_KEY_PASSWORD - &>/dev/null
-    echo "$cert_password" | docker secret create APPLIANCEMANAGEMENT_PFX_PASSWORD - &>/dev/null
-    docker secret create APPLIANCEMANAGEMENT_PFX - </certificates/$fqdn.b64 &>/dev/null
+    echo "$cert_password" | docker secret create VSI_SSL_CERTIFICATE_KEY_PASSWORD - &>/dev/null        
     
     # create launcher secret
     openssl rand -hex 40 | head -c 40 | tr [:lower:] [:upper:] | docker secret create LAUNCHER_SECRET - &>/dev/null
