@@ -20,6 +20,11 @@ cat /root/.hosting | while read -r repo branch hostingfolder; do
         sed -i 's,SystemConfiguration__AllowUntrustedCertificates: "true",SystemConfiguration__AllowUntrustedCertificates: "false",g' /loginvsi/docker-compose.yml
     fi
     
+    # Check if any new entries in new .env and add them to the current .env
+    for i in $(diff -y hosting/$hostingfolder/.env /loginvsi/.env | grep ">" | cut -d ">" -f2 | xargs); do
+        echo $i >> .env
+    done
+
 done
 
 # clean up hosting repo
@@ -37,10 +42,7 @@ chown root:root /usr/bin/loginvsid
 systemctl disable loginvsid &>/dev/null
 systemctl enable loginvsid &>/dev/null
 
-# Check if any new entries in new .env and add them to the current .env
-for i in $(diff -y hosting/latest/Production/InternalDB/.env .env | grep ">" | cut -d ">" -f2 | xargs); do
-echo $i >> .env
-done
+
 
 # create new db folders if needed
 for f in $(cat /loginvsi/docker-compose.yml | grep "{DB_ROOT}")
