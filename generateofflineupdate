@@ -53,12 +53,7 @@ read -ep "Press ENTER to upload the iso to amazon" unused
 # Upload update iso to amazon S3
 
 rm -rf /root/.aws
-mkdir /root/.aws
-echo '
-[default]
-aws_access_key_id = AKIAIMMAYE7GOMQPVWOA
-aws_secret_access_key = 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
-' > /root/.aws/credentials
+/root/bin/aws configure
 
 url="s3://loginvsidata/Virtual Appliance updates/$(echo $isopath |cut -d'/' -f3)"
 echo "$(date) Uploading $isopath to $url"
@@ -79,3 +74,4 @@ rm -rf /root/.aws
 rm -rf /root/.local/lib/aws
 rm -rf /root/bin/aws
 rm -rf /tmp/$version
+
