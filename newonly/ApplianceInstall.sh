@@ -88,6 +88,8 @@ version=$(grep "Version__Number" < /loginvsi/docker-compose.yml | cut -d':' -f2 
 
 echo "VERSION=\"$version\"" >> /loginvsi/build.conf
 
+
+
 rm -rf /dockerrepo
 
  

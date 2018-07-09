@@ -1,12 +1,23 @@
 #!/bin/bash
- cd /loginvsi
+[[ $(echo "$1" | tr '[:upper:]' '[:lower:]') == "offline" ]] && offline=true
+
+echo $offline
+
+cd /loginvsi
 if [ -d /loginvsi/hosting ]; then
     rm -rf /loginvsi/hosting
 fi 
 
+
+
 # Get the hosting repo
 cat /root/.hosting | while read -r repo branch hostingfolder; do
-    git clone -b "$branch" "$repo" hosting
+    if [ -z $offline ]; then 
+        git clone -b "$branch" "$repo" hosting;
+    else
+        # offline updater, copy hosting files from hosting folder on iso        
+        cp -rf /mnt/cdrom/hosting/ .
+    fi
     # copy latest compose file from hosting
     echo "Copying hosting/$hostingfolder/docker-compose.yml to /loginvsi"
     # get the status of trusted/untrusted certs
@@ -90,13 +101,30 @@ for newsecret in $(echo $existingsecrets $composesecrets | tr ' ' '\n' | sort | 
     esac    
 done
 
-# pull the new images from dockerhub
-echo $(cat /root/.play) | base64 -d | docker login -u vsiplayaccount --password-stdin
-for image in $(grep image: < /loginvsi/docker-compose.yml | cut -d':' -f2,3| sort | uniq);do
-    docker pull $(echo $image | xargs)
-done
-#docker-compose pull 2>&1
-docker logout 2>&1
 
+if [ -z $offline ]; then 
+    # pull the new images from dockerhub if we are online
+    echo $(cat /root/.play) | base64 -d | docker login -u vsiplayaccount --password-stdin
+    for image in $(grep image: < /loginvsi/docker-compose.yml | cut -d':' -f2,3| sort | uniq);do
+        docker pull $(echo $image | xargs)
+    done
+    docker logout 2>&1
+else
+    # offline update
+    # import registry
+    docker rm -f $(docker ps --filter name=update_registry -q) &>/dev/null
+    docker rmi registry:2 &>/dev/null
+    gunzip -c /mnt/cdrom/registry.tar.gz | docker image import - --change 'ENTRYPOINT ["/entrypoint.sh"] CMD ["/etc/docker/registry/config.yml"]' registry:2
+    tar -zxf /mnt/cdrom/registry_data.tar.gz --directory /tmp/registry_data
+    docker run -v /tmp/registry_data:/var/lib/registry -d -p 55555:5000 --name update_registry registry:2 &>/dev/null
+    
+    for image in $(grep image: < /loginvsi/docker-compose.yml | cut -d':' -f2,3| sort | uniq);do
+        docker pull $(echo localhost:55555/$image | xargs)
+        docker tag $(echo localhost:55555/$image | xargs) $(echo $image | xargs)
+        docker rmi $(echo localhost:55555/$image | xargs)
+    done
+    docker rm -f $(docker ps --filter name=update_registry -q) &>/dev/null
+    rm -rf /tmp/registry_data    
+fi
 
 # after this script loginvsid start will be called by the update process

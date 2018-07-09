@@ -106,7 +106,7 @@ update() {
     rm -rf /loginvsi/update
   fi
 
-git clone https://github.com/LoginVSI/VirtualAppliance.git update
+  git clone https://github.com/LoginVSI/VirtualAppliance.git update
 
   # execute update script
   chmod +x update/update
@@ -117,6 +117,32 @@ git clone https://github.com/LoginVSI/VirtualAppliance.git update
 
 }
 
+offlineupdate() {
+  cd /loginvsi
+  
+  read -ep "Make sure the update iso is connected to the VM, press enter to continue" emtpy
+  [[ ! -d /mnt/cdrom ]] && mkdir -p /mnt/cdrom
+  mount /dev/cdrom /mnt/cdrom
+
+  if [ ! -f /mnt/cdrom/update/update ]; then
+    echo "Could not find updater, probably the update iso was not mounted properly."
+    exit 1
+  fi
+  if [ -d /loginvsi/update ]; then
+    rm -rf /loginvsi/update
+  fi
+
+  cp -rf /mnt/cdrom/update/ .
+
+  # execute update script
+  chmod +x update/update
+  update/update offline
+  
+  loginvsid start
+  rm -rf /loginvsi/update
+
+}
+
 case "$1" in
-  start|stop|restart|update|status) "$1" ;;
+  start|stop|restart|update|status|offlineupdate) "$1" ;;
 esac

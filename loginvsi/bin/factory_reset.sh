@@ -12,7 +12,7 @@ for svc in $(docker service ls -q); do
 	docker service scale $svc=0
 done
 
-echo Leaveing docker swarm
+echo Leaving docker swarm
 docker swarm leave --force
 systemctl disable loginvsid &>/dev/null
 systemctl disable docker-cleanup &>/dev/null
