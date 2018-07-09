@@ -54,6 +54,7 @@ read -ep "Press ENTER to upload the iso to amazon" unused
 # Upload update iso to amazon S3
 
 rm -rf /root/.aws
+echo "Only supply the AWS KEY ID and the secret key in the following questions, leave the rest empty"
 /root/bin/aws configure
 
 url="s3://loginvsidata/Virtual Appliance updates/$(echo $isopath |cut -d'/' -f3)"

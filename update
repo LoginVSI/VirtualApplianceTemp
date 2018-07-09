@@ -129,8 +129,10 @@ else
     docker tag localhost:55555/portainer portainer
     docker rmi localhost:55555/portainer
 
-    docker rm -f $(docker ps --filter name=update_registry -q) &>/dev/null
-    docker rmi registry:2
+    docker rm -f $(docker ps --filter name=update_registry -q) &>/dev/null    
+    docker rmi registry:2 &>/dev/null
+    docker rmi $(docker image ls localhost:55555/* --format "{{.Repository}}:{{.Tag}}") &>/dev/null
+    docker rmi $(docker image ls localhost:55555/*/* --format "{{.Repository}}:{{.Tag}}") &>/dev/null
     rm -rf /tmp/registry_data    
 fi
 
