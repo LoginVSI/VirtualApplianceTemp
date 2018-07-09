@@ -106,6 +106,7 @@ if [ -z $offline ]; then
     for image in $(grep image: < /loginvsi/docker-compose.yml | cut -d':' -f2,3| sort | uniq);do
         docker pull $(echo $image | xargs)
     done
+    docker pull portainer
     docker logout 2>&1
 else
     # offline update
@@ -124,9 +125,14 @@ else
         docker tag $(echo localhost:55555/$image | xargs) $(echo $image | xargs)
         docker rmi $(echo localhost:55555/$image | xargs)
     done
+    docker pull localhost:55555/portainer
+    docker tag localhost:55555/portainer portainer
+    docker rmi localhost:55555/portainer
+
     docker rm -f $(docker ps --filter name=update_registry -q) &>/dev/null
     docker rmi registry:2
     rm -rf /tmp/registry_data    
 fi
 
+docker rm -f portainer
 # after this script loginvsid start will be called by the update process
