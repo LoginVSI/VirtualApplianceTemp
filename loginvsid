@@ -138,6 +138,9 @@ offlineupdate() {
   chmod +x update/update
   update/update offline
   
+  umount /mnt/cdrom
+  rm -rf /mnt/cdrom
+
   loginvsid start
   rm -rf /loginvsi/update
 
