@@ -112,12 +112,13 @@ else
     # import registry
     docker rm -f $(docker ps --filter name=update_registry -q) &>/dev/null
     docker rmi registry:2 &>/dev/null
-    gunzip -c /mnt/cdrom/registry.tar.gz | docker image import - --change 'ENTRYPOINT ["/entrypoint.sh"] CMD ["/etc/docker/registry/config.yml"]' registry:2
+    echo "$(date) Importing docker registry image, this might take a while"
+    gunzip -c /mnt/cdrom/registry.tar.gz | docker image import - registry:2
     rm -rf /tmp/registry_data
     mkdir -p /tmp/registry_data
     tar -zxf /mnt/cdrom/registry_data.tar.gz --directory /tmp/registry_data
-    docker run -v /tmp/registry_data:/var/lib/registry -d -p 55555:5000 --name update_registry registry:2 &>/dev/null
-    
+    docker run -v /tmp/registry_data:/var/lib/registry -d -p 55555:5000 --entrypoint /entrypoint.sh --name update_registry registry:2 /etc/docker/registry/config.yml &>/dev/null
+    echo "$(date) Importing docker images from local registry, this might take a while"
     for image in $(grep image: < /loginvsi/docker-compose.yml | cut -d':' -f2,3| sort | uniq);do
         docker pull $(echo localhost:55555/$image | xargs)
         docker tag $(echo localhost:55555/$image | xargs) $(echo $image | xargs)
