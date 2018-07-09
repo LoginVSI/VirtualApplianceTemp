@@ -125,6 +125,7 @@ else
         docker rmi $(echo localhost:55555/$image | xargs)
     done
     docker rm -f $(docker ps --filter name=update_registry -q) &>/dev/null
+    docker rmi registry:2
     rm -rf /tmp/registry_data    
 fi
 
