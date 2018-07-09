@@ -33,7 +33,8 @@ for image in $(docker image ls --format "{{.Repository}}:{{.Tag}}" | grep -v reg
 done
 echo "$(date) Exporting local registry"
 docker container export update_registry | gzip > /tmp/$version/registry.tar.gz 
-tar -zcf /tmp/$version/registry_data.tar.gz /tmp/$version/registry_data/
+cd /tmp/$version/registry_data
+tar -zcf /tmp/$version/registry_data.tar.gz docker
 
 rm -rf /tmp/$version/registry_data
 echo "$(date) Cloning git repos"

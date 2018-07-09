@@ -1,8 +1,6 @@
 #!/bin/bash
 [[ $(echo "$1" | tr '[:upper:]' '[:lower:]') == "offline" ]] && offline=true
 
-echo $offline
-
 cd /loginvsi
 if [ -d /loginvsi/hosting ]; then
     rm -rf /loginvsi/hosting
@@ -115,6 +113,8 @@ else
     docker rm -f $(docker ps --filter name=update_registry -q) &>/dev/null
     docker rmi registry:2 &>/dev/null
     gunzip -c /mnt/cdrom/registry.tar.gz | docker image import - --change 'ENTRYPOINT ["/entrypoint.sh"] CMD ["/etc/docker/registry/config.yml"]' registry:2
+    rm -rf /tmp/registry_data
+    mkdir -p /tmp/registry_data
     tar -zxf /mnt/cdrom/registry_data.tar.gz --directory /tmp/registry_data
     docker run -v /tmp/registry_data:/var/lib/registry -d -p 55555:5000 --name update_registry registry:2 &>/dev/null
     
