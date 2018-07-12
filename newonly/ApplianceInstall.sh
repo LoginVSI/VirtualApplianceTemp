@@ -3,6 +3,7 @@ HOSTINGREPO="$1"
 HOSTINGBRANCH="$2"
 INITIALHOSTNAME="$3"
 HOSTINGFOLDER="$4"
+INITIALHOSTINGREPO="$5"
 SCRIPT_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 TITLE=$(cat /loginvsi/.title)
 
@@ -56,7 +57,7 @@ chmod +x /usr/local/bin/docker-compose
 if [ -d "/dockerrepo" ]; then
     rm -rf /dockerrepo
 fi
-git clone -q -b $HOSTINGBRANCH $HOSTINGREPO /dockerrepo
+git clone -q -b $HOSTINGBRANCH $INITIALHOSTINGREPO /dockerrepo
 cd /dockerrepo/ || exit
 cp -f $SCRIPT_PATH/../.play /root/.play
 chmod 700 /root/.play
