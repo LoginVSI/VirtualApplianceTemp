@@ -66,11 +66,11 @@ docker pull portainer/portainer 2>&1
 docker pull httpd:2.4-alpine 2>&1
 docker pull meltwater/docker-cleanup:latest
 
-cd /dockerrepo/$HOSTINGFOLDER || echo "/dockerrepo/$HOSTINGFOLDER does not exist" && exit 1
+cd /dockerrepo/$HOSTINGFOLDER || exit
 version=$(grep "Version__Number" < docker-compose.yml | cut -d':' -f2 | cut -d"'" -f2 | tail -1)
 echo $version >/loginvsi/.version
 
-docker-compose pull --quiet
+docker-compose pull 2>&1
 docker logout 2>&1
 
 
