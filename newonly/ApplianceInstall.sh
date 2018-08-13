@@ -70,7 +70,7 @@ cd /dockerrepo/$HOSTINGFOLDER || echo "/dockerrepo/$HOSTINGFOLDER does not exist
 version=$(grep "Version__Number" < docker-compose.yml | cut -d':' -f2 | cut -d"'" -f2 | tail -1)
 echo $version >/loginvsi/.version
 
-docker-compose pull --quiet || echo "pulling images failed" && exit 1
+docker-compose pull 2>&1 && echo "pulling images done" || echo "pulling images failed" && exit 1
 docker logout 2>&1
 
 
