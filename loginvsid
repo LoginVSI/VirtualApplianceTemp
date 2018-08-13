@@ -47,6 +47,17 @@ start() {
   
   export $(cat .env); docker stack deploy --resolve-image never --compose-file ./docker-compose.yml VSI
   sleep 5 &>/dev/null
+  
+  for f in $(cat /loginvsi/docker-compose.yml | grep "{DB_ROOT}")
+	do 
+		folder=$(echo $f | cut -d"-" -f2 | cut -d"/" -f2 | cut -d":" -f1) 
+		if [ ! -z $folder ]; then
+		  if [ ! -d /loginvsi/data/$folder ]; then        
+			  mkdir -p /loginvsi/data/$folder; 
+		  fi
+		fi
+	done
+  
   TOTAL=$(docker stack services VSI --format "{{.Replicas}}" | wc -l)
 
   MAXCOUNT=30
