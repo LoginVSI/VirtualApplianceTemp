@@ -27,13 +27,16 @@ done
 
 start() {
   export fqdn=$(hostname).$(domainname)
-  if [ -f /home/admin/capturedockerstats ]; then
-    echo "Date,Name,CPUPerc,MemUsage,MemPerc,NetIO,BlockIO,PIDs" > /home/admin/dockerstats
-	while [ -f /home/admin/capturedockerstats ]; do		
-		docker stats --no-stream --format "$(date -Iseconds),{{.Name}},{{.CPUPerc}},{{.MemUsage}},{{.MemPerc}},{{.NetIO}},{{.BlockIO}},{{.PIDs}}" >> /home/admin/dockerstats
-		sleep 30
-	done &
-  fi
+  while [ 1 -gt 0 ]; do
+	if [ -f /home/admin/.capturedockerstats ]; then
+		if [ ! -f /home/admin/.dockerstats ]; then
+			echo "Date,Name,CPUPerc,MemUsage,MemPerc,NetIO,BlockIO,PIDs" > /home/admin/.dockerstats
+		fi
+		docker stats --no-stream --format "$(date -Iseconds),{{.Name}},{{.CPUPerc}},{{.MemUsage}},{{.MemPerc}},{{.NetIO}},{{.BlockIO}},{{.PIDs}}" >> /home/admin/.dockerstats
+	fi
+	sleep 30
+  done &
+  
   cd /loginvsi
   if [ ! -z $(docker ps -a -f name=portainer --format "{{.Image}}") ]; then
     echo "Portainer container already exists, not recreating.."
