@@ -140,4 +140,16 @@ else
 fi
 
 docker rm -f portainer
+
+version=$(grep "Version__Number" < /loginvsi/docker-compose.yml | cut -d':' -f2 | cut -d"'" -f2 | tail -1)
+applianceversion=$(grep "Appliance_Version" < /loginvsi/docker-compose.yml | cut -d':' -f2 | cut -d"'" -f2 | tail -1)
+TITLE=$(cat /loginvsi/.title)
+
+echo "   
+    Welcome to $TITLE - version $version ($applianceversion)
+    $TITLE appliance is configured!
+    Web interface available at: https://\4{$netadapter} or https://\n.\o    
+    "  > /etc/issue    
+
+
 # after this script loginvsid start will be called by the update process
