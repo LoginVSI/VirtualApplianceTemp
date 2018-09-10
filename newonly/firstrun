@@ -10,6 +10,18 @@ netadapters=$(ip -o link show | while read -r num dev fam mtulabel mtusize qlabe
     done
     )
 netadapter=$(echo $netadapters | tail -1 | awk '{split($1,n,":");print n[1]}')
+
+if [ $(cat /sys/class/net/$netapter/operstate) == "down" ]; then
+		echo -n "Network adapter $netadapter does not have a link, please make sure it is connected. Setup will not continue until the adapter has a link"
+fi
+while [ $(cat /sys/class/net/$netapter/operstate) == "down" ]
+do
+	echo -n "."
+	sleep 2
+	ifconfig $netadapter up
+done
+echo ""
+
 ip=$(ip -o addr show $netadapter primary scope global | while read -r num dev fam addr rest; do 
         if [[ ${dev} != docker* ]]; then
             echo ${addr%/*}; 
@@ -22,6 +34,9 @@ nameserversarray=$(cat /etc/resolv.conf | grep -i nameserver|head -n2|cut -d ' '
 nameservers=$(echo $(echo "${nameserversarray[@]}"))
 broadcast=$(ip a s dev $netadapter | awk '/inet / {print $4}')
 dnssuffix=$(grep search /etc/resolv.conf | while read -r search suffix; do echo $suffix;done )
+
+
+
 if [ ! -f "/loginvsi/first_run.chk" ]; then
 trap 'echo "You cannot cancel this script!"' SIGINT
     # check for interactive shell
@@ -177,6 +192,7 @@ if [ ! -f "/loginvsi/second_run.chk" ]; then
     echo "SSL_CERTIFICATE_PATH=/certificates/${fqdn}.crt" >>/loginvsi/.env
     echo "GATEWAY_PORT=443" >>/loginvsi/.env
 
+	
     
     echo "Initting docker swarm..."  
     docker swarm init &>/dev/null
@@ -189,7 +205,9 @@ if [ ! -f "/loginvsi/second_run.chk" ]; then
     openssl rand -hex 40 | head -c 40 | tr [:lower:] [:upper:] | docker secret create LAUNCHER_SECRET - &>/dev/null
 	openssl rand -hex 40 | head -c 40 | tr [:lower:] [:upper:] | docker secret create ENGINE_SECRET - &>/dev/null
     # create data volume folders for the dbs
-    mkdir /loginvsi/data
+    if [ ! -d /loginvsi/data ]; then        
+		mkdir /loginvsi/data
+	fi
     echo "DB_ROOT=/loginvsi/data" >>/loginvsi/.env
     for f in $(cat /loginvsi/docker-compose.yml | grep "{DB_ROOT}")
     do 
