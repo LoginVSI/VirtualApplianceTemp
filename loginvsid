@@ -120,53 +120,60 @@ restart() {
 status() {   
   docker service ls -f name=VSI_   
 }
-
+internalupdate(){  
+      
+      git clone tfs.loginvsi.com/tfs/NextGen/Shared/_git/VirtualAppliance /loginvsi/update;
+      echo "Performing internal update!" 
+     
+}
 update() {
+  [[ $(echo "$2" | tr '[:upper:]' '[:lower:]') == "offline" ]] && offline=true  
+  [[ $(echo "$2" | tr '[:upper:]' '[:lower:]') == "internal" ]] && internal=true  
   cd /loginvsi
   if [ -d /loginvsi/update ]; then
     rm -rf /loginvsi/update
   fi
+  if [ -z $offline ]; then
+      if [ -z $internal ]; then        
+        git clone https://github.com/LoginVSI/VirtualAppliance.git /loginvsi/update
+      else
+        read -ep "InternalUrl for virtual appliance" applianceurl
+        read -ep "InternalUrl for Hosting" hostingurl
+        git clone $applianceurl /loginvsi/update
+      fi         
+  else
+    read -ep "Make sure the update iso is connected to the VM, press enter to continue" emtpy
+    [[ ! -d /mnt/cdrom ]] && mkdir -p /mnt/cdrom
+    mount /dev/cdrom /mnt/cdrom
 
-  git clone https://github.com/LoginVSI/VirtualAppliance.git update
-
+    if [ ! -f /mnt/cdrom/update/update ]; then
+      echo "Could not find updater, probably the update iso was not mounted properly."
+      exit 1
+    fi
+    cp -rf /mnt/cdrom/update/ .  
+  fi
   # execute update script
-  chmod +x update/update
-  update/update
+  chmod +x /loginvsi/update/update  
+  /loginvsi/update/update "$2" "$hostingurl"    
   
   loginvsid start
   rm -rf /loginvsi/update
 
+  if [ ! -z $offline ];  then
+   umount /mnt/cdrom
+    rm -rf /mnt/cdrom
+  fi
 }
 
-offlineupdate() {
-  cd /loginvsi
-  
-  read -ep "Make sure the update iso is connected to the VM, press enter to continue" emtpy
-  [[ ! -d /mnt/cdrom ]] && mkdir -p /mnt/cdrom
-  mount /dev/cdrom /mnt/cdrom
 
-  if [ ! -f /mnt/cdrom/update/update ]; then
-    echo "Could not find updater, probably the update iso was not mounted properly."
-    exit 1
-  fi
-  if [ -d /loginvsi/update ]; then
-    rm -rf /loginvsi/update
-  fi
-
-  cp -rf /mnt/cdrom/update/ .
-
-  # execute update script
-  chmod +x update/update
-  update/update offline
-  
-  umount /mnt/cdrom
-  rm -rf /mnt/cdrom
-
-  loginvsid start
-  rm -rf /loginvsi/update
-
-}
 
 case "$1" in
-  start|stop|restart|update|status|offlineupdate) "$1" ;;
+  start|stop|restart|status) "$1" ;;
+  update) "$1" "$@" ;;
+  *)
+  echo "Invalid arguments!"
+  echo "Usage: $0 start|stop|restart|status"
+  echo "Updating online : $0 update"
+  echo "Updating offline: $0 update offline"  
+  ;;
 esac

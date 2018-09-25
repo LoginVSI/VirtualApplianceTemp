@@ -1,5 +1,7 @@
 #!/bin/bash
 [[ $(echo "$1" | tr '[:upper:]' '[:lower:]') == "offline" ]] && offline=true
+[[ $(echo "$1" | tr '[:upper:]' '[:lower:]') == "internal" ]] && internal=true
+
 
 cd /loginvsi
 if [ -d /loginvsi/hosting ]; then
@@ -10,12 +12,18 @@ fi
 
 # Get the hosting repo
 cat /root/.hosting | while read -r repo branch hostingfolder; do
+    
     if [ -z $offline ]; then 
-        git clone -b "$branch" "$repo" hosting;
+        if [ -z $internal ]; then 
+            git clone -b "$branch" "$2" /loginvsi/hosting;
+        else
+            git clone -b "$branch" "$repo" /loginvsi/hosting;
+        fi
     else
         # offline updater, copy hosting files from hosting folder on iso        
         cp -rf /mnt/cdrom/hosting/ .
     fi
+    
     # copy latest compose file from hosting
     echo "Copying hosting/$hostingfolder/docker-compose.yml to /loginvsi"
     # get the status of trusted/untrusted certs
