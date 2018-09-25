@@ -137,8 +137,8 @@ update() {
       if [ -z $internal ]; then        
         git clone https://github.com/LoginVSI/VirtualAppliance.git /loginvsi/update
       else
-        read -ep "InternalUrl for virtual appliance" applianceurl
-        read -ep "InternalUrl for Hosting" hostingurl
+        read -ep "InternalUrl for virtual appliance: " applianceurl
+        read -ep "InternalUrl for Hosting: " hostingurl
         git clone $applianceurl /loginvsi/update
       fi         
   else
@@ -153,8 +153,14 @@ update() {
     cp -rf /mnt/cdrom/update/ .  
   fi
   # execute update script
-  chmod +x /loginvsi/update/update  
-  /loginvsi/update/update "$2" "$hostingurl"    
+  chmod +x /loginvsi/update/update
+  if [ ! -z $offline ]; then   
+    /loginvsi/update/update offline
+  elif [ ! -z $internal ]; then 
+    /loginvsi/update/update "$2" "$hostingurl"    
+  else
+    /loginvsi/update/update
+  fi
   
   loginvsid start
   rm -rf /loginvsi/update
