@@ -14,7 +14,7 @@ fi
 cat /root/.hosting | while read -r repo branch hostingfolder; do
     
     if [ -z $offline ]; then 
-        if [ -z $internal ]; then 
+        if [ ! -z $internal ]; then 
             git clone -b "$branch" "$2" /loginvsi/hosting;
         else
             git clone -b "$branch" "$repo" /loginvsi/hosting;
