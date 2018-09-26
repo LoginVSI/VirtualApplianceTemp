@@ -25,7 +25,7 @@ cat /root/.hosting | while read -r repo branch hostingfolder; do
         # offline updater, copy hosting files from hosting folder on iso        
         cp -rf /mnt/cdrom/hosting/ .
     fi
-    if [ ! -d /loginvsi/hosting ]; then 
+    if [ ! -f /loginvsi/hosting/$hostingfolder/docker-compose.yml ]; then 
 		echo "Cloning hosting repo has failed, unable to continue update, please contact support@loginvsi.com"
 	fi 
     # copy latest compose file from hosting
@@ -33,7 +33,7 @@ cat /root/.hosting | while read -r repo branch hostingfolder; do
     # get the status of trusted/untrusted certs
     currentcertsetting=$(grep SystemConfiguration__AllowUntrustedCertificates < /loginvsi/docker-compose.yml | head -n1 | cut -d':' -f2 | cut -d '"' -f2)
     # copy the new compose file
-    cp -f "hosting/$hostingfolder/docker-compose.yml" /loginvsi
+    cp -f "/loginvsi/hosting/$hostingfolder/docker-compose.yml" /loginvsi
     # persist status of trusted/untrusted certs
     if [ $currentcertsetting == "true" ]; then
         sed -i 's,SystemConfiguration__AllowUntrustedCertificates: "false",SystemConfiguration__AllowUntrustedCertificates: "true",g' /loginvsi/docker-compose.yml
