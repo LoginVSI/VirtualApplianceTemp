@@ -27,6 +27,7 @@ cat /root/.hosting | while read -r repo branch hostingfolder; do
     fi
     if [ ! -f /loginvsi/hosting/$hostingfolder/docker-compose.yml ]; then 
 		echo "Cloning hosting repo has failed, unable to continue update, please contact support@loginvsi.com"
+		exit 1
 	fi 
     # copy latest compose file from hosting
     echo "Copying hosting/$hostingfolder/docker-compose.yml to /loginvsi"
