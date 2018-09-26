@@ -25,7 +25,9 @@ cat /root/.hosting | while read -r repo branch hostingfolder; do
         # offline updater, copy hosting files from hosting folder on iso        
         cp -rf /mnt/cdrom/hosting/ .
     fi
-    
+    if [ ! -d /loginvsi/hosting ]; then 
+		echo "Cloning hosting repo has failed, unable to continue update, please contact support@loginvsi.com"
+	fi 
     # copy latest compose file from hosting
     echo "Copying hosting/$hostingfolder/docker-compose.yml to /loginvsi"
     # get the status of trusted/untrusted certs
