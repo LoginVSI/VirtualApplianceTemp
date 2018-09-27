@@ -219,7 +219,7 @@ if [ ! -f "/loginvsi/second_run.chk" ]; then
     done
     )
     if [ -z $ip ]; then
-         echo -n "Network adapter $netadapter does not have a valid ip address. Setup cannot continue. Please resolve the network connectivity issues manually and restart the appliance to resume setup."
+         echo "Network adapter $netadapter does not have a valid ip address. Setup cannot continue. Please resolve the network connectivity issues manually and restart the appliance to resume setup."
          exit 1
     fi
 
