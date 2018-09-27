@@ -11,16 +11,6 @@ netadapters=$(ip -o link show | while read -r num dev fam mtulabel mtusize qlabe
     )
 netadapter=$(echo $netadapters | tail -1 | awk '{split($1,n,":");print n[1]}')
 
-if [ $(cat /sys/class/net/$netapter/operstate) == "down" ]; then
-		echo -n "Network adapter $netadapter does not have a link, please make sure it is connected. Setup will not continue until the adapter has a link"
-fi
-while [ $(cat /sys/class/net/$netapter/operstate) == "down" ]
-do
-	echo -n "."
-	sleep 2
-	ifconfig $netadapter up
-done
-echo ""
 
 ip=$(ip -o addr show $netadapter primary scope global | while read -r num dev fam addr rest; do 
         if [[ ${dev} != docker* ]]; then
@@ -47,8 +37,16 @@ trap 'echo "You cannot cancel this script!"' SIGINT
         echo "Welcome to $TITLE - version $version ($applianceversion)"
         echo "Please help answer the following questions to get the system setup..."
         
-        read -ep " Please enter your preferred hostname ($(hostname)):" new_hostname        
-        read -ep " Please enter your preferred domain ($(domainname)):" new_domain        
+        read -ep " Please enter your preferred hostname ($(hostname)):" new_hostname
+        # check if hostname was supplied in fqdn notation
+        if [[ "$new_hostname" = *.* ]]; then
+            # remove everything up till and including the first . to get the domainname
+            new_domain=$(echo ${new_hostname#*.})
+            new_hostname=$(echo $new_hostname | cut -d "." -f1)
+            
+        else 
+            read -ep " Please enter your preferred domain ($(domainname)):" new_domain        
+        fi         
         read -ep " Please choose a network configuration mode dhcp or static (D/s) " network
         case $network in
             s|S)
@@ -90,6 +88,7 @@ iface $netadapter inet static
     dns-search $dnssuffix
     dns-nameservers $nameservers
                 " > /etc/network/interfaces
+                
                 ;;
             *)
                 echo "Configuring network using dhcp..."
@@ -107,6 +106,7 @@ iface lo inet loopback
 auto $netadapter
 iface $netadapter inet dhcp        
     " > /etc/network/interfaces
+    
       ;;
         esac
 
@@ -129,7 +129,7 @@ iface $netadapter inet dhcp
    
     # set fqdn
      [[ -z $new_hostname ]] && new_hostname=$(hostname)
-     [[ -z $new_domain ]] && new_domain="local"
+     [[ -z $new_domain ]] && new_domain="$(domainname)"
     export fqdn="$new_hostname.$new_domain"    
     echo " Setting fqdn: $fqdn"
 	
@@ -192,7 +192,37 @@ if [ ! -f "/loginvsi/second_run.chk" ]; then
     echo "SSL_CERTIFICATE_PATH=/certificates/${fqdn}.crt" >>/loginvsi/.env
     echo "GATEWAY_PORT=443" >>/loginvsi/.env
 
-	
+	# check if we have link & valid ip address
+    netadapters=$(ip -o link show | while read -r num dev fam mtulabel mtusize qlabel queu statelabel state modelabel mode grouplabel group qlenlabel qlen maclabel mac brdlabel brcast; do 
+        if [[ ${mac} != brd && ${mac} != 00:00:00:00:00:00 && ${dev} != br-*  && ${dev} != veth* ]]; then
+            echo ${dev%/*}; 
+        fi     
+    done
+    )
+    netadapter=$(echo $netadapters | tail -1 | awk '{split($1,n,":");print n[1]}')
+
+    if [ $(cat /sys/class/net/$netadapter/operstate) == "down" ]; then
+            echo -n "Network adapter $netadapter does not have a link, please make sure it is connected. Setup will not continue until the adapter has a link"
+    fi
+    while [ $(cat /sys/class/net/$netadapter/operstate) == "down" ]
+    do
+        echo -n "."
+        sleep 2
+        ifconfig $netadapter up
+    done
+    echo ""
+    ip=
+    ip=$(ip -o addr show $netadapter primary scope global | while read -r num dev fam addr rest; do 
+        if [[ ${dev} != docker* ]]; then
+            echo ${addr%/*}; 
+        fi       
+    done
+    )
+    if [ -z $ip ]; then
+         echo -n "Network adapter $netadapter does not have a valid ip address. Setup cannot continue. Please resolve the network connectivity issues manually and restart the appliance to resume setup."
+         exit 1
+    fi
+
     
     echo "Initting docker swarm..."  
     docker swarm init &>/dev/null

@@ -85,6 +85,7 @@ cp /loginvsi/img/logo_alt.png /loginvsi/img/logo.png
 cp -r "/dockerrepo/$HOSTINGFOLDER/docker-compose.yml" /loginvsi/
 
 version=$(grep "Version__Number" < /loginvsi/docker-compose.yml | cut -d':' -f2 | cut -d"'" -f2 | tail -1)
+applianceversion=$(grep "Appliance_Version" < /loginvsi/docker-compose.yml | cut -d':' -f2 | cut -d"'" -f2 | tail -1)
 
 echo "VERSION=\"$version\"" >> /loginvsi/build.conf
 
@@ -98,7 +99,7 @@ rm /etc/pdmenurc
 cp -f $SCRIPT_PATH/../loginvsid /usr/bin/
 cp -f $SCRIPT_PATH/../loginvsid.service /etc/systemd/system/
 cp -f $SCRIPT_PATH/../docker-cleanup.service /etc/systemd/system/
-cp -f $SCRIPT_PATH/firstrun /loginvsi/
+#cp -f $SCRIPT_PATH/firstrun /loginvsi/
 cp -f $SCRIPT_PATH/../daemon.json /etc/docker
 
 
@@ -127,7 +128,7 @@ chmod +x /loginvsi/bin/*
 
 echo "admin:admin" | chpasswd
 
-echo "Welcome to $TITLE - version $version
+echo "Welcome to $TITLE - version $version ($applianceversion)
 This system is not yet configured, please logon with username: admin and password: admin" > /etc/issue
 
 echo '#!/bin/sh

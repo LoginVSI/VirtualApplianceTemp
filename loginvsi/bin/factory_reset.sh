@@ -1,28 +1,61 @@
 #!/bin/bash
+version=$(grep "Version__Number" < /loginvsi/docker-compose.yml | cut -d':' -f2 | cut -d"'" -f2 | tail -1)
+applianceversion=$(grep "Appliance_Version" < /loginvsi/docker-compose.yml | cut -d':' -f2 | cut -d"'" -f2 | tail -1)
 
 echo "WARNING: YOU ARE ABOUT TO REMOVE ALL CONFIGURATION"
 echo "AND DATA FROM THIS MACHINE."
-echo "ARE YOU SURE?"
+read -ep "ARE YOU SURE? [y/N]" proceed
+case $proceed in
+	y|Y) proceed=true ;;
+	*) proceed=false ;;
+esac
 
-echo Read variables from when the virtual appliance was built.
+if [ $proceed != true ]; then
+    exit 1
+fi
+echo "Read variables from when the virtual appliance was built."
 source /loginvsi/build.conf
 
-echo "Stopping all microservices. This may take a while"
-for svc in $(docker service ls -q); do
-	docker service scale $svc=0
+echo "Removing docker stack. This may take a while"
+docker stack rm VSI  
+printf "Waiting for networks to clear up...\r\n"
+while [[ ! -z $(docker network ls -qf name=VSI_) ]];
+do    
+    docker network prune -f &>/dev/null
+    sleep 5
 done
+printf "Waiting for networks to clear up... \e[32m[DONE]\e[39m \r\n"
 
-echo Leaving docker swarm
+echo "Leaving docker swarm" 
 docker swarm leave --force
 systemctl disable loginvsid &>/dev/null
 systemctl disable docker-cleanup &>/dev/null
 
-echo "Removing network configuration"
-if [ -f "/etc/network/interfaces" ]; then
-    rm /etc/network/interfaces
-fi
+netadapters=$(ip -o link show | while read -r num dev fam mtulabel mtusize qlabel queu statelabel state modelabel mode grouplabel group qlenlabel qlen maclabel mac brdlabel brcast; do 
+        if [[ ${mac} != brd && ${mac} != 00:00:00:00:00:00 && ${dev} != br-*  && ${dev} != veth* ]]; then
+            echo ${dev%/*}; 
+        fi     
+    done
+    )
+netadapter=$(echo $netadapters | tail -1 | awk '{split($1,n,":");print n[1]}')
 
-echo Reset hostname and domain name
+echo "Resetting network configuration"               
+echo "
+# This file describes the network interfaces available on your system
+# and how to activate them. For more information, see interfaces(5).
+
+source /etc/network/interfaces.d/*
+
+# The loopback network interface
+auto lo
+iface lo inet loopback
+
+# The primary network interface
+auto $netadapter
+iface $netadapter inet dhcp        
+    " > /etc/network/interfaces
+
+echo "Reset hostname and domain name"
 hostname $INITIALHOSTNAME
 
 echo "127.0.0.1	localhost $INITIALHOSTNAME $INITIALHOSTNAME.local
@@ -37,7 +70,7 @@ echo Reset admin username and password
 echo "admin:admin" | chpasswd
 
 echo Reset message of the day
-echo "Welcome to $TITLE - version $version
+echo "Welcome to $TITLE - version $version ($applianceversion)
 This system is not yet configured, please logon with username: admin and password: admin" > /etc/issue
 
 echo '#!/bin/sh
@@ -53,23 +86,23 @@ printf "%s (%s %s %s)\n" "$DISTRIB_DESCRIPTION" "$(uname -o)" "$(uname -r)" "$(u
 
 ' > /etc/update-motd.d/00-header
 
-echo Remove MOTD
+echo "Remove MOTD"
 if [ -f "/etc/motd" ]; then
     rm /etc/motd
 fi
 
-echo Create first run check file
+echo "Remove first run check file"
 if [ -f "/loginvsi/first_run.chk" ]; then
     rm /loginvsi/first_run.chk
 fi
 
-echo Remove second run check file
+echo "Remove second run check file"
 if [ -f "/loginvsi/second_run.chk" ]; then
     rm /loginvsi/second_run.chk
 fi
 
 # Remove data
-rm /loginvsi/data/*
+rm -rf /loginvsi/data/*
 
 # Re-enable first run 
 echo "#!/bin/bash" > /home/admin/.bash_profile
@@ -89,5 +122,3 @@ rm -rf /root/.bash_history
 rm -rf /root/.ssh
 
 reboot
-
-echo "Press ENTER to continue"; read
