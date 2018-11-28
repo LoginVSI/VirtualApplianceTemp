@@ -107,7 +107,7 @@ start() {
 }
 
 stop() { 
-  echo -n "Stopping LoginVSI services"
+  echo -n "Stopping LoginVSI services..."
   docker stack rm VSI  &>/dev/null  
   while [[ ! -z $(docker network ls -qf name=VSI_) ]];
   do    
