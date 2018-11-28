@@ -43,7 +43,7 @@ while read -r repo branch hostingfolder; do
     fi   
     echo -n "Updating from $currentversion to $newversion..."
     # copy latest compose file from hosting
-    echo "Copying hosting/$hostingfolder/docker-compose.yml to /loginvsi" &>> /loginvsi/update.log
+    echo "Copying hosting/$hostingfolder/docker-compose.yml to /loginvsi" &> /loginvsi/update.log
     
     # copy the new compose file
     cp -f "/loginvsi/hosting/$hostingfolder/docker-compose.yml" /loginvsi
