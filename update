@@ -23,7 +23,7 @@ cat /root/.hosting | while read -r repo branch hostingfolder; do
             echo "Performing internal update from $2" 
             git clone -q -b "$branch" "$2" /loginvsi/hosting;
         else
-            echo "Performing online update from $repo"
+            echo "Performing online update from $repo" 
             git clone -q -b "$branch" "$repo" /loginvsi/hosting;
         fi
     else
@@ -35,7 +35,7 @@ cat /root/.hosting | while read -r repo branch hostingfolder; do
 		exit 111
 	fi 
     # copy latest compose file from hosting
-    echo "Copying hosting/$hostingfolder/docker-compose.yml to /loginvsi"
+    echo "Copying hosting/$hostingfolder/docker-compose.yml to /loginvsi" &>> /loginvsi/update.log
     
     # copy the new compose file
     cp -f "/loginvsi/hosting/$hostingfolder/docker-compose.yml" /loginvsi
@@ -68,8 +68,8 @@ cp -f update/loginvsid.service /etc/systemd/system/
 
 chmod +x /usr/bin/loginvsid
 chown root:root /usr/bin/loginvsid
-systemctl disable loginvsid &>/dev/null
-systemctl enable loginvsid &>/dev/null
+systemctl disable loginvsid &>> /loginvsi/update.log
+systemctl enable loginvsid &>> /loginvsi/update.log
 
 if [ ! -f /etc/docker/daemon.json ]; then
 	cp -f update/daemon.json /etc/docker
@@ -109,15 +109,15 @@ for newsecret in $(echo $existingsecrets $composesecrets | tr ' ' '\n' | sort | 
             # we do nothing with SSL_certs during update
             ;;
         LAUNCHER_SECRET)
-            echo "Found new secret: $newsecret, creating it now..."
-            openssl rand -hex 40 | head -c 40 | tr [:lower:] [:upper:] | docker secret create LAUNCHER_SECRET - &>/dev/null
+            echo "Found new secret: $newsecret, creating it now..." &>> /loginvsi/update.log
+            openssl rand -hex 40 | head -c 40 | tr [:lower:] [:upper:] | docker secret create LAUNCHER_SECRET - &>> /loginvsi/update.log
             ;; 
         ENGINE_SECRET)
-            echo "Found new secret: $newsecret, creating it now..."
-            openssl rand -hex 40 | head -c 40 | tr [:lower:] [:upper:] | docker secret create ENGINE_SECRET - &>/dev/null
+            echo "Found new secret: $newsecret, creating it now..." &>> /loginvsi/update.log
+            openssl rand -hex 40 | head -c 40 | tr [:lower:] [:upper:] | docker secret create ENGINE_SECRET - &>> /loginvsi/update.log
             ;; 
         *) 
-            echo "WARNING: Found new secret: $newsecret, but this updater does not know how to handle it!"
+            echo "WARNING: Found new secret: $newsecret, but this updater does not know how to handle it!" 
             ;;
     esac    
 done
@@ -125,41 +125,41 @@ done
 
 if [ -z $offline ]; then 
     # pull the new images from dockerhub if we are online
-    echo $(cat /root/.play) | base64 -d | docker login -u vsiplayaccount --password-stdin
+    echo $(cat /root/.play) | base64 -d | docker login -u vsiplayaccount --password-stdin &>> /loginvsi/update.log
     for image in $(grep image: < /loginvsi/docker-compose.yml | cut -d':' -f2,3| sort | uniq);do
-        docker pull $(echo $image | xargs)
+        docker pull $(echo $image | xargs) &>> /loginvsi/update.log
     done
-    docker pull portainer
-    docker logout 2>&1
+    docker pull portainer &>> /loginvsi/update.log
+    docker logout &>> /loginvsi/update.log
 else
     # offline update
     # import registry
-    docker rm -f $(docker ps --filter name=update_registry -q) &>/dev/null
-    docker rmi registry:2 &>/dev/null
+    docker rm -f $(docker ps --filter name=update_registry -q) &>> /loginvsi/update.log
+    docker rmi registry:2 &>> /loginvsi/update.log
     echo "$(date) Importing docker registry image, this might take a while"
-    gunzip -c /mnt/cdrom/registry.tar.gz | docker image import - registry:2
+    gunzip -c /mnt/cdrom/registry.tar.gz | docker image import - registry:2 &>> /loginvsi/update.log
     rm -rf /tmp/registry_data
     mkdir -p /tmp/registry_data
-    tar -zxf /mnt/cdrom/registry_data.tar.gz --directory /tmp/registry_data
-    docker run -v /tmp/registry_data:/var/lib/registry -d -p 55555:5000 --entrypoint /entrypoint.sh --name update_registry registry:2 /etc/docker/registry/config.yml &>/dev/null
+    tar -zxf /mnt/cdrom/registry_data.tar.gz --directory /tmp/registry_data &>> /loginvsi/update.log
+    docker run -v /tmp/registry_data:/var/lib/registry -d -p 55555:5000 --entrypoint /entrypoint.sh --name update_registry registry:2 /etc/docker/registry/config.yml &>> /loginvsi/update.log
     echo "$(date) Importing docker images from local registry, this might take a while"
     for image in $(grep image: < /loginvsi/docker-compose.yml | cut -d':' -f2,3| sort | uniq);do
-        docker pull $(echo localhost:55555/$image | xargs)
-        docker tag $(echo localhost:55555/$image | xargs) $(echo $image | xargs)
-        docker rmi $(echo localhost:55555/$image | xargs)
+        docker pull $(echo localhost:55555/$image | xargs) &>> /loginvsi/update.log
+        docker tag $(echo localhost:55555/$image | xargs) $(echo $image | xargs) &>> /loginvsi/update.log
+        docker rmi $(echo localhost:55555/$image | xargs) &>> /loginvsi/update.log
     done
-    docker pull localhost:55555/portainer
-    docker tag localhost:55555/portainer portainer
-    docker rmi localhost:55555/portainer
+    docker pull localhost:55555/portainer &>> /loginvsi/update.log
+    docker tag localhost:55555/portainer portainer &>> /loginvsi/update.log
+    docker rmi localhost:55555/portainer &>> /loginvsi/update.log
 
-    docker rm -f $(docker ps --filter name=update_registry -q) &>/dev/null    
-    docker rmi registry:2 &>/dev/null
-    docker rmi $(docker image ls localhost:55555/* --format "{{.Repository}}:{{.Tag}}") &>/dev/null
-    docker rmi $(docker image ls localhost:55555/*/* --format "{{.Repository}}:{{.Tag}}") &>/dev/null
+    docker rm -f $(docker ps --filter name=update_registry -q) &>> /loginvsi/update.log
+    docker rmi registry:2 &>> /loginvsi/update.log
+    docker rmi $(docker image ls localhost:55555/* --format "{{.Repository}}:{{.Tag}}") &>> /loginvsi/update.log
+    docker rmi $(docker image ls localhost:55555/*/* --format "{{.Repository}}:{{.Tag}}") &>> /loginvsi/update.log
     rm -rf /tmp/registry_data    
 fi
 
-docker rm -f portainer
+docker rm -f portainer &>> /loginvsi/update.log
 
 netadapters=$(ip -o link show | while read -r num dev fam mtulabel mtusize qlabel queu statelabel state modelabel mode grouplabel group qlenlabel qlen maclabel mac brdlabel brcast; do 
         if [[ ${mac} != brd && ${mac} != 00:00:00:00:00:00 && ${dev} != br-*  && ${dev} != veth* ]]; then
@@ -182,6 +182,6 @@ echo "
 
     NOTE: Please make sure to update your dns records accordingly
     "  > /etc/issue    
-
-
+# stop identityserver to force new version nr, will get restarted by loginvsid start
+docker service rm VSI_identityserver &>> /loginvsi/update.log
 # after this script loginvsid start will be called by the update process

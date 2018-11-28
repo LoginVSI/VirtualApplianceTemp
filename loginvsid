@@ -72,25 +72,25 @@ start() {
   
   TOTAL=$(docker stack services VSI --format "{{.Replicas}}" | wc -l)
 
-  MAXCOUNT=30
+  MAXCOUNT=900
   COUNT=0
   while [ $COUNT -le $MAXCOUNT ];
   do    
     COUNT=$((COUNT+1))    
     RUNNING=$(docker stack services VSI --format "{{.Replicas}}" | grep "1/1" | wc -l)    
     if [ $TOTAL -eq $RUNNING ]; then
-      printf "\rStarting LoginVSI services: \e[32m[DONE]\e[39m \r\n" 
+      printf "\rStarting LoginVSI services... \e[32m[DONE]\e[39m \r\n" 
       DONE="true" 
       break
     else
-      printf "\rStarting LoginVSI services: \e[36m[%s]\e[39m" "$RUNNING/$TOTAL"
+      printf "\rStarting LoginVSI services... \e[36m[%s]\e[39m   " "$RUNNING/$TOTAL"
     fi
-    sleep 30 &>/dev/null  
+    sleep 1 &>/dev/null  
   done
   if [ -z $DONE ]; then
-    echo "\rStarting LoginVSI services: \e[31m[TIMEOUT]\e[39m \r\n"
+    echo "\rStarting LoginVSI services... \e[31m[TIMEOUT]\e[39m \r\n"
   else
-    echo "\r\n";
+    
     if [ -f /certificates/CA.crt ]; then       
       services=$(docker service ps -q VSI_contentdelivery)
       for f in $services; do
@@ -108,30 +108,22 @@ start() {
 
 stop() { 
   echo -n "Stopping LoginVSI services"
-  docker stack rm VSI &>/dev/null    
-  printf "\e[32m[DONE]\e[39m \r\n"
-}
-
-restart() {
-  docker stack rm VSI  
-  echo -n "Waiting for networks to clear up..."
+  docker stack rm VSI  &>/dev/null  
   while [[ ! -z $(docker network ls -qf name=VSI_) ]];
   do    
     docker network prune -f &>/dev/null
     sleep 5
-  done
- printf "\e[32m[DONE]\e[39m \r\n"
+  done 
+  printf "\e[32m[DONE]\e[39m \r\n"
+}
+
+restart() {
+ stop
  start
 }
 
 status() {   
   docker service ls -f name=VSI_   
-}
-internalupdate(){  
-      
-      git clone tfs.loginvsi.com/tfs/NextGen/Shared/_git/VirtualAppliance /loginvsi/update;
-      echo "Performing internal update!" 
-     
 }
 update() {
   [[ $(echo "$2" | tr '[:upper:]' '[:lower:]') == "offline" ]] && offline=true  
@@ -160,6 +152,7 @@ update() {
     cp -rf /mnt/cdrom/update/ .  
   fi
   # execute update script
+
   chmod +x /loginvsi/update/update
   if [ ! -z $offline ]; then   
     /loginvsi/update/update offline
