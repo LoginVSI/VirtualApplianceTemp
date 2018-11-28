@@ -32,21 +32,23 @@ cat /root/.hosting | while read -r repo branch hostingfolder; do
     fi
     if [ ! -f /loginvsi/hosting/$hostingfolder/docker-compose.yml ]; then 
 		echo "Cloning hosting repo has failed, unable to continue update, please contact support@loginvsi.com"
-		exit 1
+		exit 111
 	fi 
     # copy latest compose file from hosting
     echo "Copying hosting/$hostingfolder/docker-compose.yml to /loginvsi"
-    # get the status of trusted/untrusted certs
-    currentcertsetting=$(grep SystemConfiguration__AllowUntrustedCertificates < /loginvsi/docker-compose.yml | head -n1 | cut -d':' -f2 | cut -d '"' -f2)
+    
     # copy the new compose file
     cp -f "/loginvsi/hosting/$hostingfolder/docker-compose.yml" /loginvsi
-    # persist status of trusted/untrusted certs
-    if [ $currentcertsetting == "true" ]; then
-        sed -i 's,SystemConfiguration__AllowUntrustedCertificates: "false",SystemConfiguration__AllowUntrustedCertificates: "true",g' /loginvsi/docker-compose.yml
-    else
-        sed -i 's,SystemConfiguration__AllowUntrustedCertificates: "true",SystemConfiguration__AllowUntrustedCertificates: "false",g' /loginvsi/docker-compose.yml
+    # get the status of trusted/untrusted certs
+    currentcertsetting=$(grep SystemConfiguration__AllowUntrustedCertificates < /loginvsi/docker-compose.yml | head -n1 | cut -d':' -f2 | cut -d '"' -f2)
+    if [ ! -z $currentcertsetting ]; then 
+        # persist status of trusted/untrusted certs
+        if [ $currentcertsetting == "true" ]; then
+            sed -i 's,SystemConfiguration__AllowUntrustedCertificates: "false",SystemConfiguration__AllowUntrustedCertificates: "true",g' /loginvsi/docker-compose.yml
+        else
+            sed -i 's,SystemConfiguration__AllowUntrustedCertificates: "true",SystemConfiguration__AllowUntrustedCertificates: "false",g' /loginvsi/docker-compose.yml
+        fi
     fi
-    
     # Check if any new entries in new .env and add them to the current .env
     for i in $(diff -y hosting/$hostingfolder/.env /loginvsi/.env | grep ">" | cut -d ">" -f2 | xargs); do
         echo $i >> .env
