@@ -36,6 +36,10 @@ cat /root/.hosting | while read -r repo branch hostingfolder; do
 	fi 
     currentversion=$(grep "Version__Number" < /loginvsi/docker-compose.yml | cut -d':' -f2 | cut -d"'" -f2 | tail -1)
     newversion=$(grep "Version__Number" < /loginvsi/hosting/$hostingfolder/docker-compose.yml | cut -d':' -f2 | cut -d"'" -f2 | tail -1)
+    if [ $currentversion == $newversion ]; then 
+        echo "This appliance is already using the latest version."
+        exit 1
+    fi
     echo -n "Performing update from $currentversion to $newversion..."
     # copy latest compose file from hosting
     echo "Copying hosting/$hostingfolder/docker-compose.yml to /loginvsi" &>> /loginvsi/update.log
