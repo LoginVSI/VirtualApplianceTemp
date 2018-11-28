@@ -134,11 +134,11 @@ update() {
   fi
   if [ -z $offline ]; then
       if [ -z $internal ]; then        
-        git clone https://github.com/LoginVSI/VirtualAppliance.git /loginvsi/update
+        git clone -q https://github.com/LoginVSI/VirtualAppliance.git /loginvsi/update
       else
         read -ep "InternalUrl for virtual appliance: " applianceurl
         read -ep "InternalUrl for Hosting: " hostingurl
-        git clone $applianceurl /loginvsi/update
+        git clone -q $applianceurl /loginvsi/update
       fi         
   else
     read -ep "Make sure the update iso is connected to the VM, press enter to continue" emtpy
