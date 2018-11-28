@@ -13,7 +13,8 @@ fi
 # Get the hosting repo
 cat /root/.hosting | while read -r repo branch hostingfolder; do
     if [ $repo == "https://github.com/LoginVSI/HostingTAT.git" ]; then        
-        branch="master";        
+        branch="master";
+        hostingfolder="latest/Production/InternalDB"        
     else
         branch="release";
     fi 
