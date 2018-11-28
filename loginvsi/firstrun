@@ -269,9 +269,6 @@ if [ ! -f "/loginvsi/second_run.chk" ]; then
     systemctl enable loginvsid &>/dev/null
     systemctl enable docker-cleanup &>/dev/null
     touch -f /loginvsi/second_run.chk
-	
-    
-    head -n -2 /etc/issue > /etc/issue.tmp; mv /etc/issue.tmp /etc/issue
     
     echo "   
     Welcome to $TITLE - version $version ($applianceversion)

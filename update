@@ -160,8 +160,12 @@ TITLE=$(cat /loginvsi/.title)
 
 echo "   
     Welcome to $TITLE - version $version ($applianceversion)
-    $TITLE appliance is configured!
-    Web interface available at: https://\4{$netadapter} or https://\n.\o    
+
+    The Login PI Webinterface is available at: 
+        https://\4{$netadapter}
+        https://\n.\o
+
+    NOTE: Please make sure to update your dns records accordingly
     "  > /etc/issue    
 
 
