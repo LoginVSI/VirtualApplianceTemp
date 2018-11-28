@@ -18,6 +18,7 @@ menu:main:Maintenance Menu
 	preproc: /loginvsi/menu/gethostname
 	exec:Regenerate self-signed certificates:pause:/loginvsi/bin/regeneratessl
 	exec:Apply new certificate:pause:/loginvsi/bin/applypfx
+	exec:Update:pause:loginvsid update
 	nop
 	group:Network Configuration
 	exec::makemenu: (\
