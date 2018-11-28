@@ -11,7 +11,7 @@ fi
 
 
 # Get the hosting repo
-cat /root/.hosting | while read -r repo branch hostingfolder; do
+while read -r repo branch hostingfolder; do
     if [ $repo == "https://github.com/LoginVSI/HostingTAT.git" ]; then        
         branch="master";
         hostingfolder="latest/Production/InternalDB"        
@@ -61,7 +61,7 @@ cat /root/.hosting | while read -r repo branch hostingfolder; do
         echo $i >> .env
     done
 
-done
+done < /root/.hosting
 
 # clean up hosting repo
 rm -rf /loginvsi/hosting
