@@ -154,6 +154,14 @@ fi
 
 docker rm -f portainer
 
+netadapters=$(ip -o link show | while read -r num dev fam mtulabel mtusize qlabel queu statelabel state modelabel mode grouplabel group qlenlabel qlen maclabel mac brdlabel brcast; do 
+        if [[ ${mac} != brd && ${mac} != 00:00:00:00:00:00 && ${dev} != br-*  && ${dev} != veth* ]]; then
+            echo ${dev%/*}; 
+        fi
+    done
+    )
+netadapter=$(echo $netadapters | tail -1 | awk '{split($1,n,":");print n[1]}')
+
 version=$(grep "Version__Number" < /loginvsi/docker-compose.yml | cut -d':' -f2 | cut -d"'" -f2 | tail -1)
 applianceversion=$(grep "Appliance_Version" < /loginvsi/docker-compose.yml | cut -d':' -f2 | cut -d"'" -f2 | tail -1)
 TITLE=$(cat /loginvsi/.title)
