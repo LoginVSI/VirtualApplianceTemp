@@ -161,9 +161,14 @@ update() {
   else
     /loginvsi/update/update
   fi
-  
-  loginvsid start
-  rm -rf /loginvsi/update
+  retVal=$?
+  if [ $retVal -ne 0 ]; then
+    echo "Update process exited with exit code: $retVal"
+    exit $retVal  
+  else  
+    loginvsid start  
+    rm -rf /loginvsi/update
+  fi
 
   if [ ! -z $offline ];  then
    umount /mnt/cdrom
