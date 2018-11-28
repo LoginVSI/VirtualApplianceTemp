@@ -12,12 +12,10 @@ fi
 
 # Get the hosting repo
 cat /root/.hosting | while read -r repo branch hostingfolder; do
-    if [ $repo == "https://github.com/LoginVSI/HostinTAT.git" ]; then
-        if [ $branch == "stable" ]; then
-            branch="master";
-        fi
+    if [ $repo == "https://github.com/LoginVSI/HostinTAT.git" ]; then        
+        branch="master";        
     else
-        branch="release"
+        branch="release";
     fi 
     if [ -z $offline ]; then 
         if [ ! -z $internal ]; then
