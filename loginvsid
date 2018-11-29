@@ -40,11 +40,11 @@ start() {
   
   cd /loginvsi
   if [ ! -z $(docker ps -a -f name=portainer --format "{{.Image}}") ]; then
-    echo "Portainer already started, skipping start of portainer..." |& tee -a /loginvsi/startup.log
+    echo "Portainer already started, skipping start of portainer..." 
   else
-    echo  -n "Starting portainer..." |& tee -a /loginvsi/startup.log
+    echo  -n "Starting portainer..." 
     docker run -d -p 9000:9000 --restart=always -v /loginvsi/img:/images -v /certificates:/certs -v /var/run/docker.sock:/var/run/docker.sock -v /opt/portainer:/data --name portainer portainer/portainer --ssl --sslkey /certs/${fqdn}.key.un --sslcert /certs/${fqdn}.crt --admin-password $(cat /root/.portainer) -H unix:///var/run/docker.sock   &>> /loginvsi/startup.log
-    printf "\e[32m[DONE]\e[39m \r\n" |& tee -a /loginvsi/startup.log
+    printf "\e[32m[DONE]\e[39m \r\n" 
   fi
   
   #if [ ! -z $(docker ps -a -f name=appliancemanagement --format "{{.Image}}") ]; then
@@ -58,7 +58,7 @@ start() {
   echo COMPOSE_PROJECT_NAME=loginvsi >>/loginvsi/.env
   echo ALLOWED_CLIENT_URLS=https://$fqdn$allowed_ips >>/loginvsi/.env
   
-  export $(cat .env); docker stack deploy --prune --resolve-image never --compose-file ./docker-compose.yml VSI &>>/loginvi/startup.log
+  export $(cat .env); docker stack deploy --prune --resolve-image never --compose-file ./docker-compose.yml VSI &>> /loginvsi/startup.log
   sleep 5 &>>/loginvsi/startup.log
   
   for f in $(cat /loginvsi/docker-compose.yml | grep "{DB_ROOT}")
@@ -80,16 +80,16 @@ start() {
     COUNT=$((COUNT+1))    
     RUNNING=$(docker stack services VSI --format "{{.Replicas}}" | grep "1/1" | wc -l)    
     if [ $TOTAL -eq $RUNNING ]; then
-      printf "\rStarting LoginVSI services... \e[32m[DONE]\e[39m \r\n" |& tee -a /loginvsi/startup.log
+      printf "\rStarting LoginVSI services... \e[32m[DONE]\e[39m \r\n" 
       DONE="true" 
       break
     else
-      printf "\rStarting LoginVSI services... \e[36m[%s]\e[39m   " "$RUNNING/$TOTAL" |& tee -a /loginvsi/startup.log
+      printf "\rStarting LoginVSI services... \e[36m[%s]\e[39m   " "$RUNNING/$TOTAL" 
     fi
     sleep 1 &>/dev/null  
   done
   if [ -z $DONE ]; then
-    echo "\rStarting LoginVSI services... \e[31m[TIMEOUT]\e[39m \r\n" |& tee -a /loginvsi/startup.log
+    echo "\rStarting LoginVSI services... \e[31m[TIMEOUT]\e[39m \r\n" 
   else
     
     if [ -f /certificates/CA.crt ]; then       
@@ -98,9 +98,9 @@ start() {
         state=$(docker inspect --format "{{.Status.State}}" $f)
         if [ $state == "running" ]; then        
           container=$(docker inspect --format "{{.Status.ContainerStatus.ContainerID}}" $f) # needs to be checked when more then 1 instance of contentdelivery is running        
-          echo -n "Copying CA.crt to contentDelivery..."      |& tee -a /loginvsi/startup.log
+          echo -n "Copying CA.crt to contentDelivery..."      
           docker cp /certificates/CA.crt $container:/app/wwwroot/content 
-          printf "\e[32m[DONE]\e[39m \r\n"       |& tee -a /loginvsi/startup.log
+          printf "\e[32m[DONE]\e[39m \r\n"       
         fi            
       done              
     fi
@@ -108,14 +108,15 @@ start() {
 }
 
 stop() { 
-  echo -n "Stopping LoginVSI services..." |& tee -a /loginvsi/startup.log
-  docker stack rm VSI  &>>loginvsi/startup.log
+  rm -rf /loginvsi/stop.log
+  echo -n "Stopping LoginVSI services..."
+  docker stack rm VSI  &>> /loginvsi/stop.log
   while [[ ! -z $(docker network ls -qf name=VSI_) ]];
   do    
-    docker network prune -f &>>/loginvsi/startup.log
+    docker network prune -f &>> /loginvsi/stop.log
     sleep 5
   done 
-  printf "\e[32m[DONE]\e[39m \r\n" |& tee -a /loginvsi/startup.log
+  printf "\e[32m[DONE]\e[39m \r\n" 
 }
 
 restart() {
