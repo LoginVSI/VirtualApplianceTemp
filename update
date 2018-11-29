@@ -8,6 +8,21 @@ if [ -d /loginvsi/hosting ]; then
     rm -rf /loginvsi/hosting
 fi 
 
+#copy latest loginvsi folder
+cp -f -r update/loginvsi/* /loginvsi/
+
+# copy loginvsid.service and loginvsid
+cp -f update/loginvsid /usr/bin/
+cp -f update/loginvsid.service /etc/systemd/system/
+
+chmod +x /usr/bin/loginvsid
+chown root:root /usr/bin/loginvsid
+systemctl disable loginvsid &>> /loginvsi/update.log
+systemctl enable loginvsid &>> /loginvsi/update.log
+
+if [ ! -f /etc/docker/daemon.json ]; then
+	cp -f update/daemon.json /etc/docker
+fi
 
 
 # Get the hosting repo
@@ -67,21 +82,6 @@ done < /root/.hosting
 # clean up hosting repo
 rm -rf /loginvsi/hosting
 
-#copy latest loginvsi folder
-cp -f -r update/loginvsi/* /loginvsi/
-
-# copy loginvsid.service and loginvsid
-cp -f update/loginvsid /usr/bin/
-cp -f update/loginvsid.service /etc/systemd/system/
-
-chmod +x /usr/bin/loginvsid
-chown root:root /usr/bin/loginvsid
-systemctl disable loginvsid &>> /loginvsi/update.log
-systemctl enable loginvsid &>> /loginvsi/update.log
-
-if [ ! -f /etc/docker/daemon.json ]; then
-	cp -f update/daemon.json /etc/docker
-fi
 
 
 # create new db folders if needed
