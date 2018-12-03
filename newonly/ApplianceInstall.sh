@@ -197,5 +197,7 @@ iface $netadapter inet dhcp
 # Cleanup
 rm -rf /home/admin/*
 rm -rf /home/admin/.bash_history
+rm -rf /home/admin/.git
 rm -rf /root/.bash_history
 rm -rf /root/.ssh
+
