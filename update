@@ -192,5 +192,8 @@ echo "
     "  > /etc/issue    
 # stop identityserver to force new version nr, will get restarted by loginvsid start
 docker service rm VSI_identityserver &>> /loginvsi/update.log
+
+rm -rf /home/admin/.git
+
 printf "\e[32m[DONE]\e[39m \r\n"
 # after this script loginvsid start will be called by the update process
