@@ -25,6 +25,8 @@ nameservers=$(echo $(echo "${nameserversarray[@]}"))
 broadcast=$(ip a s dev $netadapter | awk '/inet / {print $4}')
 dnssuffix=$(grep search /etc/resolv.conf | while read -r search suffix; do echo $suffix;done )
 
+ValidIpAddressRegex='^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$'
+ValidHostnameRegex='^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$'
 
 
 if [ ! -f "/loginvsi/first_run.chk" ]; then
@@ -36,25 +38,64 @@ trap 'echo "You cannot cancel this script!"' SIGINT
         # ask questions
         echo "Welcome to $TITLE - version $version ($applianceversion)"
         echo "Please help answer the following questions to get the system setup..."
-
-        read -ep " Please enter your computername (e.g $(hostname)):" new_hostname
+        validhostname=false
+        while [ ! $validhostname ]; do        
+            read -rep " Please enter your computername (e.g $(hostname)):" new_hostname
+            if [[ new_hostname =~ $ValidHostnameRegex ]]; then
+                validhostname=true
+            else
+                echo "Invalid hostname!"
+            fi 
+        done
         # check if hostname was supplied in fqdn notation
         if [[ "$new_hostname" = *.* ]]; then
             # remove everything up till and including the first . to get the domainname
             new_domain=$(echo ${new_hostname#*.})
             new_hostname=$(echo $new_hostname | cut -d "." -f1)
-
         else
             read -ep " Please enter your domain dns sufffix (e.g contoso.com):" new_domain
         fi
+        
+
         read -ep " Please choose a network configuration mode dhcp or static (D/s) " network
         case $network in
             s|S)
 
                 echo "Configuring network using static address..."
-                read -ep " Please provide the new ip address ($ip): " new_ip
-                read -ep " Please provide the netmask ($netmask): " new_netmask
-                read -ep " Please provide the default gateway ($gateway): " new_gateway
+                validip=false
+                while [ ! $validip ]; do
+                    read -rep " Please provide the new ip address ($ip): " new_ip
+                    if [[ ! -z $new_ip ]]; then
+                        if [[ new_ip =~ $ValidIpAddressRegex ]]; then
+                            validip=true
+                        else
+                            echo "Invalid IP address!"
+                        fi
+                    fi
+                done;
+                validnetmask=false
+                while [ ! $validnetmask ]; do                    
+                    read -rep " Please provide the netmask ($netmask): " new_netmask
+                    if [[ ! -z $new_netmask ]]; then
+                        if [[ new_netmask =~ $ValidIpAddressRegex ]]; then 
+                            validnetmask=true
+                        else
+                            echo "Invalid netmask address!"
+                        fi
+                    fi
+                done
+                validgateway=false                                
+                while [ ! $validgateway ]; do
+                    read -ep " Please provide the default gateway ($gateway): " new_gateway
+                    if [[ ! -z $new_gateway ]]; then
+                        if [[ $new_gateway =~ $ValidIpAddressRegex ]]; then 
+                            validgateway=true
+                        else
+                            echo "Invalid gateway address!"
+                        fi 
+                    fi
+                done
+                
                 read -ep " Please provide the nameservers ($nameservers) " new_nameservers
                 read -ep " Please provide the dns search suffix ($new_domain) " new_dnssuffix
 
