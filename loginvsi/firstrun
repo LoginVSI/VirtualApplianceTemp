@@ -39,7 +39,7 @@ trap 'echo "You cannot cancel this script!"' SIGINT
         echo "Welcome to $TITLE - version $version ($applianceversion)"
         echo "Please help answer the following questions to get the system setup..."
         validhostname=false
-        while [ $validhostname == false ]; do        
+        while [[ $validhostname == false ]]; do        
             read -rep " Please enter your computername (e.g $(hostname)):" new_hostname
             if [[ new_hostname =~ $ValidHostnameRegex ]]; then
                 validhostname=true
@@ -63,7 +63,7 @@ trap 'echo "You cannot cancel this script!"' SIGINT
 
                 echo "Configuring network using static address..."
                 validip=false
-                while [ $validip == false ]; do
+                while [[ $validip == false ]]; do
                     read -rep " Please provide the new ip address ($ip): " new_ip
                     if [[ ! -z $new_ip ]]; then
                         if [[ new_ip =~ $ValidIpAddressRegex ]]; then
@@ -74,7 +74,7 @@ trap 'echo "You cannot cancel this script!"' SIGINT
                     fi
                 done;
                 validnetmask=false
-                while [ $validnetmask == false ]; do                    
+                while [[ $validnetmask == false ]]; do                    
                     read -rep " Please provide the netmask ($netmask): " new_netmask
                     if [[ ! -z $new_netmask ]]; then
                         if [[ new_netmask =~ $ValidIpAddressRegex ]]; then 
@@ -85,7 +85,7 @@ trap 'echo "You cannot cancel this script!"' SIGINT
                     fi
                 done
                 validgateway=false                                
-                while [ $validgateway == false ]; do
+                while [[ $validgateway == false ]]; do
                     read -rep " Please provide the default gateway ($gateway): " new_gateway
                     if [[ ! -z $new_gateway ]]; then
                         if [[ $new_gateway =~ $ValidIpAddressRegex ]]; then 
