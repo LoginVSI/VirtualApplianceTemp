@@ -84,7 +84,7 @@ trap 'echo "You cannot cancel this script!"' SIGINT
                     if [[ ! -z $new_netmask ]]; then
                         result=""
                         result=$(echo $new_netmask | grep -P $ValidNetMaskRegex)
-                        if [[ -z $result ]]; then 
+                        if [[ ! -z $result ]]; then 
                             validnetmask=true
                         else
                             echo "Invalid netmask address!"
