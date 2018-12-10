@@ -26,8 +26,7 @@ broadcast=$(ip a s dev $netadapter | awk '/inet / {print $4}')
 dnssuffix=$(grep search /etc/resolv.conf | while read -r search suffix; do echo $suffix;done )
 
 ValidIpAddressRegex='^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$'
-ValidHostnameRegex='^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$'
-
+ValidHostnameRegex="^(([a-zA-Z]|[a-zA-Z][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])$"
 
 if [ ! -f "/loginvsi/first_run.chk" ]; then
 trap 'echo "You cannot cancel this script!"' SIGINT
@@ -41,9 +40,12 @@ trap 'echo "You cannot cancel this script!"' SIGINT
         validhostname=false
         while [[ $validhostname == false ]]; do        
             read -rep " Please enter your computername (e.g $(hostname)):" new_hostname
-            if [[ new_hostname =~ $ValidHostnameRegex ]]; then
+            result=""
+            result=$(echo $new_hostname | grep -P $ValidHostnameRegex)
+            if [[ ! -z $result ]]; then
                 validhostname=true
             else
+                echo $result
                 echo "Invalid hostname!"
             fi 
         done
@@ -66,7 +68,9 @@ trap 'echo "You cannot cancel this script!"' SIGINT
                 while [[ $validip == false ]]; do
                     read -rep " Please provide the new ip address ($ip): " new_ip
                     if [[ ! -z $new_ip ]]; then
-                        if [[ new_ip =~ $ValidIpAddressRegex ]]; then
+                        result=""
+                        result=$(echo $new_ip | grep -P $ValidIpAddressRegex)
+                        if [[ ! -z $result ]]; then
                             validip=true
                         else
                             echo "Invalid IP address!"
@@ -77,7 +81,9 @@ trap 'echo "You cannot cancel this script!"' SIGINT
                 while [[ $validnetmask == false ]]; do                    
                     read -rep " Please provide the netmask ($netmask): " new_netmask
                     if [[ ! -z $new_netmask ]]; then
-                        if [[ new_netmask =~ $ValidIpAddressRegex ]]; then 
+                        result=""
+                        result=$(echo $new_netmask | grep -P $ValidIpAddressRegex)
+                        if [[ -z $result ]]; then 
                             validnetmask=true
                         else
                             echo "Invalid netmask address!"
@@ -88,7 +94,9 @@ trap 'echo "You cannot cancel this script!"' SIGINT
                 while [[ $validgateway == false ]]; do
                     read -rep " Please provide the default gateway ($gateway): " new_gateway
                     if [[ ! -z $new_gateway ]]; then
-                        if [[ $new_gateway =~ $ValidIpAddressRegex ]]; then 
+                        result=""
+                        result=$(echo $new_gateway | grep -P $ValidIpAddressRegex)
+                        if [[ ! -z $result ]]; then 
                             validgateway=true
                         else
                             echo "Invalid gateway address!"
