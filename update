@@ -38,18 +38,13 @@ while read -r repo branch hostingfolder; do
     currentversion=$(grep "Version__Number" < /loginvsi/docker-compose.yml | cut -d':' -f2 | cut -d"'" -f2 | tail -1)    
     newversion=$(grep "Version__Number" < /loginvsi/hosting/$hostingfolder/docker-compose.yml | cut -d':' -f2 | cut -d"'" -f2 | tail -1)
     echo "This appliance is going to be updated to the latest version. Please make sure you have a backup of the system and data before proceeding."
-    read -rep "Are you sure you want to update from $currentversion to $newversion: y/N" proceed
-    if [[ -z $proceed ]]; then 
-        proceed="n"
-    else
-        if [[ $(echo $proceed | tr '[:upper:]' '[:lower:]') == "y" ]]; then 
-            proceed="y"
-        else
-            proceed="n"
-        fi
-    fi
+    read -rep "Are you sure you want to update from $currentversion to $newversion: y/N" PROCEED
+    DEFAULT="n"
+    PROCEED="${PROCEED:-${DEFAULT}}"
+    # convert to lowercase
+    PROCEED="${PROCEED,,,}"       
     
-    if [[ $proceed == "y" ]]; then
+    if [[ "${PROCEED}" == "y" ]]; then
         echo "Updating to $newversion..."
         if [ $currentversion == $newversion ]; then 
             echo "This appliance is already using the latest version ($currentversion)."
@@ -78,7 +73,7 @@ while read -r repo branch hostingfolder; do
     fi
 done < /root/.hosting
 
-if [[ $proceed == "y" ]]; then
+if [[ "${PROCEED}" == "y" ]]; then
     #copy latest loginvsi folder
     cp -f -r update/loginvsi/* /loginvsi/
 
