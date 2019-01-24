@@ -2,7 +2,6 @@
 [[ $(echo "$1" | tr '[:upper:]' '[:lower:]') == "offline" ]] && offline=true
 [[ $(echo "$1" | tr '[:upper:]' '[:lower:]') == "internal" ]] && internal=true
 
-proceed="n"
 
 cd /loginvsi
 if [ -d /loginvsi/hosting ]; then
