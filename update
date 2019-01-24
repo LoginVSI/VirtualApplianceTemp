@@ -43,7 +43,7 @@ while read -r repo branch hostingfolder; do
     if [[ -z $proceed ]]; then 
         proceed="n"
     else
-        if [[ $(echo $proceed) | tr '[:upper:]' '[:lower:]') == "y" ]]; then 
+        if [[ $(echo $proceed | tr '[:upper:]' '[:lower:]') == "y" ]]; then 
             proceed="y"
         else
             proceed="n"
