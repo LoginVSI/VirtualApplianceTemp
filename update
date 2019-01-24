@@ -38,14 +38,13 @@ while read -r repo branch hostingfolder; do
     currentversion=$(grep "Version__Number" < /loginvsi/docker-compose.yml | cut -d':' -f2 | cut -d"'" -f2 | tail -1)    
     newversion=$(grep "Version__Number" < /loginvsi/hosting/$hostingfolder/docker-compose.yml | cut -d':' -f2 | cut -d"'" -f2 | tail -1)
     echo "This appliance is going to be updated to the latest version. Please make sure you have a backup of the system and data before proceeding."
-    read -rep "Are you sure you want to update from $currentversion to $newversion: y/N" PROCEED </dev/tty
+    read -rep "Are you sure you want to update from $currentversion to $newversion [y/N]: " PROCEED </dev/tty
     DEFAULT="n"
     PROCEED="${PROCEED:-${DEFAULT}}"
     # convert to lowercase
     PROCEED="${PROCEED,,,}"       
     
-    if [[ "${PROCEED}" == "y" ]]; then
-        echo "Updating to $newversion..."
+    if [[ "${PROCEED}" == "y" ]]; then        
         if [ $currentversion == $newversion ]; then 
             echo "This appliance is already using the latest version ($currentversion)."
             exit 2
