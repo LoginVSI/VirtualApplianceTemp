@@ -43,7 +43,7 @@ while read -r repo branch hostingfolder; do
     PROCEED="${PROCEED:-${DEFAULT}}"
     # convert to lowercase
     PROCEED="${PROCEED,,,}"       
-    
+    echo $PROCEED
     if [[ "${PROCEED}" == "y" ]]; then
         echo "Updating to $newversion..."
         if [ $currentversion == $newversion ]; then 
