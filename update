@@ -55,10 +55,10 @@ while read -r repo branch hostingfolder; do
     PROCEED="${PROCEED,,,}"       
     
     if [[ "${PROCEED}" == "y" ]]; then        
-        if [ $currentversion == $newversion ]; then 
-            echo "This appliance is already using the latest version ($currentversion)."
-            exit 2
-        fi   
+        #if [ $currentversion == $newversion ]; then 
+        #    echo "This appliance is already using the latest version ($currentversion)."
+        #    exit 2
+        #fi   
         echo -n "Updating from $currentversion to $newversion..."
         # copy latest compose file from hosting
         echo "Copying hosting/$hostingfolder/docker-compose.yml to /loginvsi" &> /loginvsi/update.log
@@ -155,9 +155,15 @@ if [[ "${PROCEED}" == "y" ]]; then
     if [ -z $offline ]; then 
         # pull the new images from dockerhub if we are online
         echo $(cat /root/.play) | base64 -d | docker login -u vsiplayaccount --password-stdin &>> /loginvsi/update.log
-        for image in $(grep image: < /loginvsi/docker-compose.yml | cut -d':' -f2,3| sort | uniq);do
-            docker pull $(echo $image | xargs) &>> /loginvsi/update.log
-        done
+        cd /loginvsi
+        docker-compose pull --quiet &>>/loginvsi/update.log
+        if [ $? != 0 ]; then 
+            echo "Something went wrong during pulling of the images from docker hub, please verify this appliance can connect to hub.docker.com"
+            exit
+        fi
+        #for image in $(grep image: < /loginvsi/docker-compose.yml | cut -d':' -f2,3| sort | uniq);do
+        #    docker pull $(echo $image | xargs) &>> /loginvsi/update.log
+        #done
         docker pull portainer &>> /loginvsi/update.log
         docker logout &>> /loginvsi/update.log
     else
