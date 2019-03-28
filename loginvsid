@@ -136,7 +136,7 @@ update() {
   fi
   if [ -z $offline ]; then
       if [ -z $internal ]; then        
-        curl -Lfs -m 10 https://github.com/LoginVSI/VirtualAppliance.git
+        curl -Lfs -m 10 https://github.com/LoginVSI/VirtualAppliance.git &> /dev/null
         if [[ $? != 0 ]]; then 
           echo "Failed to connect to github.com, make sure the appliance can access github.com"
           exit

@@ -24,12 +24,12 @@ while read -r repo branch hostingfolder; do
             echo "Performing internal update from $2" 
             git clone -q -b "$branch" "$2" /loginvsi/hosting;
         else
-            curl -Lfs -m 10 https://github.com/LoginVSI/VirtualAppliance.git
+            curl -Lfs -m 10 https://github.com/LoginVSI/VirtualAppliance.git &> /dev/null
             if [[ $? != 0 ]]; then 
                 echo "Failed to connect to github.com, make sure the appliance can access github.com"
                 exit
             fi
-            curl -Lfs -m 10 https://hub.docker.com
+            curl -Lfs -m 10 https://hub.docker.com &> /dev/null
             if [[ $? != 0 ]]; then 
                 echo "Failed to connect to hub.docker.com, make sure the appliance can access hub.docker.com"
                 exit
