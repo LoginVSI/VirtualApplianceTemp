@@ -40,7 +40,8 @@ menu:main:Maintenance Menu
 menu:troublshoot:Troubleshooting
 	exit:Back to main menu
 	nop:--------------------------
-	exec:Start SSH server:pause:/etc/init.d/ssh start
+	exec:Start enable SSH server:pause:systemctl enable ssh;systemctl start ssh
+	exec:Stop and disable SSH server:pause:systemctl disable ssh; systemctl stop ssh
 	exec:Restart portainer:pause:docker restart portainer
 	exec:Ping:edit,pause:clear;ping -c 10 ~Address:~
 	exec:Show netstat:display:netstat -tuna
