@@ -28,25 +28,30 @@ done
 start() {
   rm -rf /loginvsi/startup.log  
   export fqdn=$(hostname).$(domainname)
-  while [ 1 -gt 0 ]; do
-	if [ -f /home/admin/.capturedockerstats ]; then
-		if [ ! -f /home/admin/.dockerstats ]; then
-			echo "Date,Name,CPUPerc,MemUsage,MemPerc,NetIO,BlockIO,PIDs" > /home/admin/.dockerstats
-		fi
-		docker stats --no-stream --format "$(date -Iseconds),{{.Name}},{{.CPUPerc}},{{.MemUsage}},{{.MemPerc}},{{.NetIO}},{{.BlockIO}},{{.PIDs}}" >> /home/admin/.dockerstats
-	fi
-	sleep 30
-  done &
   
+  # while [ 1 -gt 0 ]; do
+	# if [ -f /home/admin/.capturedockerstats ]; then
+	# 	if [ ! -f /home/admin/.dockerstats ]; then
+	# 		echo "Date,Name,CPUPerc,MemUsage,MemPerc,NetIO,BlockIO,PIDs" > /home/admin/.dockerstats
+	# 	fi
+	# 	docker stats --no-stream --format "$(date -Iseconds),{{.Name}},{{.CPUPerc}},{{.MemUsage}},{{.MemPerc}},{{.NetIO}},{{.BlockIO}},{{.PIDs}}" >> /home/admin/.dockerstats
+	# fi
+	# sleep 30
+  # done &
   cd /loginvsi
-  if [ ! -z $(docker ps -a -f name=portainer --format "{{.Image}}") ]; then
-    echo "Portainer already started, skipping start of portainer..." 
+  if [ ! -f /loginvsi/.portainerdisabled ]; then
+    if [ ! -z $(docker ps -a -f name=portainer --format "{{.Image}}") ]; then
+      echo "Portainer already started, skipping start of portainer..." 
+    else
+      echo  -n "Starting portainer..." 
+      docker run -d -p 9000:9000 --restart=always -v /loginvsi/img:/images -v /certificates:/certs -v /var/run/docker.sock:/var/run/docker.sock -v /opt/portainer:/data --name portainer portainer/portainer --ssl --sslkey /certs/${fqdn}.key.un --sslcert /certs/${fqdn}.crt --admin-password $(cat /root/.portainer) -H unix:///var/run/docker.sock   &>> /loginvsi/startup.log
+      printf "\e[32m[DONE]\e[39m \r\n" 
+    fi
   else
-    echo  -n "Starting portainer..." 
-    docker run -d -p 9000:9000 --restart=always -v /loginvsi/img:/images -v /certificates:/certs -v /var/run/docker.sock:/var/run/docker.sock -v /opt/portainer:/data --name portainer portainer/portainer --ssl --sslkey /certs/${fqdn}.key.un --sslcert /certs/${fqdn}.crt --admin-password $(cat /root/.portainer) -H unix:///var/run/docker.sock   &>> /loginvsi/startup.log
-    printf "\e[32m[DONE]\e[39m \r\n" 
+    if [ ! -z $(docker ps -a -f name=portainer --format "{{.Image}}") ]; then
+      docker rm -f portainer
+    fi
   fi
-  
   #if [ ! -z $(docker ps -a -f name=appliancemanagement --format "{{.Image}}") ]; then
   #  echo "ApplianceManagement container already exists, not recreating.."
   #else  
