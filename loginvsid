@@ -58,10 +58,18 @@ start() {
   #  docker service create --name appliancemanagement --publish 8000:8000 --secret ADMIN_PASSWORD --secret APPLIANCEMANAGEMENT_PFX --secret APPLIANCEMANAGEMENT_PFX_PASSWORD loginvsi/appliancemanagement:stable
   #fi
 
+
+  allowed_urls=$(grep 'ALLOWED_CLIENT_URLS' < /loginvsi/.env | cut -d'=' -f2)
+  allowed_urls=$(echo $allowed_urls | sed "s,https://$fqdn,,g")
+  allowed_urls=$(echo $allowed_urls | sed "s,$allowed_ips,,g")
+  allowed_urls+=";https://$fqdn$allowed_ips"
+  
+  allowed_urls=${allowed_urls#";"}
+  
   sed -i '/ALLOWED_CLIENT_URLS=/d' /loginvsi/.env
   sed -i '/COMPOSE_PROJECT_NAME=/d' /loginvsi/.env
   echo COMPOSE_PROJECT_NAME=loginvsi >>/loginvsi/.env
-  echo ALLOWED_CLIENT_URLS=https://$fqdn$allowed_ips >>/loginvsi/.env
+  echo ALLOWED_CLIENT_URLS=$allowed_urls >>/loginvsi/.env
   
   export $(cat .env); docker stack deploy --prune --resolve-image never --compose-file ./docker-compose.yml VSI &>> /loginvsi/startup.log
   sleep 5 &>>/loginvsi/startup.log
