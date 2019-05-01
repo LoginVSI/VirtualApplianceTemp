@@ -103,8 +103,9 @@ if [[ "${PROCEED}" == "y" ]]; then
         branch="release"
         echo $repo $branch $hostingfolder > /root/.hosting       
         exec loginvsid update recurse        
+        echo "Shouldn't see this line anymore"
     fi
-    echo "Shouldn't see this line anymore"
+    
 
     if [ ! -f /etc/docker/daemon.json ]; then
         cp -f update/daemon.json /etc/docker
