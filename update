@@ -17,7 +17,7 @@ while read -r repo branch hostingfolder; do
         branch="master";
         hostingfolder="latest/Production/InternalDB"        
     else
-        branch="release";
+        branch="release";        
     fi 
     if [ -z $offline ]; then 
         if [ ! -z $internal ]; then
@@ -32,6 +32,11 @@ while read -r repo branch hostingfolder; do
             curl -Lfs -m 10 https://hub.docker.com &> /dev/null
             if [[ $? != 0 ]]; then 
                 echo "Failed to connect to hub.docker.com, make sure the appliance can access hub.docker.com"
+                exit
+            fi
+            if [ $repo == "https://github.com/LoginVSI/Hosting.git" ]; then
+                # PI3 update, we should relaunch the update process from the daemon as it will now have a different address
+                loginvsid update 
                 exit
             fi
             echo "Performing online update from $repo" 
