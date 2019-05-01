@@ -102,7 +102,7 @@ if [[ "${PROCEED}" == "y" ]]; then
         echo "Virtual Appliance scripts repo change detected, relaunching update..." 
         branch="release"
         echo $repo $branch $hostingfolder > /root/.hosting       
-        loginvsid update 
+        loginvsid update relaunch
         exit
     fi
 
