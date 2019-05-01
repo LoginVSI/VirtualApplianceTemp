@@ -102,10 +102,9 @@ if [[ "${PROCEED}" == "y" ]]; then
         echo "Virtual Appliance scripts repo change detected, relaunching update..." 
         branch="release"
         echo $repo $branch $hostingfolder > /root/.hosting       
-        loginvsid update recurse
-        exit
+        exec loginvsid update recurse        
     fi
-
+    echo "Shouldn't see this line anymore"
 
     if [ ! -f /etc/docker/daemon.json ]; then
         cp -f update/daemon.json /etc/docker
