@@ -17,7 +17,8 @@ while read -r repo branch hostingfolder; do
         branch="master";
         hostingfolder="latest/Production/InternalDB"        
     else
-        branch="release";        
+        branch="release";   
+        echo $repo $branch $hostingfolder > /root/.hosting      
     fi 
     if [ -z $offline ]; then 
         if [ ! -z $internal ]; then
@@ -99,7 +100,7 @@ if [[ "${PROCEED}" == "y" ]]; then
     read -r repo branch hostingfolder < /root/.hosting
     if [ $repo == "https://github.com/LoginVSI/Hosting.git" ]; then
         # PI3 update, we should relaunch the update process from the daemon as it will now have a different address
-        echo "Virtual Appliance scripts repo change detected, relaunching update..."
+        echo "Virtual Appliance scripts repo change detected, relaunching update..."        
         loginvsid update 
         exit
     fi
