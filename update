@@ -96,7 +96,7 @@ if [[ "${PROCEED}" == "y" ]]; then
         branch="release"
         echo $repo $branch $hostingfolder > /root/.hosting       
         exec loginvsid update recurse        
-        echo "Shouldn't see this line anymore"
+        
     fi
     
 
