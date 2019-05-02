@@ -1,6 +1,6 @@
 #!/bin/bash
 ## shellcheck disable=2060,2086,2046,2034
-echo "update script old repo"
+
 
 [[ $(echo "$1" | tr '[:upper:]' '[:lower:]') == "offline" ]] && offline=true
 [[ $(echo "$1" | tr '[:upper:]' '[:lower:]') == "internal" ]] && internal=true
@@ -11,7 +11,7 @@ if [ -d /loginvsi/hosting ]; then
     rm -rf /loginvsi/hosting
 fi 
 
-
+echo "update script old repo"
 
 
 # Get the hosting repo
