@@ -191,8 +191,9 @@ update() {
     /loginvsi/update/update "$2" "$hostingurl"    
   elif [ -n "$recurse" ]; then
     echo "old repo loginvsid script"
-    exec /loginvsi/update/update recurse
+    exec /loginvsi/update/update recurse    
     echo "Shouldn't see this line anymore"
+    exit
   else
     /loginvsi/update/update
   fi
