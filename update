@@ -1,5 +1,5 @@
 #!/bin/bash
-## shellcheck disable=2060,2086,2046,2034
+
 
 
 [[ $(echo "$1" | tr '[:upper:]' '[:lower:]') == "offline" ]] && offline=true
