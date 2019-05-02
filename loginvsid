@@ -145,8 +145,7 @@ status() {
 }
 update() {
   [[ $(echo "$2" | tr '[:upper:]' '[:lower:]') == "offline" ]] && offline=true  
-  [[ $(echo "$2" | tr '[:upper:]' '[:lower:]') == "internal" ]] && internal=true  
-  [[ $(echo "$2" | tr '[:upper:]' '[:lower:]') == "recurse" ]] && recurse=true  
+  [[ $(echo "$2" | tr '[:upper:]' '[:lower:]') == "internal" ]] && internal=true     
   
   cd /loginvsi || (echo "/loginvsi folder cannot be found" && exit 1)
   if [ -d /loginvsi/update ]; then
@@ -190,7 +189,11 @@ update() {
   elif [ -n "$internal" ]; then 
     /loginvsi/update/update "$2" "$hostingurl"      
   else
-    /loginvsi/update/update
+    /loginvsi/update/update    
+     read -r repo branch hostingfolder < /root/.hosting
+     if [ $repo == "https://github.com/LoginVSI/Hosting.git" ]; then  
+        exit
+     fi
   fi
   retVal=$?
   if [ $retVal -ne 0 ]; then
