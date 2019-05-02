@@ -189,11 +189,7 @@ update() {
   elif [ -n "$internal" ]; then 
     /loginvsi/update/update "$2" "$hostingurl"      
   else
-    /loginvsi/update/update    
-     read -r repo branch hostingfolder < /root/.hosting
-     if [ $repo == "https://github.com/LoginVSI/Hosting.git" ]; then  
-        exit
-     fi
+    /loginvsi/update/update     
   fi
   retVal=$?
   if [ $retVal -ne 0 ]; then
