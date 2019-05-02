@@ -188,12 +188,7 @@ update() {
   if [ -n "$offline" ]; then   
     /loginvsi/update/update offline
   elif [ -n "$internal" ]; then 
-    /loginvsi/update/update "$2" "$hostingurl"    
-  elif [ -n "$recurse" ]; then
-    echo "old repo loginvsid script"
-    exec /loginvsi/update/update recurse    
-    echo "Shouldn't see this line anymore"
-    exit
+    /loginvsi/update/update "$2" "$hostingurl"      
   else
     /loginvsi/update/update
   fi
