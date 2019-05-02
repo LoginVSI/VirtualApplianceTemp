@@ -96,7 +96,7 @@ if [[ "${PROCEED}" == "y" ]]; then
         echo "Virtual Appliance scripts repo change detected, please restart the update!" 
         branch="release"
         echo $repo $branch $hostingfolder > /root/.hosting
-        exec exit
+        exec /bin/sleep 5
         echo "should not see this line"                       
     fi
     
