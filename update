@@ -24,12 +24,12 @@ while read -r repo branch hostingfolder; do
     if [ -z "$offline" ]; then 
         if [ -n "$internal" ]; then
             echo "Performing internal update from $2" 
-            git clone -q -b "$branch" "$2" /loginvsi/hosting || echo "Failed to clone repository, made a typo perhaps?";exit 1                        
+            git clone -q -b "$branch" "$2" /loginvsi/hosting || (echo "Failed to clone repository, made a typo perhaps?" && exit 1)                        
         else
-            curl -Lfs -m 10 https://github.com/LoginVSI/VirtualAppliance.git &> /dev/null || echo "Failed to connect to github.com, make sure the appliance can access github.com";exit 1
-            curl -Lfs -m 10 https://hub.docker.com &> /dev/null || echo "Failed to connect to hub.docker.com, make sure the appliance can access hub.docker.com";exit 1                        
+            curl -Lfs -m 10 https://github.com/LoginVSI/VirtualAppliance.git &> /dev/null || (echo "Failed to connect to github.com, make sure the appliance can access github.com" && exit 1)
+            curl -Lfs -m 10 https://hub.docker.com &> /dev/null || (echo "Failed to connect to hub.docker.com, make sure the appliance can access hub.docker.com" && exit 1)                        
             echo "Performing online update from $repo" 
-            git clone -q -b "$branch" "$repo" /loginvsi/hosting || echo "Failed to clone repository, make sure the appliance can access github";exit 1                        
+            git clone -q -b "$branch" "$repo" /loginvsi/hosting || (echo "Failed to clone repository, make sure the appliance can access github" && exit 1)                        
         fi
     else
         # offline updater, copy hosting files from hosting folder on iso        
@@ -161,7 +161,7 @@ if [[ "${PROCEED}" == "y" ]]; then
     if [ -z $offline ]; then 
         # pull the new images from dockerhub if we are online
         echo $(cat /root/.play) | base64 -d | docker login -u vsiplayaccount --password-stdin &>> /loginvsi/update.log
-        cd /loginvsi || exit 1
+        cd /loginvsi || (echo "/loginvsi folder cannot be found" && exit 1)
         docker-compose pull --quiet &>>/loginvsi/update.log
         if [ $? != 0 ]; then 
             echo "Something went wrong during pulling of the images from docker hub, please verify this appliance can connect to hub.docker.com"

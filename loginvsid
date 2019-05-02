@@ -41,7 +41,7 @@ start() {
 	# fi
 	# sleep 30
   # done &
-  cd /loginvsi || exit 1
+  cd /loginvsi || (echo "/loginvsi folder cannot be found" && exit 1)
   if [ ! -f /loginvsi/.portainerdisabled ]; then
     if [ -n "$(docker ps -a -f name=portainer --format '{{.Image}}')" ]; then
       echo "Portainer already started, skipping start of portainer..." 
@@ -148,7 +148,7 @@ update() {
   [[ $(echo "$2" | tr '[:upper:]' '[:lower:]') == "internal" ]] && internal=true  
   [[ $(echo "$2" | tr '[:upper:]' '[:lower:]') == "recurse" ]] && recurse=true  
   
-  cd /loginvsi || exit 1
+  cd /loginvsi || (echo "/loginvsi folder cannot be found" && exit 1)
   if [ -d /loginvsi/update ]; then
     rm -rf /loginvsi/update
   fi
@@ -156,9 +156,9 @@ update() {
       read -r repo branch hostingfolder < /root/.hosting
       if [ -z $internal ]; then                
         if [ $repo == "https://github.com/LoginVSI/Hosting.git" ]; then  
-          curl -Lfs -m 10 https://github.com/LoginVSI/LoginPIVirtualAppliance.git &> /dev/null || echo "Failed to connect to github.com, make sure the appliance can access github.com";exit 1
+          curl -Lfs -m 10 https://github.com/LoginVSI/LoginPIVirtualAppliance.git &> /dev/null || (echo "Failed to connect to github.com, make sure the appliance can access github.com" && exit 1)
         else
-          curl -Lfs -m 10 https://github.com/LoginVSI/VirtualAppliance.git &> /dev/null || echo "Failed to connect to github.com, make sure the appliance can access github.com";exit 1
+          curl -Lfs -m 10 https://github.com/LoginVSI/VirtualAppliance.git &> /dev/null || (echo "Failed to connect to github.com, make sure the appliance can access github.com" && exit 1)
         fi
         
         if [ $repo == "https://github.com/LoginVSI/Hosting.git" ]; then  
