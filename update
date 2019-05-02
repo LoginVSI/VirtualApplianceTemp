@@ -6,7 +6,7 @@ echo "update script old repo"
 [[ $(echo "$1" | tr '[:upper:]' '[:lower:]') == "internal" ]] && internal=true
 
 
-cd /loginvsi || exit 1
+cd /loginvsi || echo "/loginvsi folder does not exist";exit 1
 if [ -d /loginvsi/hosting ]; then
     rm -rf /loginvsi/hosting
 fi 
