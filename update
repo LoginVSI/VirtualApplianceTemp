@@ -95,9 +95,9 @@ if [[ "${PROCEED}" == "y" ]]; then
         # PI3 update, we should relaunch the update process from the daemon as it will now have a different address
         echo "Virtual Appliance scripts repo change detected, please restart the update!" 
         branch="release"
-        echo $repo $branch $hostingfolder > /root/.hosting
-        echo "parent" $PPID
+        echo $repo $branch $hostingfolder > /root/.hosting        
         kill $PPID
+        loginvsid update recurse
         exit
         echo "should not see this line"                       
     fi

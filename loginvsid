@@ -146,7 +146,8 @@ status() {
 update() {
   [[ $(echo "$2" | tr '[:upper:]' '[:lower:]') == "offline" ]] && offline=true  
   [[ $(echo "$2" | tr '[:upper:]' '[:lower:]') == "internal" ]] && internal=true     
-  
+  [[ $(echo "$2" | tr '[:upper:]' '[:lower:]') == "recurse" ]] && recurse=true     
+    
   cd /loginvsi || (echo "/loginvsi folder cannot be found" && exit 1)
   if [ -d /loginvsi/update ]; then
     rm -rf /loginvsi/update
@@ -188,6 +189,8 @@ update() {
     /loginvsi/update/update offline
   elif [ -n "$internal" ]; then 
     /loginvsi/update/update "$2" "$hostingurl"      
+  elif [ -n "$recurse" ]; then
+    /loginvsi/update/update recurse     
   else
     /loginvsi/update/update     
   fi
