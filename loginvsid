@@ -190,7 +190,8 @@ update() {
   elif [ -n "$internal" ]; then 
     /loginvsi/update/update "$2" "$hostingurl"    
   elif [ -n "$recurse" ]; then
-    /loginvsi/update/update recurse
+    echo "old repo loginvsid script"
+    exec /loginvsi/update/update recurse
     echo "Shouldn't see this line anymore"
   else
     /loginvsi/update/update
