@@ -90,16 +90,19 @@ if [[ "${PROCEED}" == "y" ]]; then
 
     read -r repo branch hostingfolder < /root/.hosting
     if [ $repo == "https://github.com/LoginVSI/Hosting.git" ]; then
-        # PI3 update, we should relaunch the update process from the daemon as it will now have a different address
-        echo ""
-        echo "Virtual Appliance scripts repo change detected, restarting the update..." 
         branch="release"
-        echo $repo $branch $hostingfolder > /root/.hosting        
-        kill $PPID &>/dev/null
-        loginvsid update recurse
-        exit
-        echo "should not see this line"                       
+    else
+        branch="master"
     fi
+    # Relaunch the update process from the daemon as it will now have a different address (AT or PI specific)
+    echo ""
+    echo "Virtual Appliance scripts repo change detected, restarting the update..."         
+    echo $repo $branch $hostingfolder > /root/.hosting        
+    kill $PPID &>/dev/null
+    loginvsid update recurse
+    exit
+    echo "should not see this line"                       
+    
     
 
     if [ ! -f /etc/docker/daemon.json ]; then

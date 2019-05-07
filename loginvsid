@@ -158,13 +158,13 @@ update() {
         if [ $repo == "https://github.com/LoginVSI/Hosting.git" ]; then  
           curl -Lfs -m 10 https://github.com/LoginVSI/LoginPIVirtualAppliance.git &> /dev/null || (echo "Failed to connect to github.com, make sure the appliance can access github.com" && exit 1)
         else
-          curl -Lfs -m 10 https://github.com/LoginVSI/VirtualAppliance.git &> /dev/null || (echo "Failed to connect to github.com, make sure the appliance can access github.com" && exit 1)
+          curl -Lfs -m 10 https://github.com/LoginVSI/VirtualApplianceTAT.git &> /dev/null || (echo "Failed to connect to github.com, make sure the appliance can access github.com" && exit 1)
         fi
         
         if [ $repo == "https://github.com/LoginVSI/Hosting.git" ]; then  
           git clone -b $branch -q https://github.com/LoginVSI/LoginPIVirtualAppliance.git /loginvsi/update
         else
-          git clone -q https://github.com/LoginVSI/VirtualAppliance.git /loginvsi/update
+          git clone -q https://github.com/LoginVSI/VirtualApplianceTAT.git /loginvsi/update
         fi
       else
         read -rep "InternalUrl for virtual appliance: " applianceurl
