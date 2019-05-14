@@ -45,10 +45,7 @@ while read -r repo branch hostingfolder; do
         echo "
 ########################################
 #  This appliance is going to be updated from $currentversion to $newversion          
-#                                                                                                      
-#  This appliance is going to be updated to the latest version                       
 #  Please make sure you have a backup of the system and data before proceeding             
-#                                                                                                      
 #  After the update has finished please remember to update your launchers                
 ########################################
 #  IMPORTANT NOTICES                                           
