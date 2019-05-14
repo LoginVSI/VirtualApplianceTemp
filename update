@@ -43,27 +43,22 @@ while read -r repo branch hostingfolder; do
         echo "This appliance is going to be updated to the latest version. Please make sure you have a backup of the system and data before proceeding."
     else
         echo "
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-#                                                                                                       #
-#                    This appliance is going to be updated from $currentversion to $newversion          #
-#                                                                                                       #
-#                    This appliance is going to be updated to the latest version                        #
-#              Please make sure you have a backup of the system and data before proceeding              #
-#                                                                                                       #
-#                After the update has finished please remember to update your launchers                 #
-#                                                                                                       #
-#                                                                                                       #
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-#                                                                                                       #
-#                                           IMPORTANT NOTICES                                           #
-#                                                                                                       #
-#     3.5                                                                                               #
-#     The logonscript has been changed and needs to be updated in your environment                      #
-#                                                                                                       #
-#     3.4                                                                                               #
-#     After the update initial boot might take longer due to database maintenance                       #
-#                                                                                                       #
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+# # #                                                                                                  
+#  This appliance is going to be updated from $currentversion to $newversion          
+#                                                                                                      
+#  This appliance is going to be updated to the latest version                       
+#  Please make sure you have a backup of the system and data before proceeding             
+#                                                                                                      
+#  After the update has finished please remember to update your launchers                
+# # #
+#  IMPORTANT NOTICES                                           
+#    3.5                                                                                               
+#    The logonscript has been changed and needs to be updated in your environment                      
+#                                                                                                       
+#    3.4                                                                                               
+#    After the update initial boot might take longer due to database maintenance                       
+#                                                                                                       
+# # #
 "    
     fi
     read -rep "Are you sure you want to update from $currentversion to $newversion [y/N]: " PROCEED </dev/tty
