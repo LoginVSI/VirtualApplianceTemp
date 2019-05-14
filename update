@@ -98,8 +98,9 @@ if [[ "${PROCEED}" == "y" ]]; then
     echo ""
     echo -n "Virtual Appliance scripts repo change detected, restarting the update..."         
     echo $repo $branch $hostingfolder > /root/.hosting            
-    kill $PPID &>/dev/null
-    loginvsid update recurse    
+    kill -PIPE $PPID &>/dev/null
+    loginvsid update recurse
+    exit    
     echo "should not see this line"                       
     
     
