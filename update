@@ -96,11 +96,10 @@ if [[ "${PROCEED}" == "y" ]]; then
     fi
     # Relaunch the update process from the daemon as it will now have a different address (AT or PI specific)
     echo ""
-    echo "Virtual Appliance scripts repo change detected, restarting the update..."         
-    echo $repo $branch $hostingfolder > /root/.hosting        
+    echo -n "Virtual Appliance scripts repo change detected, restarting the update..."         
+    echo $repo $branch $hostingfolder > /root/.hosting            
     kill $PPID &>/dev/null
-    loginvsid update recurse
-    exit
+    loginvsid update recurse    
     echo "should not see this line"                       
     
     
