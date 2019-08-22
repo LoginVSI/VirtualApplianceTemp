@@ -17,7 +17,26 @@ while read -r repo branch hostingfolder; do
         branch="master";
         hostingfolder="latest/Production/InternalDB"        
     else
-        branch="release"          
+		#copy latest loginvsi folder
+		cp -f -r update/loginvsi/* /loginvsi/
+		chmod -R +x /loginvsi/bin
+
+		# copy loginvsid.service and loginvsid
+		cp -f update/loginvsid /usr/bin/
+		cp -f update/loginvsid.service /etc/systemd/system/
+
+		chmod +x /usr/bin/loginvsid
+		chown root:root /usr/bin/loginvsid
+		systemctl disable loginvsid &>> /loginvsi/update.log
+		systemctl enable loginvsid &>> /loginvsi/update.log
+
+		# Relaunch the update process from the daemon as it will now have a different address (AT or PI specific)
+		echo ""
+		echo -n "Virtual Appliance update mechanism change detected, please restart the update..."         
+		echo $repo $branch $hostingfolder > /root/.hosting            
+		kill -PIPE $PPID &>/dev/null    
+		exit 0    
+		echo "should not see this line"                
     fi 
     if [ -z "$offline" ]; then 
         if [ -n "$internal" ]; then

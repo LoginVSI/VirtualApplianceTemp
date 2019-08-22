@@ -162,14 +162,34 @@ update() {
         fi
         
         if [ $repo == "https://github.com/LoginVSI/Hosting.git" ]; then  
-          git clone -b $branch -q https://github.com/LoginVSI/LoginPIVirtualAppliance.git /loginvsi/update
+			latest=$(curl -s https://loginvsidata.s3-eu-west-1.amazonaws.com/LoginPI3_ISO/latest.txt)
+			echo "Downloading $latest"
+			curl -o /tmp/$latest https://loginvsidata.s3-eu-west-1.amazonaws.com/LoginPI3_ISO/$latest
+			mkdir -p /mnt/cdrom
+
+			mount -o loop /tmp/$latest /mnt/cdrom
+
+			cp -rf /mnt/cdrom/update/ .
+			chmod +x /loginvsi/update/update
+			/loginvsi/update/update offline
+			umount /mnt/cdrom
+			exit 0
         else
           git clone -q https://github.com/LoginVSI/VirtualApplianceTAT.git /loginvsi/update
         fi
       else
-        read -rep "InternalUrl for virtual appliance: " applianceurl
-        read -rep "InternalUrl for Hosting: " hostingurl
-        git clone -q $applianceurl /loginvsi/update
+        latest=$(curl -s https://loginvsidata.s3-eu-west-1.amazonaws.com/LoginPI3_ISO/latest-internal.txt)
+		echo "Downloading $latest"
+		curl -o /tmp/$latest https://loginvsidata.s3-eu-west-1.amazonaws.com/LoginPI3_ISO/$latest
+		mkdir -p /mnt/cdrom
+
+		mount -o loop /tmp/$latest /mnt/cdrom
+
+		cp -rf /mnt/cdrom/update/ .
+		chmod +x /loginvsi/update/update
+		/loginvsi/update/update offline
+		umount /mnt/cdrom
+		exit 0
       fi         
   else
     read -rep "Make sure the update iso is connected to the VM, press enter to continue" _
