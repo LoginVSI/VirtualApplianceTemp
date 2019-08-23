@@ -162,9 +162,9 @@ update() {
         fi
         
         if [ $repo == "https://github.com/LoginVSI/Hosting.git" ]; then  
-			latest=$(curl -s https://loginvsidata.s3-eu-west-1.amazonaws.com/LoginPI3_ISO/latest.txt)
+			latest=$(curl -s https://loginvsidata.s3-eu-west-1.amazonaws.com/LoginPI3_ISO/public/latest.txt)
 			echo "Downloading $latest"
-			curl -o /tmp/$latest https://loginvsidata.s3-eu-west-1.amazonaws.com/LoginPI3_ISO/$latest
+			curl -o /tmp/$latest https://loginvsidata.s3-eu-west-1.amazonaws.com/LoginPI3_ISO/public/$latest
 			mkdir -p /mnt/cdrom
 
 			mount -o loop /tmp/$latest /mnt/cdrom
@@ -178,9 +178,9 @@ update() {
           git clone -q https://github.com/LoginVSI/VirtualApplianceTAT.git /loginvsi/update
         fi
       else
-        latest=$(curl -s https://loginvsidata.s3-eu-west-1.amazonaws.com/LoginPI3_ISO/latest-internal.txt)
+        latest=$(curl -s https://loginvsidata.s3-eu-west-1.amazonaws.com/LoginPI3_ISO/internal/latest.txt)
 		echo "Downloading $latest"
-		curl -o /tmp/$latest https://loginvsidata.s3-eu-west-1.amazonaws.com/LoginPI3_ISO/$latest
+		curl -o /tmp/$latest https://loginvsidata.s3-eu-west-1.amazonaws.com/LoginPI3_ISO/internal/$latest
 		mkdir -p /mnt/cdrom
 
 		mount -o loop /tmp/$latest /mnt/cdrom
